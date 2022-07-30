@@ -1,5 +1,5 @@
 {
-    "version": "3.0.1",
+    "version": "3.0.2",
     "manifest_version": 2,
     "name": "Cursors: New Tab",
     "description": "New tab page with cool backgrounds!",
@@ -33,7 +33,6 @@
         "https://*/*",
         "topSites",
         "storage",
-        "tabs",
         "chrome://favicon/*"
     ]
 }
