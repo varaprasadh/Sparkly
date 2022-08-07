@@ -1,3 +1,5 @@
 node_modules
 dist
 *.pem
+.ds_store
+dist.crx
