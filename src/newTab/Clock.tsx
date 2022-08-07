@@ -4,8 +4,6 @@ import styled from "styled-components";
 const StyledTime = styled.div`
   font-size: 2em;
   color: white;
-  font-weight: bold;
-  font-family: sans;
 `;
 
 function Clock() {
@@ -22,11 +20,9 @@ function Clock() {
 
 
     const date = new Date(datetime);
-    const time = date.toLocaleString('en-US', { hour12: true }).split(",").pop();
     const dateString = date.toDateString();
     return (
         <div style={{fontFamily:"sans"}}>
-            <StyledTime>{time}</StyledTime>
             <StyledTime>{dateString}</StyledTime>
         </div>
     )

@@ -1,6 +1,6 @@
 {
-    "version": "3.0.2",
-    "manifest_version": 2,
+    "version": "3.1.0",
+    "manifest_version": 3,
     "name": "Cursors: New Tab",
     "description": "New tab page with cool backgrounds!",
     "icons": {
@@ -8,7 +8,7 @@
         "48": "./images/icon.png",
         "16": "./images/icon.png"
     },
-    "browser_action": {
+    "action": {
         "default_icon": {
             "128": "./images/icon.png",
             "48": "./images/icon.png",
@@ -19,20 +19,25 @@
         "newtab": "./new-tab.html"
     },
     "background": {
-        "scripts": [
-            "./background.js"
-        ],
-        "persistent": false
+        "service_worker": "./background.js"
     },
     "web_accessible_resources": [
-        "images/icon.png"
+        {
+            "resources": ["images/icon.png"],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
     ],
-    "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; img-src *"
+    },
     "permissions": [
-        "http://*/*",
-        "https://*/*",
         "topSites",
-        "storage",
-        "chrome://favicon/*"
+        "storage"
+    ],
+    "host_permissions":[
+        "http://*/*",
+        "https://*/*"
     ]
 }

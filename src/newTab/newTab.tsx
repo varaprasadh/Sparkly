@@ -16,7 +16,6 @@ import { getObjectFromStorageSync } from '../helpers/storage';
 
 
 // images 
-import buy_me_coffee from "../assets/images/buymecoffee.webp";
 import Clock from './Clock';
 
 const TopSection = styled.section`
@@ -198,17 +197,6 @@ function NewTab() {
                     <TopSites />
                 </div>
             </MiddleSection>
-            <BottomSection>
-                <div>
-                    <a href="https://www.buymeacoffee.com/varaprasadh" target="_blank">
-                        <img
-                            src={buy_me_coffee}
-                            alt="Buy Me A Coffee!"
-                            style={{ height: "50px", width: "200px"}}
-                        />
-                    </a>
-                </div>
-            </BottomSection>
         </Page>
         </AppContext.Provider> 
     )

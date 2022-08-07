@@ -21,6 +21,7 @@ const WindowContainer = styled.div`
    right: 20%;
    background-color: white;
    border-radius: 0.2rem;
+   z-index: 99;
 `;
 
 const StyledPanel = styled.div`
@@ -230,8 +231,9 @@ export function AuthorInfoWindow(){
                     <img src={myPhoto} alt="varaprasadh's photo" 
                         style={{width:'8rem', objectFit:"cover"}}/>
                     <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
-                        👋Hi! I'm <strong>Varaprasadh</strong> <br/>
-                        i am a software engineer &amp; love to do crazy things like this extension. <br/>
+                        👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
+                        A am a software Engineer🤖<br/>
+                        And Google Certified Cloud Developer 💻<br/>
                         <strong>Catch me up below</strong> <br/>
                         <div className="social-links">
                             <a href={links.LINKEDIN}>

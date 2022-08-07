@@ -1,6 +1,6 @@
 
 // redirect to varaprasadh.dev
-chrome.browserAction.onClicked.addListener(() => {
+chrome.action.onClicked.addListener(() => {
     chrome.tabs.create({
         url: "https://varaprasadh.dev"
     })
