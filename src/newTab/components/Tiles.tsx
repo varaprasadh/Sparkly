@@ -34,7 +34,7 @@ export const TopSites = ({ }) => {
                 const { protocol, host, origin, href  } = url;
                //  chrome://favicon2/?size=24&scale_factor=1x&show_fallback_monogram=&page_url=http%3A%2F%2Fyoutube.com%2F
                 // const favicon_path = `chrome://favicon2/?size=24&scale_factor=1x&show_fallback_monogram=&page_url=${encodeURIComponent(href)}`;
-                const favicon_path = `chrome://favicon/size/48@1x/${origin}`;
+                const favicon_path = `${origin}/favicon.ico`;
 
                 return {
                     title: site.title,

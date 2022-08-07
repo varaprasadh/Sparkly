@@ -6,9 +6,10 @@ import { preventSelectStyles } from '.';
 import cursorIcon from "../../icons/cursor.png";
 
 const TileContainer = styled.a`
+    position: relative;
     width: 100px;
     background-color: white;
-    margin: 0.1rem;
+    margin: 0.4rem;
     padding: 0.5rem  1rem;
     text-decoration: none;
     border-radius: 0.2rem;
@@ -39,19 +40,46 @@ const TileImage = styled.img`
 
 export default function Tile({ title, url, icon }: { title: string, url: string, icon: any }) {
     const imageRef: Ref<HTMLImageElement> = React.createRef();
+    const [imageLoadErrorHandled, setImageLoadErrorHandled] = useState(false);
     useEffect(() => {
-        imageRef.current?.addEventListener('error', () => {
+        console.log('imageRef', imageRef.current);
+        imageRef.current?.addEventListener('error', ({ target }) => {
+            console.log("image load error", target);
             imageRef.current?.removeEventListener('error', () => { });
-            imageRef.current!.src = cursorIcon;
+            // @ts-ignore
+            target?.src = cursorIcon;
         });
         return () => {
             imageRef.current?.removeEventListener('error', () => { });
         }
     }, [])
+    const titleMatchParts = title.match(/\((?<count>\b\d[\d,.]*\b)\)/);
+    const notificationCount = titleMatchParts?.groups?.count ? parseInt(titleMatchParts?.groups?.count.replace(/,/g, '')) : 0;
+    console.log('notificationCount', notificationCount);
+    const formattedNotificationCount = notificationCount > 99 ? '99+' : notificationCount;
+    console.log({ title, formattedNotificationCount });
     return (
         <TileContainer key={url} href={url}>
-            <TileImage ref={imageRef} onError={e => (e.target as HTMLImageElement as any).src = { cursorIcon }} src={icon} alt={`tile-icon ${title}`} />
+            <TileImage ref={imageRef} src={icon} alt={`tile-icon ${title}`} />
             <TileTitle title={title}>{title}</TileTitle>
+            {notificationCount > 0 && <span style={{
+                background: 'tomato',
+                color: 'white',
+                borderRadius: '50%',
+                padding: '0.2rem',
+                fontSize: '0.8rem',
+                position: 'absolute',
+                top: '-0.5rem',
+                right: '-0.5rem',
+                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minWidth: '20px',
+                minHeight: '20px',
+            }}
+                >{formattedNotificationCount}</span>
+            }
         </TileContainer>
     )
 }

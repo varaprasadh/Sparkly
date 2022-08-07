@@ -8,6 +8,12 @@ import { preventSelectStyles } from './components';
 import { AppContext } from './Context';
 
 import myPhoto from "../icons/vara.jpeg";
+import { links } from '../data';
+
+
+import twitterIcon from "../assets/images/twitter.png";
+import linkedinIcon from "../assets/images/linkedin.png";
+import githubIcon from "../assets/images/github.png";
 
 const WindowContainer = styled.div`
    position: absolute;
@@ -15,6 +21,7 @@ const WindowContainer = styled.div`
    right: 20%;
    background-color: white;
    border-radius: 0.2rem;
+   z-index: 99;
 `;
 
 const StyledPanel = styled.div`
@@ -153,21 +160,6 @@ export default function SettingsWindow(){
     }
     return (
         <WindowContainer>
-            <Panel title={"Backgrounds"}>
-                <GradientsContainer>
-                    {
-                        gradients.map(({ value, key }) => {
-                            return (
-                                <GradientOption 
-                                    key={key} 
-                                    gradient={value} 
-                                    onClick={() => setBackground(ASSET_TYPES.GRADIENT, key)}
-                                />
-                            )
-                        })
-                    }
-                </GradientsContainer>
-            </Panel> 
             <Panel title={"Wallpapers"}>
                 <GradientsContainer>
                     {
@@ -182,9 +174,22 @@ export default function SettingsWindow(){
                         })
                     }
                 </GradientsContainer>
+                <GradientsContainer>
+                    {
+                        gradients.map(({ value, key }) => {
+                            return (
+                                <GradientOption
+                                    key={key}
+                                    gradient={value}
+                                    onClick={() => setBackground(ASSET_TYPES.GRADIENT, key)}
+                                />
+                            )
+                        })
+                    }
+                </GradientsContainer>
             </Panel> 
             <Panel title={"Gif"}>
-                <GradientsContainer style={{padding:'0rem 1rem', justifyContent:'start'}}>
+                <GradientsContainer style={{padding:'0rem 1em', justifyContent:'start'}}>
                     {
                         gifs.map(({ value, key }) => {
                             return (
@@ -200,7 +205,6 @@ export default function SettingsWindow(){
             </Panel> 
             <Panel title={"What's next ?"}>
                     <ul style={{paddingLeft:'2rem', lineHeight:'1.5rem'}}>
-                        <li>More Gifs 🙋‍♂️  </li>
                         <li>Custom cursors 😋</li>
                         <li>Custom background! 🌈 </li>
                     </ul>
@@ -210,43 +214,54 @@ export default function SettingsWindow(){
 }
 
 
-export function InfoWindow(){
-    return (
-        <WindowContainer>
-            <Panel title={"📃 About"} canToggle={false}>
-                <p style={{padding:'0.5rem 1rem', lineHeight:'1.5rem'}}>
-                    📣 This Extension is made for my lovely college <b>ANITS</b> on the occasion of yearly college festival 
-                    named <b>"Cursors"</b> which is organized by 🖥 CSE department 
-                    on <b>🕗2019 March.</b>
-                    <br/>
-                    <br/>
-                    <strong>👋Thank You!</strong>
-                </p>
-            </Panel>
-        </WindowContainer>
-    )
-}
+const StyledSocialIcon = styled.img`
+  height: 30px;
+  margin: 0.2em;
+  transition: all 0.2s ease;
+  &:active{
+      transform: scale(0.8);
+  }
+`
 export function AuthorInfoWindow(){
-    const socialLinks = {
-        instagram: "https://www.instagram.com/i_varaprasadh/",
-        linkedin: "https://www.linkedin.com/in/varaprasadh"
-    }
-     
+
     return (
         <WindowContainer>
             <Panel title={"🔯 About Me"} canToggle={false}>
-                <div style={{display:'flex', padding:"0.5rem 1rem"}}>
-                    <img src={myPhoto} alt="varaprasadh's photo" style={{width:'8rem'}}/>
-                    <div style={{marginLeft:'0.2rem',minWidth: "200px", lineHeight:'1.2rem'}}>
-                        👋Hi! I'm <strong>Varaprasadh</strong>, most of the people calls me 
-                        <strong><i>Vara.</i> </strong> I'm self-taught programmer(in my point of view 😜).
-                        <br/>
-                        if you want to talk with me then,
-                        you can contact me through <strong><a href={socialLinks.linkedin}> LinkedIn</a></strong>
-                        &nbsp;Or <strong><a href={socialLinks.instagram}>Instagram</a></strong>
+                <div style={{display:'flex', padding:"0.5rem 1rem", fontFamily:"sans"}}>
+                    <img src={myPhoto} alt="varaprasadh's photo" 
+                        style={{width:'8rem', objectFit:"cover"}}/>
+                    <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
+                        👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
+                        A am a software Engineer🤖<br/>
+                        And Google Certified Cloud Developer 💻<br/>
+                        <strong>Catch me up below</strong> <br/>
+                        <div className="social-links">
+                            <a href={links.LINKEDIN}>
+                                <StyledSocialIcon src={linkedinIcon} alt="linkedin"/>
+                            </a>
+                            <a href={links.TWITTER}>
+                                <StyledSocialIcon src={twitterIcon} alt="twitter"/>
+                            </a>
+                            <a href={links.GITHUB}>
+                                <StyledSocialIcon src={githubIcon} alt="github"/>
+                            </a>
+                        </div>
+                        <div>
+                            <a href={links.WEBSITE} style={{fontSize:'1.2em'}}>varaprasadh.dev</a>
+                        </div>
                     </div>
                 </div>
             </Panel>
         </WindowContainer>
     )
 }
+
+/*
+
+<strong><i>Vara.</i> </strong> I'm self-taught programmer(in my point of view 😜).
+<br/>
+test
+if you want to talk with me then,
+you can contact me through <strong><a href={socialLinks.linkedin}> LinkedIn</a></strong>
+
+*/

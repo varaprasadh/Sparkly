@@ -6,16 +6,17 @@ import searchIcon from "../../icons/search_icon.png";
 
 const StyledSearchBar = styled.div`
     box-sizing: border-box;
+    border-radius: 0.5rem;
     display: flex;
     align-items: center;
     padding: 0.5rem;
     background: white;
     margin: 1rem;
-    border-radius: 0%.2rem;
 `
 const StyledInput = styled.input`
     flex: 1;
     border: none;
+    padding: 0.5rem;
     font-size: 1rem;
     &:focus{
         outline: none;
@@ -25,6 +26,7 @@ const StyledSearchIcon = styled.img`
     width: 1rem;
     height: 1rem;
     cursor: pointer;
+    margin-right: 0.5rem;
     transition: all 0.1s ease;
     &:active{
         transform: scale(0.8);

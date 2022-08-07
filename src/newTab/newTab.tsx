@@ -8,15 +8,19 @@ import OutsideClickHandler from 'react-outside-click-handler';
 import { Page } from "./components/index";
 
 import SearchBar from './components/SearchBar';
-import { TopSites } from './components/Tiles';
-import SettingsWindow, { AuthorInfoWindow, InfoWindow } from './SettingsWindow';
+import { TopSites } from './components/Tiles'; 
+import SettingsWindow, { AuthorInfoWindow } from './SettingsWindow';
 import { AppContext, reducer, initialState } from './Context';
 import { wallpapers, gifs, gradients, ASSET_TYPES } from "./backgroundAssets";
 import { getObjectFromStorageSync } from '../helpers/storage';
 
+
+// images 
+import Clock from './Clock';
+
 const TopSection = styled.section`
   /* clock + setting icon on right */
-  padding: 1rem;
+  padding: 1rem; 
   display: flex;
 `;
 const MiddleSection = styled.section`
@@ -29,13 +33,20 @@ const MiddleSection = styled.section`
 const BottomSection = styled.section`
     /* author + info */
     display: flex;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding:1em;
 `;
 
 
 const Right = styled.div`
     margin-left: auto;
     justify-self: end;
+    display: flex;
+`;
+
+const Left = styled.div`
+    justify-self: start;
     display: flex;
 `;
 
@@ -81,11 +92,7 @@ const StyledBackgroundImage = styled.img<{src:any}>`
     object-position: center;
     z-index: -1;
 `;
-
-
-
-
-
+ 
 const StyledBackgroundGradient = styled.div<{ gradient:any}>`
     position: absolute;
     height: 100%;
@@ -111,16 +118,13 @@ function getBackground({type, key}:{type:number,key:number}):any{
             return wallpapers.find(i=>true);
     }
 }
-
+ 
 function PageBackground({}){
     const [store, dispatch ]= React.useContext(AppContext as any);
    
     const { type, key } = store.appBackground;
     const { value } = getBackground({type,key})
 
-    console.log({
-        value
-    })
     if(type === ASSET_TYPES.IMAGE){
         return (
             <StyledBackgroundImage src={value}/>
@@ -149,11 +153,7 @@ const AppTitle = styled.div`
 const AuthorSlogan = styled.div`
     margin-bottom: 0.5rem;
     font-size: 1rem;
-    background: #ffffff;
     padding: 0.2rem 1rem;
-    filter: drop-shadow(-2px -4px 6px black inset);
-    box-shadow: 7px -3px 20px 3px #00b8ff inset;
-    border-radius: 0.2rem;
 `
 
 function NewTab() {
@@ -178,18 +178,18 @@ function NewTab() {
         <Page relative style={{background:'black'}}>
             <PageBackground/>
             <TopSection>
+                <Left>
+                    <Clock/>
+                </Left>
                 <Right>  
-                    <ActionButton icon={'❓'} title={'Settings'}>
-                        <AuthorInfoWindow/>
-                    </ActionButton>
-                    <ActionButton icon={'ℹ️'} title={'Settings'}>
-                        <InfoWindow/>
+                    <ActionButton icon={'ℹ️'} title={'About'}>
+                        <AuthorInfoWindow />
                     </ActionButton>
                     <ActionButton icon={'⚙️'} title={'Settings'}>
                         <SettingsWindow />
                     </ActionButton>
                 </Right>
-            </TopSection>
+            </TopSection> 
             <MiddleSection> 
                 <div style={{ textAlign: 'center' }}>
                     <AppTitle>Cursors</AppTitle>
@@ -197,14 +197,9 @@ function NewTab() {
                     <TopSites />
                 </div>
             </MiddleSection>
-            <BottomSection>
-                <AuthorSlogan>
-                    Made With ❤ by <a href="https://www.linkedin.com/in/varaprasadh">Varaprasadh</a>
-                </AuthorSlogan>
-            </BottomSection>
         </Page>
-        </AppContext.Provider>
+        </AppContext.Provider> 
     )
-}
+} 
 
 render(<NewTab />, document.getElementById("app")); 
