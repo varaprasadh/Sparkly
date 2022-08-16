@@ -13,7 +13,7 @@ import SettingsWindow, { AuthorInfoWindow } from './SettingsWindow';
 import { AppContext, reducer, initialState } from './Context';
 import { wallpapers, gifs, gradients, ASSET_TYPES } from "./backgroundAssets";
 import { getObjectFromStorageSync } from '../helpers/storage';
-
+import SettingsIconFilled from '../assets/svg/settings_filled.svg';
 
 // images 
 import Clock from './Clock';
@@ -59,8 +59,6 @@ const RoundedIcon = styled.div`
     cursor: pointer;
     font-size: 1.5rem;
     color: white;
-    width: 1rem;
-    height: 1rem;
     position: relative;
     transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
     &:active{
@@ -185,7 +183,7 @@ function NewTab() {
                     <ActionButton icon={'ℹ️'} title={'About'}>
                         <AuthorInfoWindow />
                     </ActionButton>
-                    <ActionButton icon={'⚙️'} title={'Settings'}>
+                    <ActionButton icon={<SettingsIconFilled size/>} title={'Settings'}>
                         <SettingsWindow />
                     </ActionButton>
                 </Right>

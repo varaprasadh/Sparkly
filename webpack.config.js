@@ -1,10 +1,14 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin  } = require('clean-webpack-plugin')
 const copyWebpackPlugin = require('copy-webpack-plugin')
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const { resolve } = require('path');
 
 
+// webpack plugin to log the build progress
+
 const plugins = [
+    new ProgressBarPlugin(),
     new HtmlWebpackPlugin({
         template: './public/new-tab.raw.html',
         filename:'new-tab.html',
@@ -54,9 +58,13 @@ module.exports = {
                     }
                 }
             },
+            {
+                test: /\.svg$/,
+                use: ['@svgr/webpack'],
+            },
         ]
     },
-    plugins
+    plugins,    
 };
 
 
