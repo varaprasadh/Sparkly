@@ -11,12 +11,13 @@ import SearchBar from './components/SearchBar';
 import { TopSites } from './components/Tiles'; 
 import { AuthorInfoWindow } from './SettingsWindow';
 import { AppContext, reducer, initialState } from './Context';
-import { getObjectFromStorageSync } from '../helpers/storage';
+import { getObjectFromStorageLocal, getObjectFromStorageSync } from '../helpers/storage';
 import list1 from '../data/list1.json';
 import list2 from '../data/list2.json';
 import list3 from '../data/list3.json';
 
 import appIcon from '../icons/Sparkly_x.png';
+import fallBackWallpaper from '../assets/images/fallback_wallpaper.jpg';
 
 const images = [...list1, ...list2, ...list3];
 
@@ -118,6 +119,30 @@ const AppTitle = styled.div`
         width: 300px;
     }
 `;
+function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+
+    // create a view into the buffer
+    var ia = new Uint8Array(ab);
+
+    // set the bytes of the buffer to the correct values
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    // write the ArrayBuffer to a blob, and you're done
+    var blob = new Blob([ab], { type: mimeString });
+    return blob;
+
+}
 
 function NewTab() {
     const [store, dispatch] = useReducer(reducer, initialState);
@@ -125,18 +150,31 @@ function NewTab() {
     const [imageInfo, setImageInfo] = React.useState(null);
     useEffect(async () => {
         const { activeImageIndex = 0 } = await getObjectFromStorageSync();
+        const { bufferedImage } = await getObjectFromStorageLocal("bufferedImage");
         const image = images[activeImageIndex];
-        const regularURL = image.urls.regular; // change it to full once buffered loading implimented.
-        setImageInfo(image);
-        setAvailableImage(regularURL);
-        chrome.storage.sync.set({ activeImageIndex: (activeImageIndex + 1) % images.length })
+        const displayableImage = bufferedImage ? URL.createObjectURL(dataURItoBlob(bufferedImage)) : fallBackWallpaper;
+        const imageInfo = bufferedImage ? image : null;
+        setImageInfo(imageInfo);
+        setAvailableImage(displayableImage);
+        // activeImageIndex is buffered and loaded, load the next image.
+        const nextImageIndex = bufferedImage ? (activeImageIndex + 1) % images.length : activeImageIndex;
+        const nextImage = images[nextImageIndex];
+        const imageURL = nextImage.urls.full;
+        fetch(imageURL).then(res => res.blob()).then(blob => {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                chrome.storage.local.set({ bufferedImage: reader.result });
+                chrome.storage.sync.set({ activeImageIndex: nextImageIndex });
+            });
+            reader.readAsDataURL(blob);
+        });
     }, []);
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
     const showBottomBar = imageAuthor && imageAuthorUnsplashLink;
     const handleImageLoadError = () => {
         setImageInfo(null);
-        setAvailableImage(null);
+        setAvailableImage(fallBackWallpaper);
     }
     return ( 
         <AppContext.Provider value={[store, dispatch]}>

@@ -43,11 +43,6 @@ export const TopSites = ({ }) => {
                 };
 
             })
-            console.log({
-                tiles
-            })
-
-
             setSites(tiles as any);
             setLoading(false);
         });

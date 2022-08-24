@@ -42,9 +42,7 @@ export default function Tile({ title, url, icon }: { title: string, url: string,
     const imageRef: Ref<HTMLImageElement> = React.createRef();
     const [imageLoadErrorHandled, setImageLoadErrorHandled] = useState(false);
     useEffect(() => {
-        console.log('imageRef', imageRef.current);
         imageRef.current?.addEventListener('error', ({ target }) => {
-            console.log("image load error", target);
             imageRef.current?.removeEventListener('error', () => { });
             // @ts-ignore
             target?.src = cursorIcon;
@@ -55,9 +53,7 @@ export default function Tile({ title, url, icon }: { title: string, url: string,
     }, [])
     const titleMatchParts = title.match(/\((?<count>\b\d[\d,.]*\b)\)/);
     const notificationCount = titleMatchParts?.groups?.count ? parseInt(titleMatchParts?.groups?.count.replace(/,/g, '')) : 0;
-    console.log('notificationCount', notificationCount);
     const formattedNotificationCount = notificationCount > 99 ? '99+' : notificationCount;
-    console.log({ title, formattedNotificationCount });
     return (
         <TileContainer key={url} href={url}>
             <TileImage ref={imageRef} src={icon} alt={`tile-icon ${title}`} />
