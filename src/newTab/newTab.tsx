@@ -9,14 +9,16 @@ import { Page } from "./components/index";
 
 import SearchBar from './components/SearchBar';
 import { TopSites } from './components/Tiles'; 
-import SettingsWindow, { AuthorInfoWindow } from './SettingsWindow';
+import { AuthorInfoWindow } from './SettingsWindow';
 import { AppContext, reducer, initialState } from './Context';
-import { wallpapers, gifs, gradients, ASSET_TYPES } from "./backgroundAssets";
 import { getObjectFromStorageSync } from '../helpers/storage';
-import SettingsIconFilled from '../assets/svg/settings_filled.svg';
+import list1 from '../data/list1.json';
+import list2 from '../data/list2.json';
+import list3 from '../data/list3.json';
 
-// images 
-import Clock from './Clock';
+import appIcon from '../icons/Sparkly_x.png';
+
+const images = [...list1, ...list2, ...list3];
 
 const TopSection = styled.section`
   /* clock + setting icon on right */
@@ -33,8 +35,7 @@ const MiddleSection = styled.section`
 const BottomSection = styled.section`
     /* author + info */
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
+    justify-content: center;
     padding:1em;
 `;
 
@@ -64,6 +65,9 @@ const RoundedIcon = styled.div`
     &:active{
         transform: scale(0.8);
     }
+    background: #ffffff33;
+    width: 32px;
+    height: 32px;
 `;
 
 const ActionButton = ({ icon, title, children }: any) => {
@@ -101,100 +105,64 @@ const StyledBackgroundGradient = styled.div<{ gradient:any}>`
     background: ${props => props.gradient};
 `;
 
-function getBackground({type, key}:{type:number,key:number}):any{
-    switch(type){
-        case ASSET_TYPES.IMAGE: 
-          return wallpapers.find(i=>i.key===key);
-         break;
-        case ASSET_TYPES.GRADIENT: 
-         return gradients.find(i=>i.key === key);
-         break;
-        case ASSET_TYPES.GIF: 
-         return gifs.find(i=>i.key === key);
-         break;
-        default:
-            return wallpapers.find(i=>true);
-    }
-}
- 
-function PageBackground({}){
-    const [store, dispatch ]= React.useContext(AppContext as any);
-   
-    const { type, key } = store.appBackground;
-    const { value } = getBackground({type,key})
-
-    if(type === ASSET_TYPES.IMAGE){
-        return (
-            <StyledBackgroundImage src={value}/>
-        )
-    }
-    if(type === ASSET_TYPES.GRADIENT){
-        return <StyledBackgroundGradient gradient={value}/>
-    }
-    if(type === ASSET_TYPES.GIF){
-        return <StyledBackgroundImage src={value} />
+function PageBackground({ availableImage, onError }){
+    if (availableImage) {
+        return <StyledBackgroundImage src={availableImage} onError={onError}/>
     }
 
-    return null;
+    return <StyledBackgroundGradient gradient={'#000'} />
 }
 
 const AppTitle = styled.div`
-    font-size: 4rem;
-    color: #fff;
-    text-shadow:
-        0 0 5px #fff,
-        0 0 10px #fff,
-        0 0 20px #fff,
-        0 0 40px #0ff,
-        0 0 80px #0ff;
-`
-const AuthorSlogan = styled.div`
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    padding: 0.2rem 1rem;
-`
+    & > img {
+        width: 300px;
+    }
+`;
 
 function NewTab() {
     const [store, dispatch] = useReducer(reducer, initialState);
-    // ts-ignore
+    const [availableImage, setAvailableImage] = React.useState(null);
+    const [imageInfo, setImageInfo] = React.useState(null);
     useEffect(async () => {
-        const { appBackground = { type:ASSET_TYPES.GIF, key:1 } } = await getObjectFromStorageSync();
-        dispatch({
-            type: 'SET_BACKGROUND',
-            payload: {
-                type: appBackground.type,
-                key: appBackground.key
-            }
-        })
-       return ()=> {
-
-       }
-
-    }, [])
+        const { activeImageIndex = 0 } = await getObjectFromStorageSync();
+        const image = images[activeImageIndex];
+        const regularURL = image.urls.regular; // change it to full once buffered loading implimented.
+        setImageInfo(image);
+        setAvailableImage(regularURL);
+        chrome.storage.sync.set({ activeImageIndex: (activeImageIndex + 1) % images.length })
+    }, []);
+    const imageAuthor = imageInfo?.user?.username;
+    const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
+    const showBottomBar = imageAuthor && imageAuthorUnsplashLink;
+    const handleImageLoadError = () => {
+        setImageInfo(null);
+        setAvailableImage(null);
+    }
     return ( 
         <AppContext.Provider value={[store, dispatch]}>
         <Page relative style={{background:'black'}}>
-            <PageBackground/>
+            <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
             <TopSection>
-                <Left>
-                    <Clock/>
-                </Left>
                 <Right>  
-                    <ActionButton icon={'ℹ️'} title={'About'}>
+                    <ActionButton icon={'i'} title={'About'}>
                         <AuthorInfoWindow />
-                    </ActionButton>
-                    <ActionButton icon={<SettingsIconFilled size/>} title={'Settings'}>
-                        <SettingsWindow />
                     </ActionButton>
                 </Right>
             </TopSection> 
             <MiddleSection> 
                 <div style={{ textAlign: 'center' }}>
-                    <AppTitle>Cursors</AppTitle>
+                    <AppTitle>
+                       <img src={appIcon} alt="sparky logo"/>
+                    </AppTitle>
                     <SearchBar />
                     <TopSites />
                 </div>
             </MiddleSection>
+            { showBottomBar && <BottomSection>
+                <div style={{ background:"#0101012b", color: "white", padding:"0.2rem 0.5rem" }}>
+                    Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                </div>
+            </BottomSection>}
         </Page>
         </AppContext.Provider> 
     )

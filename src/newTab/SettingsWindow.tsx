@@ -1,13 +1,11 @@
 /// <reference types="chrome"/>
 // @ts-nocheck
-import React, { useState, useEffect, Ref, ReactChildren, createRef } from 'react'
+import React, { useState, useEffect, createRef } from 'react'
 import styled, { css } from 'styled-components';
 
-import { wallpapers, gifs, gradients, ASSET_TYPES } from "./backgroundAssets"
 import { preventSelectStyles } from './components';
-import { AppContext } from './Context';
 
-import myPhoto from "../icons/vara.jpeg";
+import myPhoto from "../icons/vara.jpg";
 import { links } from '../data';
 
 
@@ -22,6 +20,7 @@ const WindowContainer = styled.div`
    background-color: white;
    border-radius: 0.2rem;
    z-index: 99;
+   font-family: Arial,Sans;
 `;
 
 const StyledPanel = styled.div`
@@ -96,124 +95,6 @@ function Panel({ title, canToggle = true, children }: { title: any, children:any
     )
 }
 
-const StyledGradientOptionWrapper = styled.div`
-    width: 5rem;
-    height: 3rem;
-    margin: 0.2rem;
-    cursor: pointer;
-    background: ${props => props.gradient};
-    box-sizing: border-box;
-    &:hover{
-        border: 2px solid #000000;
-    };
-    ${preventSelectStyles}
-`;
-const StyledImageOptionWrapper = styled.img`
-    width: 5rem;
-    height: 3rem;
-    margin: 0.2rem;
-    cursor: pointer;
-    box-sizing: border-box;
-    &:hover{
-        border: 2px solid #000000;
-    };
-    ${preventSelectStyles}
-`;
-
-function GradientOption({ gradient , onClick }){
-    return  (
-        <StyledGradientOptionWrapper gradient={gradient} onClick={onClick}>
-            {/*  */}
-        </StyledGradientOptionWrapper>
-    )
-};
-
-function ImageOption({ source, onClick }){
-    return  (
-        <StyledImageOptionWrapper src={source} onClick={onClick}>
-            {/*  */}
-        </StyledImageOptionWrapper>
-    )
-};
-
-
-
-
-const GradientsContainer = styled.div`
-    margin: 0.5rem 0rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-`;
-
-export default function SettingsWindow(){
-    const [store, dispatch] = React.useContext(AppContext as any);
-    const setBackground = (type, key) => {
-        console.log("click click");
-        dispatch({
-            type:'SET_BACKGROUND',
-            payload: {
-                type,
-                key
-            }
-        })
-    }
-    return (
-        <WindowContainer>
-            <Panel title={"Wallpapers"}>
-                <GradientsContainer>
-                    {
-                        wallpapers.map(({ value, key }) => {
-                            return (
-                                <ImageOption 
-                                    key={key} 
-                                    source={value} 
-                                    onClick={() => setBackground(ASSET_TYPES.IMAGE, key)}
-                                />
-                            )
-                        })
-                    }
-                </GradientsContainer>
-                <GradientsContainer>
-                    {
-                        gradients.map(({ value, key }) => {
-                            return (
-                                <GradientOption
-                                    key={key}
-                                    gradient={value}
-                                    onClick={() => setBackground(ASSET_TYPES.GRADIENT, key)}
-                                />
-                            )
-                        })
-                    }
-                </GradientsContainer>
-            </Panel> 
-            <Panel title={"Gif"}>
-                <GradientsContainer style={{padding:'0rem 1em', justifyContent:'start'}}>
-                    {
-                        gifs.map(({ value, key }) => {
-                            return (
-                                <ImageOption 
-                                    key={key} 
-                                    source={value} 
-                                    onClick={() => setBackground(ASSET_TYPES.GIF, key)}
-                                />
-                            )
-                        })
-                    }
-                </GradientsContainer>
-            </Panel> 
-            <Panel title={"What's next ?"}>
-                    <ul style={{paddingLeft:'2rem', lineHeight:'1.5rem'}}>
-                        <li>Custom cursors 😋</li>
-                        <li>Custom background! 🌈 </li>
-                    </ul>
-            </Panel> 
-        </WindowContainer>
-    )
-}
-
-
 const StyledSocialIcon = styled.img`
   height: 30px;
   margin: 0.2em;
@@ -232,7 +113,7 @@ export function AuthorInfoWindow(){
                         style={{width:'8rem', objectFit:"cover"}}/>
                     <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
                         👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
-                        A am a software Engineer🤖<br/>
+                        Software Engineer🤖<br/>
                         And Google Certified Cloud Developer 💻<br/>
                         <strong>Catch me up below</strong> <br/>
                         <div className="social-links">
@@ -255,13 +136,3 @@ export function AuthorInfoWindow(){
         </WindowContainer>
     )
 }
-
-/*
-
-<strong><i>Vara.</i> </strong> I'm self-taught programmer(in my point of view 😜).
-<br/>
-test
-if you want to talk with me then,
-you can contact me through <strong><a href={socialLinks.linkedin}> LinkedIn</a></strong>
-
-*/

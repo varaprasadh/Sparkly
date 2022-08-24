@@ -1,14 +1,5 @@
-import React, { useReducer, createContext } from 'react';
-import { ASSET_TYPES } from './backgroundAssets';
+import React, { createContext } from 'react';
 
-
-
-export const initialState = {
-   appBackground : {
-        type: ASSET_TYPES.IMAGE,
-        key: 1
-   }
-};
 
 export const reducer = (state: any, action: any) => {
     switch (action.type) {
