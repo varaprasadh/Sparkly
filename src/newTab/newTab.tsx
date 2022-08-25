@@ -10,7 +10,7 @@ import { Page } from "./components/index";
 import SearchBar from './components/SearchBar';
 import { TopSites } from './components/Tiles'; 
 import { AuthorInfoWindow } from './SettingsWindow';
-import { AppContext, reducer, initialState } from './Context';
+import { AppContext, reducer } from './Context';
 import { getObjectFromStorageLocal, getObjectFromStorageSync } from '../helpers/storage';
 import list1 from '../data/list1.json';
 import list2 from '../data/list2.json';
@@ -145,7 +145,7 @@ function dataURItoBlob(dataURI) {
 }
 
 function NewTab() {
-    const [store, dispatch] = useReducer(reducer, initialState);
+    const [store, dispatch] = useReducer(reducer, {});
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
     useEffect(async () => {
