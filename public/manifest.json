@@ -2,7 +2,7 @@
     "version": "4.2.0",
     "manifest_version": 3,
     "name": "Sparkly: New Tab",
-    "description": "New tab page with cool HD backgrounds!",
+    "description": "Search friendly new tab page with cool HD wallpapers!",
     "icons": {
         "128": "./images/icon.png",
         "48": "./images/icon.png",
