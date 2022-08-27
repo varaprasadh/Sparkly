@@ -26,6 +26,7 @@ const StyledSearchWrapper = styled.div`
     align-items: center;
     padding: 0.5rem;
     flex: 1;
+    margin-left: -0.5rem;
 `;
 
 const StyledInput = styled.input`
@@ -124,7 +125,7 @@ const StyledSearchEngineOptions = styled.div`
 const StyledSearchEngineOption = styled.div`
     display: flex;
     align-items: center;
-    padding: 0.5rem;
+    padding: 0.8rem 0.5rem;
     cursor: pointer;
     & > img {
         width: 24px;
