@@ -1,20 +1,33 @@
 /// <reference types="chrome"/>
+// @ts-nocheck
 import React, { useState, useEffect, Ref } from 'react'
 import styled from 'styled-components';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import searchIcon from "../../icons/search_icon.png";
+import downArrow from "../../assets/svg/down_arrow.svg";
+import googleIcon from "../../assets/images/google.png";
+import yahooIcon from "../../assets/images/yahoo.png";
+import bingIcon from "../../assets/images/bing.png";
+import duckDuckGoIcon from "../../assets/images/duckduckgo.png";
+import { getObjectFromStorageLocal } from '../../helpers/storage';
 
 const StyledSearchBar = styled.div`
     box-sizing: border-box;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;
-    padding: 0.5rem;
     background: white;
     margin: 1rem;
     position: relative;
 `
+const StyledSearchWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    flex: 1;
+`;
+
 const StyledInput = styled.input`
     flex: 1;
     border: none;
@@ -28,7 +41,7 @@ const StyledSearchIcon = styled.img`
     width: 1rem;
     height: 1rem;
     cursor: pointer;
-    margin-left: 0.5rem;
+    margin-right: 0.5rem;
     transition: all 0.1s ease;
     &:active{
         transform: scale(0.8);
@@ -75,18 +88,147 @@ function debounce(func: any, wait: any) {
         }, wait);
     };
 }
+
+const StyledSearchEngineSelectWrapper = styled.div`
+    position: relative;
+    display flex;
+    align-items: center;
+    padding: 0.5rem;
+`;
+const StyledSearchEngineSelectValue = styled.div`
+    display: flex;
+    align-items: center;
+    & > img {
+        width: 24px;
+    }
+    border: 1px solid #c1c1c1;
+    border-radius: 0.2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+`;
+const StyledSearchEngineOptions = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0%;
+    background: white;
+    margin-top: 0.5rem;
+    z-index: 99;
+    margin-left: 0.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    width: 150px;
+    border: 1px solid #efefef;
+    filter: drop-shadow(2px 2px 4px black);
+`;
+
+const StyledSearchEngineOption = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    & > img {
+        width: 24px;
+    }
+    & > span {
+        font-size: 1rem;
+        margin-left: 0.5rem;
+    }
+    &:hover {
+        background: #efefef;
+    }
+    &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+    }
+    &.active {
+        background: #efefef;
+    }
+`;
+
+interface SearchEngineSelectorProps {
+    onEngineChange: any,
+    searchEngines: any,
+    currentEngineId: string,
+}
+
+function SearchEngineSelector({ onEngineChange, searchEngines, currentEngineId = 'google'}: SearchEngineSelectorProps) {
+    const [show, setShow] = useState(false);
+    const toggleEngines = () => {
+        setShow(show => !show);
+    };
+    const setEngine = (engineId:string) => {
+        setShow(false);
+        if (typeof onEngineChange === 'function') {
+            onEngineChange(engineId);
+        }
+    };
+    const currentEngineInfo = searchEngines.find(e => e.id === currentEngineId);
+    return (
+        <StyledSearchEngineSelectWrapper>
+            <StyledSearchEngineSelectValue onClick={toggleEngines}>
+                <img src={currentEngineInfo?.icon} alt='search engine' />
+                <img src={downArrow} alt="ds" style={{ marginLeft: '0.5rem', width: '16px' }}/>
+            </StyledSearchEngineSelectValue>
+            {show  && (
+                <OutsideClickHandler onOutsideClick={() => setShow(false)}>
+                    <StyledSearchEngineOptions>
+                        {
+                            searchEngines
+                            .map(engine => (
+                                <StyledSearchEngineOption key={engine.id} onClick={() => setEngine(engine.id)}>
+                                    <img src={engine.icon} alt='search engine' />
+                                    <span>{engine.label}</span>
+                                </StyledSearchEngineOption>
+                            ))
+                        }
+                    </StyledSearchEngineOptions>
+                </OutsideClickHandler>
+            )}
+        </StyledSearchEngineSelectWrapper>
+    )
+}
+
+
 export default function SearchBar() {
     const [queryText, setQueryText] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-
+    const [engineId, setSearchEngineId] = useState({});
+    const searchEngines = [
+        {
+            id: 'google',
+            label: 'Google',
+            icon: googleIcon,
+            getSearchURL: (query: string) => `https://www.google.com/search?q=${query}`
+        },
+        {
+            id: 'bing',
+            label: 'Bing',
+            icon: bingIcon,
+            getSearchURL: (query: string) => `https://www.bing.com/search?q=${query}`
+        },
+        {
+            id: 'yahoo',
+            label: 'Yahoo',
+            icon: yahooIcon,
+            getSearchURL: (query: string) => `https://search.yahoo.com/search?p=${query}`
+        },
+        {
+            id: 'duckduckgo',
+            label: 'Duck Duck Go',
+            icon: duckDuckGoIcon,
+            getSearchURL: (query: string) => `https://duckduckgo.com/?q=${query}`,
+        }
+    ];
     const search = () => {
         if (queryText.trim() === '') return;
         doSearch(queryText.trim());
     }
     const doSearch = (val: string) => {
-        window.location.href = `https://www.google.com/search?q=${val}`;
+        // @ts-ignore
+        const engine = searchEngines.find(e => e.id === engineId);
+        console.log(val, engine);
+        window.location.href = engine.getSearchURL(val);
     }
     const onEnter = (e: any) => {
         if (e.which === 13) {
@@ -104,6 +246,15 @@ export default function SearchBar() {
         setSuggestions(results);
     };
     const debouncedGetSuggestions = React.useCallback(debounce(getSuggestions, 300), []);
+
+    const onSearchEngineChange = (engineId : any) => {
+        setSearchEngineId(engineId);
+        chrome.storage.local.set({ searchEngineId: engineId });
+    }
+    useEffect(async () => {
+        const { searchEngineId = 'google' } = await getObjectFromStorageLocal("searchEngineId");
+        setSearchEngineId(searchEngineId);
+    }, []);
 
     useEffect(() => {
         setActiveSuggestionIndex(-1);
@@ -133,7 +284,9 @@ export default function SearchBar() {
                     setActiveSuggestionIndex(nextActiveSuggestion);
                     break;
                 case 13:
+                    if (activeSuggestionIndex < 0) return;
                     const query = suggestions[activeSuggestionIndex];
+                    console.log('hittinh this as well?', activeSuggestionIndex);
                     doSearch(query);
                     break;
             }
@@ -144,14 +297,21 @@ export default function SearchBar() {
 
     return (
         <StyledSearchBar>
-            <StyledSearchIcon src={searchIcon} alt="search" onClick={search} />
-            <StyledInput
-                type="text"
-                placeholder="search here..."
-                value={queryText}
-                onKeyDown={onEnter}
-                onChange={e => setQueryText(e.target.value)}
+            <SearchEngineSelector
+                onEngineChange={onSearchEngineChange}
+                currentEngineId={engineId}
+                searchEngines={searchEngines}
             />
+            <StyledSearchWrapper>
+                <StyledInput
+                    type="text"
+                    placeholder="search here..."
+                    value={queryText}
+                    onKeyDown={onEnter}
+                    onChange={e => setQueryText(e.target.value)}
+                />
+                <StyledSearchIcon src={searchIcon} alt="search" onClick={search} />
+            </StyledSearchWrapper>
             {
              showSuggestions && (
                 <OutsideClickHandler onOutsideClick={()=>setShowSuggestions(false)}>
