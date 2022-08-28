@@ -153,9 +153,6 @@ interface SearchEngineSelectorProps {
 
 function SearchEngineSelector({ onEngineChange, searchEngines, currentEngineId = 'google'}: SearchEngineSelectorProps) {
     const [show, setShow] = useState(false);
-    const toggleEngines = () => {
-        setShow(show => !show);
-    };
     const setEngine = (engineId:string) => {
         setShow(false);
         if (typeof onEngineChange === 'function') {
@@ -164,27 +161,29 @@ function SearchEngineSelector({ onEngineChange, searchEngines, currentEngineId =
     };
     const currentEngineInfo = searchEngines.find(e => e.id === currentEngineId);
     return (
-        <StyledSearchEngineSelectWrapper>
-            <StyledSearchEngineSelectValue onClick={toggleEngines}>
-                <img src={currentEngineInfo?.icon} alt='search engine' />
-                <img src={downArrow} alt="ds" style={{ marginLeft: '0.5rem', width: '16px' }}/>
-            </StyledSearchEngineSelectValue>
-            {show  && (
-                <OutsideClickHandler onOutsideClick={() => setShow(false)}>
-                    <StyledSearchEngineOptions>
-                        {
-                            searchEngines
-                            .map(engine => (
-                                <StyledSearchEngineOption key={engine.id} onClick={() => setEngine(engine.id)}>
-                                    <img src={engine.icon} alt='search engine' />
-                                    <span>{engine.label}</span>
-                                </StyledSearchEngineOption>
-                            ))
-                        }
-                    </StyledSearchEngineOptions>
-                </OutsideClickHandler>
-            )}
-        </StyledSearchEngineSelectWrapper>
+        <OutsideClickHandler onOutsideClick={() => setShow(false)}>
+            <StyledSearchEngineSelectWrapper>
+                <StyledSearchEngineSelectValue onClick={() => setShow(!show)}>
+                    <img src={currentEngineInfo?.icon} alt='search engine' />
+                    <img src={downArrow} alt="ds" style={{ marginLeft: '0.5rem', width: '16px' }}/>
+                </StyledSearchEngineSelectValue>
+                {show  && (
+                    
+                        <StyledSearchEngineOptions>
+                            {
+                                searchEngines
+                                .map(engine => (
+                                    <StyledSearchEngineOption key={engine.id} onClick={() => setEngine(engine.id)}>
+                                        <img src={engine.icon} alt='search engine' />
+                                        <span>{engine.label}</span>
+                                    </StyledSearchEngineOption>
+                                ))
+                            }
+                        </StyledSearchEngineOptions>
+                    
+                )}
+            </StyledSearchEngineSelectWrapper>
+        </OutsideClickHandler>
     )
 }
 
