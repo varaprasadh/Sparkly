@@ -114,7 +114,7 @@ export function AuthorInfoWindow(){
                     <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
                         👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
                         Software Engineer🤖<br/>
-                        And Google Certified Cloud Developer 💻<br/>
+                        And Certified Google Cloud Developer 💻<br/>
                         <strong>Catch me up below</strong> <br/>
                         <div className="social-links">
                             <a href={links.LINKEDIN}>

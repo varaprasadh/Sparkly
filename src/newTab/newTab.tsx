@@ -60,13 +60,13 @@ const RoundedIcon = styled.div`
     align-items: center;
     cursor: pointer;
     font-size: 1.5rem;
-    color: white;
+    color: black;
     position: relative;
     transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
     &:active{
         transform: scale(0.8);
     }
-    background: #ffffff33;
+    background: white;
     width: 32px;
     height: 32px;
 `;
