@@ -21,13 +21,16 @@ const WindowContainer = styled.div`
    border-radius: 0.2rem;
    z-index: 99;
    font-family: Arial,Sans;
+   margin-top: 0.5rem;
 `;
 
 const StyledPanel = styled.div`
     min-width: 200px;
+    font-family: cursive !important;
 `;
 const StyledPanelHeader = styled.div`
     font-weight: bold;
+    font-family: cursive !important;
     background: #ebf7f7;
     padding: 0.5rem 1rem;
     border: 1px solid #929191;
@@ -107,14 +110,14 @@ export function AuthorInfoWindow(){
 
     return (
         <WindowContainer>
-            <Panel title={"🔯 About Me"} canToggle={false}>
+            <Panel title={"🔯 About Developer"} canToggle={false}>
                 <div style={{display:'flex', padding:"0.5rem 1rem", fontFamily:"sans"}}>
                     <img src={myPhoto} alt="varaprasadh's photo" 
                         style={{width:'8rem', objectFit:"cover"}}/>
                     <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
                         👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
                         Software Engineer🤖<br/>
-                        And Certified Google Cloud Developer 💻<br/>
+                        Certified Google Cloud Developer 💻<br/>
                         <strong>Catch me up below</strong> <br/>
                         <div className="social-links">
                             <a href={links.LINKEDIN}>

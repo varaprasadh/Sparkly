@@ -6,6 +6,7 @@ import OutsideClickHandler from 'react-outside-click-handler';
 
 import searchIcon from "../../icons/search_icon.png";
 import downArrow from "../../assets/svg/down_arrow.svg";
+import returnKey from "../../assets/svg/return-key.svg";
 import googleIcon from "../../assets/images/google.png";
 import yahooIcon from "../../assets/images/yahoo.png";
 import bingIcon from "../../assets/images/bing.png";
@@ -60,13 +61,14 @@ const StyledSuggestionsWrapper = styled.div`
     overflow: hidden;
 `;
 const StyledSuggestion = styled.div`
+    display: flex;
+    align-items: center;
     padding: 0.5rem;
     cursor:pointer;
     &:hover {
         background: #efefef;
     }
     text-align: left;
-    padding-left: 2.5rem;
     font-size: 1rem;
     &:not(:last-child) {
         border-bottom: 1px solid #e0e0e0;
@@ -75,6 +77,23 @@ const StyledSuggestion = styled.div`
         background: #efefef;
     }
 
+`;
+const StyledSuggestionPreIcon = styled.div`
+    width: 5rem;
+    display: flex;
+    justify-content: center;
+`;
+const StyledSuggestionPostIcon = styled.div`
+    justify-self: flex-end;
+    margin-left: auto;
+    margin-right: 0.5rem;
+    & > img {
+        width: 24px;
+        display: none;
+    }
+    &.show > img {
+        display: block;
+    }
 `;
 
 function debounce(func: any, wait: any) {
@@ -321,7 +340,17 @@ export default function SearchBar() {
                                 onClick={() => selectAndSearch(suggestion)}
                                 // @ts-ignore
                                 className={i === activeSuggestionIndex && 'active'}>
-                                {suggestion}
+                                <StyledSuggestionPreIcon>
+                                    {/* <img src={searchIcon} alt="search icon" /> */}
+                                </StyledSuggestionPreIcon>
+                                <div>
+                                    {suggestion}
+                                </div>
+                                <StyledSuggestionPostIcon
+                                    className={`ss-post-icon ${i === activeSuggestionIndex && 'show'}`}
+                                >
+                                    <img src={returnKey} alt="enter key" />
+                                </StyledSuggestionPostIcon>
                             </StyledSuggestion>
                         ))}
                     </StyledSuggestionsWrapper>

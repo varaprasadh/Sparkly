@@ -2,7 +2,7 @@
 // @ts-nocheck
 import React, { useState, useReducer, useEffect } from 'react'
 import { render } from 'react-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import { Page } from "./components/index";
@@ -53,13 +53,14 @@ const Left = styled.div`
 `;
 
 const RoundedIcon = styled.div`
-    padding: 0.5rem;
+    padding: 0.1rem;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
     color: black;
     position: relative;
     transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -94,6 +95,7 @@ const StyledBackgroundImage = styled.img<{src:any}>`
     object-fit: cover;
     object-position: center;
     z-index: -1;
+    // filter: blur(10px);
 `;
  
 const StyledBackgroundGradient = styled.div<{ gradient:any}>`
@@ -117,6 +119,7 @@ function PageBackground({ availableImage, onError }){
 const AppTitle = styled.div`
     & > img {
         width: 300px;
+        -webkit-user-drag: none;
     }
 `;
 function dataURItoBlob(dataURI) {
