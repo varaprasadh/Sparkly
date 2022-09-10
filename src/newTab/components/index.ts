@@ -2,7 +2,6 @@ import styled, { css, StyledComponent } from 'styled-components';
 
 export const Page: any = styled.div`
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
   z-index: 0;
   position: ${ (props:any) => props.relative ? "relative" : 'inherit'};

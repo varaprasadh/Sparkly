@@ -18,8 +18,16 @@ import list3 from '../data/list3.json';
 
 import appIcon from '../icons/Sparkly_x.png';
 import fallBackWallpaper from '../assets/images/fallback_wallpaper.jpg';
+import { defaultBookMarks } from '../data/index';
 
 const images = [...list1, ...list2, ...list3];
+
+const StyledMainColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    flex: 1;
+`;
 
 const TopSection = styled.section`
   /* clock + setting icon on right */
@@ -89,15 +97,27 @@ const ActionButton = ({ icon, title, children }: any) => {
 
 
 const StyledBackgroundImage = styled.img<{src:any}>`
-    position: absolute;
     height: 100%;
     width: 100%;
     object-fit: cover;
     object-position: center;
     z-index: -1;
-    // filter: blur(10px);
 `;
- 
+const StyledBackgroundWrapper = styled.div`
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    z-index: -1;
+`;
+ const StyledBackgroundOverlay = styled.div`
+    width: 100%;
+    height: 100%;
+    background: #000000a3;
+    left: 0%;
+    top: 0%;
+    position: absolute;
+ `;
 const StyledBackgroundGradient = styled.div<{ gradient:any}>`
     position: absolute;
     height: 100%;
@@ -110,7 +130,12 @@ const StyledBackgroundGradient = styled.div<{ gradient:any}>`
 
 function PageBackground({ availableImage, onError }){
     if (availableImage) {
-        return <StyledBackgroundImage src={availableImage} onError={onError}/>
+        return (
+            <StyledBackgroundWrapper>
+                <StyledBackgroundImage src={availableImage} onError={onError} />
+                <StyledBackgroundOverlay></StyledBackgroundOverlay>
+            </StyledBackgroundWrapper>
+        );
     }
 
     return <StyledBackgroundGradient gradient={'#000'} />
@@ -147,6 +172,48 @@ function dataURItoBlob(dataURI) {
 
 }
 
+
+const StyledBookMarkBarWrapper = styled.div`
+    background: rgb(0 0 0 / 50%);
+`;
+
+const StyledBookMarks = styled.div`
+    
+`;
+const StyledBookMark = styled.a`
+    display: block;
+    background: white;
+    margin: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.2rem;
+    &:active {
+        transform: scale(0.8);
+    }
+`;
+const StyledBookMarkThumbnail = styled.img`
+    width: 24px;
+`;
+
+
+function BookMarkBar() {
+    return (
+        <StyledBookMarkBarWrapper>
+            <StyledBookMarks>
+                {
+                    defaultBookMarks.map((bookmark) => (
+                        <StyledBookMark href={bookmark.url} title={bookmark.title}>
+                            <StyledBookMarkThumbnail src={bookmark.thumbnail}/>
+                        </StyledBookMark>
+                    ))
+                }
+            </StyledBookMarks>
+        </StyledBookMarkBarWrapper>
+    );
+}
+
+
 function NewTab() {
     const [store, dispatch] = useReducer(reducer, {});
     const [availableImage, setAvailableImage] = React.useState(null);
@@ -181,30 +248,33 @@ function NewTab() {
     }
     return ( 
         <AppContext.Provider value={[store, dispatch]}>
-        <Page relative style={{background:'black'}}>
-            <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
-            <TopSection>
-                <Right>  
-                    <ActionButton icon={'i'} title={'About'}>
-                        <AuthorInfoWindow />
-                    </ActionButton>
-                </Right>
-            </TopSection> 
-            <MiddleSection> 
-                <div style={{ textAlign: 'center' }}>
-                    <AppTitle>
-                       <img src={appIcon} alt="sparky logo"/>
-                    </AppTitle>
-                    <SearchBar />
-                    <TopSites />
-                </div>
-            </MiddleSection>
-            { showBottomBar && <BottomSection>
-                <div style={{ background:"#0101012b", color: "white", padding:"0.2rem 0.5rem" }}>
-                    Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
-                </div>
-            </BottomSection>}
-        </Page>
+            <Page relative style={{background:'black'}}>
+                <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
+                <StyledMainColumn>
+                    <TopSection>
+                        <Right>
+                            <ActionButton icon={'i'} title={'About'}>
+                                <AuthorInfoWindow />
+                            </ActionButton>
+                        </Right>
+                    </TopSection>
+                    <MiddleSection>
+                        <div style={{ textAlign: 'center' }}>
+                            <AppTitle>
+                                <img src={appIcon} alt="sparky logo" />
+                            </AppTitle>
+                            <SearchBar />
+                            <TopSites />
+                        </div>
+                    </MiddleSection>
+                    {showBottomBar && <BottomSection>
+                        <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem" }}>
+                            Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                        </div>
+                    </BottomSection>}
+                </StyledMainColumn>
+                <BookMarkBar></BookMarkBar>
+            </Page>
         </AppContext.Provider> 
     )
 } 

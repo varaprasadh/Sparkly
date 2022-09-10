@@ -43,7 +43,8 @@ const TileImage = styled.img`
     width: 1.5rem;
     height: 1.5rem;
     background: white;
-    padding: 0.5rem;
+    padding: 0.6rem;
+    overflow: hidden;
     border-radius: 50%;
     ${preventSelectStyles}
 `;
