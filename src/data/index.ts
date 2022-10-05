@@ -74,3 +74,65 @@ export const defaultBookMarks = [
 ];
 
 
+export const defaultTopSites = [
+    {
+        title: 'Lofi Cafe',
+        url: 'https://www.lofi.cafe',
+    },
+    {
+        title: 'Amazon',
+        url: 'https://www.amazon.com',
+    },
+    {
+        title: 'Facebook',
+        url: 'https://www.facebook.com'
+    },
+    {
+        title: 'Twitter',
+        url: 'https://twitter.com'
+    },
+    {
+        title: 'Linkedin',
+        url: 'https://www.linkedin.com/',
+    },
+    {
+        title: 'Instagram',
+        url: 'https://www.instagram.com',
+    },
+    {
+        title: 'Youtube',
+        url: 'https://youtube.com',
+    },
+    {
+        title: 'Unsplash',
+        url: 'https://unsplash.com',
+    },
+    {
+        title: 'Sparkly Developer',
+        url: 'https://varaprasadh.dev'
+    },
+    {
+        title: 'Weather',
+        url: 'https://weather.com',
+    },
+    {
+        title: 'Pixabay',
+        url: 'https://pixabay.com',
+    },
+    {
+        title: 'Quora',
+        url: 'https://www.quora.com',
+    },
+    {
+        title: 'StackOverflow',
+        url: 'https://stackoverflow.com',
+    },
+    {
+        title: 'Brilliant',
+        url: 'https://brilliant.org',
+    },
+    {
+        title: 'SpaceX',
+        url: 'https://www.spacex.com',
+    },
+];

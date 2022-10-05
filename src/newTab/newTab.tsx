@@ -113,7 +113,7 @@ const StyledBackgroundWrapper = styled.div`
  const StyledBackgroundOverlay = styled.div`
     width: 100%;
     height: 100%;
-    background: #000000a3;
+    background: rgb(0 0 0 / 10%);
     left: 0%;
     top: 0%;
     position: absolute;
