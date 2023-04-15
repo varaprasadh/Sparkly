@@ -1,6 +1,8 @@
 /// <reference types="chrome"/>
+// @ts-nocheck
+
 import React, { useState, useEffect, Ref } from 'react'
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { preventSelectStyles } from '.';
 
 import cursorIcon from "../../icons/cursor.png";
@@ -8,14 +10,14 @@ import cursorIcon from "../../icons/cursor.png";
 const TileContainer = styled.a`
     position: relative;
     width: 100px;
-    background-color: white;
+    // background-color: white;
     margin: 0.4rem;
     padding: 0.5rem  1rem;
     text-decoration: none;
     border-radius: 0.2rem;
-    color: black;
+    color: white;
     &:hover{
-        background: #e6e8e8;
+        background: rgb(255 255 255 / 13%);
     };
     transition: scale 0.4s ease;
     &:active{
@@ -30,13 +32,23 @@ const TileTitle = styled.div`
     font-size: 1rem;
     padding: 0.1rem 0rem;
     text-transform: capitalize;
+    text-shadow: 1px 1px black;
+`;
+const TileImageContainer = styled.div`
+    position: relative;
+    width: fit-content;
+    margin: auto;
+`;
+const TileImage = styled.img`
+    width: 1.5rem;
+    height: 1.5rem;
+    background: white;
+    padding: 0.6rem;
+    overflow: hidden;
+    border-radius: 50%;
+    ${preventSelectStyles}
 `;
 
-const TileImage = styled.img`
-    width: 2rem;
-    height: 2rem;
-    ${preventSelectStyles}
-`
 
 export default function Tile({ title, url, icon }: { title: string, url: string, icon: any }) {
     const imageRef: Ref<HTMLImageElement> = React.createRef();
@@ -56,26 +68,33 @@ export default function Tile({ title, url, icon }: { title: string, url: string,
     const formattedNotificationCount = notificationCount > 99 ? '99+' : notificationCount;
     return (
         <TileContainer key={url} href={url}>
-            <TileImage ref={imageRef} src={icon} alt={`tile-icon ${title}`} />
-            <TileTitle title={title}>{title}</TileTitle>
-            {notificationCount > 0 && <span style={{
-                background: 'tomato',
-                color: 'white',
-                borderRadius: '50%',
-                padding: '0.2rem',
-                fontSize: '0.8rem',
-                position: 'absolute',
-                top: '-0.5rem',
-                right: '-0.5rem',
-                fontWeight: 'bold',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minWidth: '20px',
-                minHeight: '20px',
-            }}
+            <TileImageContainer>
+                <TileImage
+                    ref={imageRef}
+                    src={icon}
+                    alt={`tile-icon ${title}`}
+                    badgeCount={notificationCount}
+                />
+                {notificationCount > 0 && <span style={{
+                    background: 'tomato',
+                    color: 'white',
+                    borderRadius: '50%',
+                    padding: '0.2rem',
+                    fontSize: '0.8rem',
+                    position: 'absolute',
+                    top: '-0.5rem',
+                    right: '-1rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minWidth: '20px',
+                    minHeight: '20px',
+                }}
                 >{formattedNotificationCount}</span>
-            }
+                }
+            </TileImageContainer>
+            <TileTitle title={title}>{title}</TileTitle>
         </TileContainer>
     )
 }
