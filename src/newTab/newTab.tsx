@@ -21,8 +21,15 @@ import fallBackWallpaper from '../assets/images/fallback_wallpaper.jpg';
 import { defaultBookMarks } from '../data/index';
 import settingsIcon from "../assets/svg/settings_filled.svg";
 import closeIcon from "../assets/svg/close.svg";
+import plusIcon from "../assets/svg/plus.svg";
+import cursorIcon from "../icons/cursor.png"
 import { WallpaperHistory, WallpaperSelector } from './components/WallpaperSelector';
 import { RandomWallpaperConfigPlaceHolder } from './components/RandomWallpaperConfigPlaceHolder';
+import AddBookMarkForm from './components/Forms/AddBookMarkForm';
+
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const images = [...list1, ...list2, ...list3];
 
@@ -31,6 +38,11 @@ const StyledMainColumn = styled.div`
     flex-direction: column;
     min-height: 100vh;
     flex: 1;
+    overflow:auto;
+    &::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+    }
 `;
 
 const TopSection = styled.section`
@@ -185,6 +197,11 @@ const StyledBookMarkBarWrapper = styled.div`
 
 const StyledBookMarks = styled.div`
     flex: 1;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+    }
 `;
 const StyledBookMark = styled.a`
     height: 24px;
@@ -221,17 +238,29 @@ const StyledSettingsIcon = styled.img`
     width: 24px;
 `;
 
-function ActionBar({ onOpenSettings = () => {} }) {
+
+function ActionBar({ userBookmarks = [], onOpenSettings = () => {}, onOpenAddBookMark = () => {} }) {
+
     return (
         <StyledBookMarkBarWrapper>
             <StyledBookMarks>
                 {
                     defaultBookMarks.map((bookmark) => (
-                        <StyledBookMark href={bookmark.url} title={bookmark.title}>
+                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
                             <StyledBookMarkThumbnail src={bookmark.thumbnail}/>
                         </StyledBookMark>
                     ))
                 }
+                {
+                    userBookmarks.map((bookmark) => (
+                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
+                            <StyledBookMarkThumbnail src={bookmark.thumbnail || cursorIcon}/>
+                        </StyledBookMark>
+                    ))
+                }
+                <StyledBookMark onClick={onOpenAddBookMark}>
+                    <img src={plusIcon} />
+                </StyledBookMark>
             </StyledBookMarks>
             <StyledSettingsAction onClick={onOpenSettings}>
                 <StyledSettingsIcon src={settingsIcon}/>
@@ -407,6 +436,8 @@ function NewTab() {
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
     const [showSettings, setShowSettings] = React.useState(false);
+    const [showBookmarkForm, setShowBookmarkForm] = React.useState(false);
+    const [userBookmarks, setUserBookmarks] = useState([]);
     useEffect(async () => {
         boot();
     }, []);
@@ -445,6 +476,10 @@ function NewTab() {
             if (wallpapersTrail.length > 10) wallpapersTrail.shift();
             chrome.storage.local.set({ wallpapersTrail: JSON.stringify(wallpapersTrail) });
         }
+
+        // read the user bookmarks
+        const { userBookmarks: ub = [] } = await getObjectFromStorageLocal("userBookmarks");
+        setUserBookmarks(ub);
     }
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
@@ -459,6 +494,27 @@ function NewTab() {
     const onCloseSettings = () => {
         setShowSettings(false);
     };
+
+    const onOpenAddBookMark = () => {
+        setShowBookmarkForm(true);
+    }
+
+    const addNewBookMark = async (bookmark) => {
+        const existing = userBookmarks.some(b => b.url === bookmark.url);
+        if (existing) {
+            toast.warning("You've added the similar bookmark before, sparkly will not add this item now.")
+            setShowBookmarkForm(false);
+            return;
+        }
+        const updatedBookmarks =  [...userBookmarks, bookmark];
+        chrome.storage.local.set({
+            userBookmarks: updatedBookmarks
+        });
+    
+        setUserBookmarks(updatedBookmarks);
+        setShowBookmarkForm(false);
+        toast.success("Bookmark has been saved!");
+    }
 
     return ( 
         <AppContext.Provider value={[store, dispatch]}>
@@ -487,9 +543,19 @@ function NewTab() {
                         </div>
                     </BottomSection>}
                 </StyledMainColumn>
-                <ActionBar onOpenSettings={onOpenSettings}/>
+                <ActionBar
+                    userBookmarks={userBookmarks}
+                    onOpenSettings={onOpenSettings}
+                    onOpenAddBookMark={onOpenAddBookMark}
+                />
                 {showSettings && <Settings onClose={onCloseSettings} onReloadWallpaper={boot}/>}
+                {showBookmarkForm  && <AddBookMarkForm
+                    open={showBookmarkForm}
+                    handleCancel={() => setShowBookmarkForm(false)}
+                    onAddBookMark={addNewBookMark}
+                />}
             </Page>
+            <ToastContainer />
         </AppContext.Provider> 
     )
 } 

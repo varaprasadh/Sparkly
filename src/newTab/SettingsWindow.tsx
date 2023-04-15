@@ -7,7 +7,7 @@ import { preventSelectStyles } from './components';
 
 import myPhoto from "../icons/vara.jpg";
 import { links } from '../data';
-
+import {  Typography } from 'antd'
 
 import twitterIcon from "../assets/images/twitter.png";
 import linkedinIcon from "../assets/images/linkedin.png";
@@ -30,7 +30,6 @@ const StyledPanel = styled.div`
 `;
 const StyledPanelHeader = styled.div`
     font-weight: bold;
-    font-family: cursive !important;
     background: #ebf7f7;
     padding: 0.5rem 1rem;
     border: 1px solid #929191;
@@ -114,7 +113,7 @@ export function AuthorInfoWindow(){
                 <div style={{display:'flex', padding:"0.5rem 1rem", fontFamily:"sans"}}>
                     <img src={myPhoto} alt="varaprasadh's photo" 
                         style={{width:'8rem', objectFit:"cover"}}/>
-                    <div style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
+                    <Typography.Text style={{marginLeft:'0.5rem',minWidth: "200px", lineHeight:'1.5em'}}>
                         👋Hi! It's <strong>Varaprasadh ⚡</strong> <br/>
                         Software Engineer🤖<br/>
                         Certified Google Cloud Developer 💻<br/>
@@ -133,7 +132,7 @@ export function AuthorInfoWindow(){
                         <div>
                             <a href={links.WEBSITE} style={{fontSize:'1.2em'}}>varaprasadh.dev</a>
                         </div>
-                    </div>
+                    </Typography.Text>
                 </div>
             </Panel>
         </WindowContainer>

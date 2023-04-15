@@ -2,7 +2,7 @@ import styled, { css, StyledComponent } from 'styled-components';
 
 export const Page: any = styled.div`
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   z-index: 0;
   position: ${ (props:any) => props.relative ? "relative" : 'inherit'};
   

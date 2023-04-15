@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Tile from './Tile';
 
 
-import mock from "../mock.json";
 import { defaultTopSites } from '../../data/';
 
 const TilesContainer = styled.div`
@@ -68,11 +67,6 @@ export const TopSites = ({ }) => {
             setSites(tiles as any);
             setLoading(false);
         });
-
-        // uncomment this on development
-        // const tiles = mock.tiles;
-        // setSites(tiles as any);
-        // setLoading(false);
     }, []);
 
     if (loading) {
