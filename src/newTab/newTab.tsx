@@ -30,6 +30,7 @@ import AddBookMarkForm from './components/Forms/AddBookMarkForm';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
+import TabManager from './components/TabManager';
 
 const images = [...list1, ...list2, ...list3];
 
@@ -301,6 +302,10 @@ const StyledSettingsSection = styled.div`
 const StyledRadioGroup = styled.div`
     display:flex;
     align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #bdbdbd;
+    margin: 0.1rem;
+    cursor: pointer !important;
 `;
 const StyledWallpaperConfigSelector = styled.div`
     display:flex;
@@ -323,11 +328,12 @@ const StyledCloseButton = styled.div`
 const StyledSaveButton = styled.div`
     background: black;
     color: white;
-    padding: 0.2rem 0.5rem;
+    padding: 0.5rem 0.7rem;
     margin-left: 0.5rem;
     border-radius: 0.1rem;
     cursor: pointer;
     font-size: 1.1em;
+    border-radius: 0.5rem;
 `;
 function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
     const [wallpaperConfigType, setWallpaperConfigType] = useState('random')// get from store;
@@ -398,7 +404,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'random'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='random'>Random</label>
+                            <label htmlFor='random' style={{ cursor: 'pointer' }}>Random</label>
                         </StyledRadioGroup>
                         <StyledRadioGroup>
                             <input type="radio" name="wallpaperConfig" id="custom"
@@ -406,7 +412,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'custom'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='custom'>Custom</label>
+                            <label htmlFor='custom' style={{ cursor: 'pointer' }}>Custom</label>
                         </StyledRadioGroup>
                         <StyledRadioGroup>
                             <input type="radio" name="wallpaperConfig" id="history"
@@ -414,7 +420,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'history'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='history'>From Your Wallpaper History</label>
+                            <label htmlFor='history' style={{ cursor: 'pointer' }}>From Your Wallpaper History</label>
                         </StyledRadioGroup>
                     </StyledWallpaperConfigSelector>
                     {wallpaperConfigType === 'random' && <RandomWallpaperConfigPlaceHolder /> }
@@ -520,6 +526,7 @@ function NewTab() {
         <AppContext.Provider value={[store, dispatch]}>
             <Page relative style={{background:'black'}}>
                 <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
+                <TabManager />
                 <StyledMainColumn>
                     <TopSection>
                         <Right>
