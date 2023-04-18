@@ -1,9 +1,9 @@
 {
-    "version": "4.2.5.2",
-    "version_name": "4.2.5.2",
+    "version": "4.2.5.3",
+    "version_name": "4.2.5.3",
     "manifest_version": 3,
-    "name": "Sparkly: New Tab",
-    "description": "Search friendly new tab",
+    "name": "Sparkly: New Tab, Tab Manager, Bookmarks",
+    "description": "A super charged new tab extension built with productivity in mind",
     "icons": {
         "128": "./images/icon.png",
         "48": "./images/icon.png",
@@ -31,7 +31,7 @@
         }
     ],
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; img-src *"
+        "extension_pages": "script-src 'self'; object-src 'self'; img-src * data:"
     },
     "permissions": [
         "topSites",
