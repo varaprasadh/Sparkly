@@ -20,7 +20,6 @@ const StyledTabManagerContainer = styled.div`
 
 const StyledTabItem = styled.div`
   padding: 0.2rem;
-  background: white;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -28,6 +27,9 @@ const StyledTabItem = styled.div`
   color: white;
   margin: 0.1rem 0rem;
   border-radius: 0.5rem;
+  &:hover {
+    background: #323232;
+  }
 `
 const StyledWindowGroup = styled.div`
   border-left: 2px solid ${props => props.color};
