@@ -139,7 +139,11 @@ export function WallpaperSelector({ onSelect = (a: any) => a }) {
         <StyledWallpaperSelectorContainer>
             <StyledWallpaperSearchBarContainer>
                 <StyledSearchBarGroup>
-                    <StyledWallpaperSearchBar value={query} onChange={e => setQuery(e.target.value)} />
+                    <StyledWallpaperSearchBar
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        onKeyUp={e => e.key === 'Enter' && search()}
+                    />
                     <StyledSearchButton onClick={search}>Search</StyledSearchButton>
                 </StyledSearchBarGroup>
             </StyledWallpaperSearchBarContainer>

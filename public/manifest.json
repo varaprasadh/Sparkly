@@ -1,6 +1,6 @@
 {
-    "version": "4.2.5.0",
-    "version_name": "4.2.5",
+    "version": "4.2.5.2",
+    "version_name": "4.2.5.2",
     "manifest_version": 3,
     "name": "Sparkly: New Tab",
     "description": "Search friendly new tab",
@@ -36,7 +36,8 @@
     "permissions": [
         "topSites",
         "storage",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "tabs"
     ],
     "host_permissions":[
         "http://*/*",

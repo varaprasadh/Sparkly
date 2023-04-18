@@ -21,8 +21,16 @@ import fallBackWallpaper from '../assets/images/fallback_wallpaper.jpg';
 import { defaultBookMarks } from '../data/index';
 import settingsIcon from "../assets/svg/settings_filled.svg";
 import closeIcon from "../assets/svg/close.svg";
+import plusIcon from "../assets/svg/plus.svg";
+import cursorIcon from "../icons/cursor.png"
 import { WallpaperHistory, WallpaperSelector } from './components/WallpaperSelector';
 import { RandomWallpaperConfigPlaceHolder } from './components/RandomWallpaperConfigPlaceHolder';
+import AddBookMarkForm from './components/Forms/AddBookMarkForm';
+
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
+import TabManager from './components/TabManager';
 
 const images = [...list1, ...list2, ...list3];
 
@@ -31,6 +39,11 @@ const StyledMainColumn = styled.div`
     flex-direction: column;
     min-height: 100vh;
     flex: 1;
+    overflow:auto;
+    &::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+    }
 `;
 
 const TopSection = styled.section`
@@ -185,6 +198,11 @@ const StyledBookMarkBarWrapper = styled.div`
 
 const StyledBookMarks = styled.div`
     flex: 1;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+    }
 `;
 const StyledBookMark = styled.a`
     height: 24px;
@@ -221,17 +239,29 @@ const StyledSettingsIcon = styled.img`
     width: 24px;
 `;
 
-function ActionBar({ onOpenSettings = () => {} }) {
+
+function ActionBar({ userBookmarks = [], onOpenSettings = () => {}, onOpenAddBookMark = () => {} }) {
+
     return (
         <StyledBookMarkBarWrapper>
             <StyledBookMarks>
                 {
                     defaultBookMarks.map((bookmark) => (
-                        <StyledBookMark href={bookmark.url} title={bookmark.title}>
+                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
                             <StyledBookMarkThumbnail src={bookmark.thumbnail}/>
                         </StyledBookMark>
                     ))
                 }
+                {
+                    userBookmarks.map((bookmark) => (
+                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
+                            <StyledBookMarkThumbnail src={bookmark.thumbnail || cursorIcon}/>
+                        </StyledBookMark>
+                    ))
+                }
+                <StyledBookMark onClick={onOpenAddBookMark}>
+                    <img src={plusIcon} />
+                </StyledBookMark>
             </StyledBookMarks>
             <StyledSettingsAction onClick={onOpenSettings}>
                 <StyledSettingsIcon src={settingsIcon}/>
@@ -272,6 +302,10 @@ const StyledSettingsSection = styled.div`
 const StyledRadioGroup = styled.div`
     display:flex;
     align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #bdbdbd;
+    margin: 0.1rem;
+    cursor: pointer !important;
 `;
 const StyledWallpaperConfigSelector = styled.div`
     display:flex;
@@ -294,11 +328,12 @@ const StyledCloseButton = styled.div`
 const StyledSaveButton = styled.div`
     background: black;
     color: white;
-    padding: 0.2rem 0.5rem;
+    padding: 0.5rem 0.7rem;
     margin-left: 0.5rem;
     border-radius: 0.1rem;
     cursor: pointer;
     font-size: 1.1em;
+    border-radius: 0.5rem;
 `;
 function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
     const [wallpaperConfigType, setWallpaperConfigType] = useState('random')// get from store;
@@ -369,7 +404,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'random'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='random'>Random</label>
+                            <label htmlFor='random' style={{ cursor: 'pointer' }}>Random</label>
                         </StyledRadioGroup>
                         <StyledRadioGroup>
                             <input type="radio" name="wallpaperConfig" id="custom"
@@ -377,7 +412,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'custom'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='custom'>Custom</label>
+                            <label htmlFor='custom' style={{ cursor: 'pointer' }}>Custom</label>
                         </StyledRadioGroup>
                         <StyledRadioGroup>
                             <input type="radio" name="wallpaperConfig" id="history"
@@ -385,7 +420,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
                                 checked={wallpaperConfigType === 'history'}
                                 onChange={e => setWallpaperConfigType(e.target.value)}
                             />
-                            <label htmlFor='history'>From Your Wallpaper History</label>
+                            <label htmlFor='history' style={{ cursor: 'pointer' }}>From Your Wallpaper History</label>
                         </StyledRadioGroup>
                     </StyledWallpaperConfigSelector>
                     {wallpaperConfigType === 'random' && <RandomWallpaperConfigPlaceHolder /> }
@@ -407,6 +442,8 @@ function NewTab() {
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
     const [showSettings, setShowSettings] = React.useState(false);
+    const [showBookmarkForm, setShowBookmarkForm] = React.useState(false);
+    const [userBookmarks, setUserBookmarks] = useState([]);
     useEffect(async () => {
         boot();
     }, []);
@@ -445,6 +482,10 @@ function NewTab() {
             if (wallpapersTrail.length > 10) wallpapersTrail.shift();
             chrome.storage.local.set({ wallpapersTrail: JSON.stringify(wallpapersTrail) });
         }
+
+        // read the user bookmarks
+        const { userBookmarks: ub = [] } = await getObjectFromStorageLocal("userBookmarks");
+        setUserBookmarks(ub);
     }
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
@@ -460,10 +501,32 @@ function NewTab() {
         setShowSettings(false);
     };
 
+    const onOpenAddBookMark = () => {
+        setShowBookmarkForm(true);
+    }
+
+    const addNewBookMark = async (bookmark) => {
+        const existing = userBookmarks.some(b => b.url === bookmark.url);
+        if (existing) {
+            toast.warning("You've added the similar bookmark before, sparkly will not add this item now.")
+            setShowBookmarkForm(false);
+            return;
+        }
+        const updatedBookmarks =  [...userBookmarks, bookmark];
+        chrome.storage.local.set({
+            userBookmarks: updatedBookmarks
+        });
+    
+        setUserBookmarks(updatedBookmarks);
+        setShowBookmarkForm(false);
+        toast.success("Bookmark has been saved!");
+    }
+
     return ( 
         <AppContext.Provider value={[store, dispatch]}>
             <Page relative style={{background:'black'}}>
                 <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
+                <TabManager />
                 <StyledMainColumn>
                     <TopSection>
                         <Right>
@@ -487,9 +550,19 @@ function NewTab() {
                         </div>
                     </BottomSection>}
                 </StyledMainColumn>
-                <ActionBar onOpenSettings={onOpenSettings}/>
+                <ActionBar
+                    userBookmarks={userBookmarks}
+                    onOpenSettings={onOpenSettings}
+                    onOpenAddBookMark={onOpenAddBookMark}
+                />
                 {showSettings && <Settings onClose={onCloseSettings} onReloadWallpaper={boot}/>}
+                {showBookmarkForm  && <AddBookMarkForm
+                    open={showBookmarkForm}
+                    handleCancel={() => setShowBookmarkForm(false)}
+                    onAddBookMark={addNewBookMark}
+                />}
             </Page>
+            <ToastContainer />
         </AppContext.Provider> 
     )
 } 
