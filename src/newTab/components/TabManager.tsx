@@ -4,11 +4,11 @@ import { Typography } from 'antd';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import sparklyIcon from '../../icons/Sparkly.png'
-import { DoubleRightOutlined, DoubleLeftOutlined  } from '@ant-design/icons';
+import { DoubleRightOutlined, DoubleLeftOutlined, CloseOutlined  } from '@ant-design/icons';
 
 
 const StyledTabManagerContainer = styled.div`
-  max-width: 300px;
+  width: ${props => props.collapsed ? 'auto': '300px'};
   background: rgba(0, 0, 0, 0.5);
   height: 100vh;
   overflow-y: auto;
@@ -19,6 +19,7 @@ const StyledTabManagerContainer = styled.div`
 `
 
 const StyledTabItem = styled.div`
+  position: relative;
   padding: 0.2rem;
   cursor: pointer;
   display: flex;
@@ -30,6 +31,11 @@ const StyledTabItem = styled.div`
   &:hover {
     background: #323232;
   }
+  &:hover .styled-tab-actions {
+    right: 0px;
+    display: flex;
+  }
+  
 `
 const StyledWindowGroup = styled.div`
   border-left: 2px solid ${props => props.color};
@@ -72,6 +78,32 @@ const StyledCollapse = styled.div`
     margin-left: auto;
 `;
 
+const StyledActions = styled.div`
+    position: absolute;
+    top: 0;
+    right: -50px;
+    right: 0px;
+    height: 100%;
+    width: 50px;
+    background: #323232;;
+    transition: right 0.3s cubic-bezier(0.4, 0, 1, 1) 0s;
+    display: none;
+    align-items: center;
+`;
+
+const StyledActionIconWrapper = styled.div`
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin-left: 0.5rem;
+ border-radius: 50%;
+ width: 28px;
+ height: 28px;
+ border: 1px solid white;
+ &: hover{
+    background: black;
+ }
+`;
 
 
 function TabManager() {
@@ -131,8 +163,13 @@ function TabManager() {
         });
     }
 
+    const closeTab = (e, tabId) => {
+        e.stopPropagation();
+        chrome.tabs.remove(tabId);
+    }
+
     return (
-        <StyledTabManagerContainer className="tab-manager">
+        <StyledTabManagerContainer className="tab-manager" collapsed={collapsed}>
             <StyledTabManagerHeader>
                 {
                     !collapsed && (
@@ -165,6 +202,11 @@ function TabManager() {
                                     <StyledTabTitle style={{ width: collapsed ? '0px': '100%' }}>
                                         {tab.title || 'Sparkly New Tab'}
                                     </StyledTabTitle>
+                                    <StyledActions className='styled-tab-actions'>
+                                        <StyledActionIconWrapper onClick={(e) =>  closeTab(e,tab.id)}>
+                                            <CloseOutlined style={{ color: 'white' }} />
+                                        </StyledActionIconWrapper>
+                                    </StyledActions>
                                 </StyledTabItem>
                             ))
                         }
