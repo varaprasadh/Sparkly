@@ -109,9 +109,17 @@ function TabManager() {
     useEffect(() => {
         // Get a list of all open tabs across all windows
         queryTabs();
-        chrome.tabs.onUpdated.addListener(queryTabs);
-        // chrome.windows.onCreated.addListener(queryTabs);
+        chrome.windows.onCreated.addListener(queryTabs);
         chrome.windows.onRemoved.addListener(queryTabs);
+        chrome.tabs.onUpdated.addListener(queryTabs);
+        chrome.tabs.onRemoved.addListener(queryTabs);
+
+        return () => {
+            chrome.windows.onCreated.removeListener(queryTabs);
+            chrome.windows.onRemoved.removeListener(queryTabs);
+            chrome.tabs.onUpdated.removeListener(queryTabs);
+            chrome.tabs.onRemoved.removeListener(queryTabs);
+        }
     }, []);
 
     function handleClick(tab) {
