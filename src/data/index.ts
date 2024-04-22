@@ -10,6 +10,7 @@ import mapsIcon from "../assets/google-apps/maps.png";
 import youtubeIcon from "../assets/google-apps/youtube.png";
 
 export const links = {
+    INSTAGRAM: "https://www.instagram.com/edge_runr/",
     BUY_ME_COFFEE: "https://www.buymeacoffee.com/varaprasadh",
     TWITTER: "https://twitter.com/consious_coder",
     LINKEDIN: "https://www.linkedin.com/in/varaprasadh",

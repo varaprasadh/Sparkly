@@ -143,6 +143,11 @@ function TabManager() {
     useEffect(() => {
         // Get a list of all open tabs across all windows
         queryTabs();
+        // set collapse from the storage
+        chrome.storage.local.get('tabManagerCollapsed', (result) => {
+            setCollapsed(result.tabManagerCollapsed || false);
+        });
+        
         chrome.windows.onCreated.addListener(queryTabs);
         chrome.windows.onRemoved.addListener(queryTabs);
         chrome.tabs.onUpdated.addListener(queryTabs);
@@ -155,6 +160,11 @@ function TabManager() {
             chrome.tabs.onRemoved.removeListener(queryTabs);
         }
     }, []);
+
+    const handleCollapse = () => {
+        chrome.storage.local.set({ tabManagerCollapsed: !collapsed });
+        setCollapsed(!collapsed);
+    }
 
     function handleClick(tab) {
         // Switch to the window and activate the tab
@@ -185,7 +195,7 @@ function TabManager() {
                     </StyledTabTitle>
                 }
                 <StyledCollapse>
-                    <div style={{ margin: '0rem 0.5rem', cursor: 'pointer' }} onClick={() => setCollapsed(!collapsed)}>
+                    <div style={{ margin: '0rem 0.5rem', cursor: 'pointer' }} onClick={handleCollapse}>
                         {collapsed ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
                     </div>
                 </StyledCollapse>
