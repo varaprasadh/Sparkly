@@ -252,16 +252,16 @@ function ActionBar({ userBookmarks = [], onOpenSettings = () => {}, onOpenAddBoo
                         </StyledBookMark>
                     ))
                 }
-                {
+                {/* {
                     userBookmarks.map((bookmark) => (
                         <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
                             <StyledBookMarkThumbnail src={bookmark.thumbnail || cursorIcon}/>
                         </StyledBookMark>
                     ))
-                }
-                <StyledBookMark onClick={onOpenAddBookMark}>
+                } */}
+                {/* <StyledBookMark onClick={onOpenAddBookMark}>
                     <img src={plusIcon} />
-                </StyledBookMark>
+                </StyledBookMark> */}
             </StyledBookMarks>
             <StyledSettingsAction onClick={onOpenSettings}>
                 <StyledSettingsIcon src={settingsIcon}/>
@@ -329,11 +329,10 @@ const StyledSaveButton = styled.div`
     background: black;
     color: white;
     padding: 0.5rem 0.7rem;
-    margin-left: 0.5rem;
-    border-radius: 0.1rem;
+    margin-left: 1rem;
+    border-radius: 0.3rem;
     cursor: pointer;
     font-size: 1.1em;
-    border-radius: 0.5rem;
 `;
 function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
     const [wallpaperConfigType, setWallpaperConfigType] = useState('random')// get from store;
@@ -356,7 +355,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
             const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
             const imageObject = await fetch(randomUrl).then(res => res.json());
             // cache the imageObject
-            const imageURL = imageObject.urls.full;
+            const imageURL = imageObject?.urls?.full;
             setBufferingImage(true);
             fetch(imageURL).then(res => res.blob()).then(blob => {
                 const reader = new FileReader();
@@ -372,7 +371,7 @@ function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
             // save the config to storage.
         } else if (['custom', 'history'].includes(wallpaperConfigType)) {
             if (customWallpaperInfo === null) return onClose();
-            const imageURL = customWallpaperInfo.urls.full;
+            const imageURL = customWallpaperInfo?.urls?.full;
             setBufferingImage(true);
             fetch(imageURL).then(res => res.blob()).then(blob => {
                 const reader = new FileReader();
@@ -457,7 +456,7 @@ function NewTab() {
             const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
             const imageObject = await fetch(randomUrl).then(res => res.json());
             // cache the imageObject
-            const imageURL = imageObject.urls.full;
+            const imageURL = imageObject?.urls?.full;
             fetch(imageURL).then(res => res.blob()).then(blob => {
                 const reader = new FileReader();
                 reader.addEventListener('load', () => {

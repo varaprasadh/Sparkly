@@ -9,9 +9,9 @@ import myPhoto from "../icons/vara.jpg";
 import { links } from '../data';
 import {  Typography } from 'antd'
 
-import twitterIcon from "../assets/images/twitter.png";
 import linkedinIcon from "../assets/images/linkedin.png";
 import githubIcon from "../assets/images/github.png";
+import instagramIcon from "../assets/images/instagram.png";
 
 const WindowContainer = styled.div`
    position: absolute;
@@ -26,7 +26,6 @@ const WindowContainer = styled.div`
 
 const StyledPanel = styled.div`
     min-width: 200px;
-    font-family: cursive !important;
 `;
 const StyledPanelHeader = styled.div`
     font-weight: bold;
@@ -118,11 +117,11 @@ export function AuthorInfoWindow(){
                         Software Engineer🤖<br/>
                         <strong>Catch me up below</strong> <br/>
                         <div className="social-links">
+                            <a href={links.INSTAGRAM}>
+                                <StyledSocialIcon src={instagramIcon} alt="instagram"/>
+                            </a>
                             <a href={links.LINKEDIN}>
                                 <StyledSocialIcon src={linkedinIcon} alt="linkedin"/>
-                            </a>
-                            <a href={links.TWITTER}>
-                                <StyledSocialIcon src={twitterIcon} alt="twitter"/>
                             </a>
                             <a href={links.GITHUB}>
                                 <StyledSocialIcon src={githubIcon} alt="github"/>
