@@ -38,3 +38,15 @@
         <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
     </a>
  </p>
+
+- CID: 1067014450644-8am6g840s5m9210gei21vuadhpasqlhe.apps.googleusercontent.com
+- CS: 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
+
+
+{
+  "access_token": "ya29.a0AXooCgsRAnMpS33PQQNwoFQ18kD-NQyVuS5xjhngU4UZAjHjQyMWfKNXg3yZ9pUIeYoA5WrZfbMF2-VklgXFV7ST7D-Ae3J9fElzCuMv79RZi1YxXLLNlqRz_BWMOiGxUBb9W1PyBFRCDSJIQeRNAmD22-f1XRIt-jyiaCgYKAQoSARMSFQHGX2Mi8sBw9t1YaIvw9gocsauSFA0171", 
+  "scope": "https://www.googleapis.com/auth/chromewebstore", 
+  "token_type": "Bearer", 
+  "expires_in": 3599, 
+  "refresh_token": "1//04rX3Z8yQgzWqCgYIARAAGAQSNwF-L9Ir5YQNMLj28oLCRJZcw4zKekFDEHZ--Dc8mZbIh3sBWCZqZAcOqXGlBguCdaKuyuX-rk0"
+}

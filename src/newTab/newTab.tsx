@@ -31,6 +31,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 import TabManager from './components/TabManager';
+import LocalDateTime from './components/LocalDatetime';
 
 const images = [...list1, ...list2, ...list3];
 
@@ -529,9 +530,7 @@ function NewTab() {
                 <StyledMainColumn>
                     <TopSection>
                         <Right>
-                            <ActionButton icon={'i'} title={'About'}>
-                                <AuthorInfoWindow />
-                            </ActionButton>
+                            <LocalDateTime/>
                         </Right>
                     </TopSection>
                     <MiddleSection>
