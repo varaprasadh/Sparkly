@@ -1,85 +1,144 @@
 /// <reference types="chrome"/>
-import React, { useState, useEffect, Ref } from 'react'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Tile from './Tile';
-
-
 import { defaultTopSites } from '../../data/';
+import { useSettings } from '../../store/hooks';
 
-const TilesContainer = styled.div`
-    display: flex;
-    max-width: 600px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 20px;
-    align-items: start;
-`;
-
-
-export const TopSites = ({ }) => {
-
-
-    const [sites, setSites] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-         // comment this on development
-        chrome.topSites.get(async topSites => {
-            topSites = topSites.slice(0, 8);
-            // if sites are not exactly 8, then compensate for them.
-            if (topSites.length < 8) {
-                const toCompensate = 8 - topSites.length;
-                // make sure we are not duplicately adding fallback site which exists in top sites
-                // hold all origins
-                const existingSiteSet = new Set();
-                topSites.map(s => {
-                    const urlObj = new URL(s.url);
-                    existingSiteSet.add(urlObj.hostname.replace(/www./g, ''));
-                });
-                console.log(existingSiteSet);
-                // now add the
-                for (const site of defaultTopSites) {
-                    const urlObject = new URL(site.url);
-                    // if existing top sites not has the site from default, add it
-                    console.log("debug", urlObject);
-                    if (!existingSiteSet.has(urlObject.hostname.replace(/www./g, ''))) {
-                        topSites.push(site);
-                    }
-                    if (topSites.length >=8) break;
-                }
-            }
-            const tiles: Array<any> = topSites.map(site => {
-
-                const url:URL = new URL(site.url);
-                const { protocol, host, origin, href  } = url;
-               //  chrome://favicon2/?size=24&scale_factor=1x&show_fallback_monogram=&page_url=http%3A%2F%2Fyoutube.com%2F
-                // const favicon_path = `chrome://favicon2/?size=24&scale_factor=1x&show_fallback_monogram=&page_url=${encodeURIComponent(href)}`;
-                const favicon_path = `${origin}/favicon.ico`;
-
-                return {
-                    title: site.title,
-                    url: site.url,
-                    favicon: favicon_path
-                };
-
-            });
-            setSites(tiles as any);
-            setLoading(false);
-        });
-    }, []);
-
-    if (loading) {
-        return <div>loading...</div>
-    }
-    return (
-        <TilesContainer>
-            {
-                sites.map((site: any) => (
-                    <Tile title={site.title} url={site.url} icon={site.favicon} />
-                ))
-            }
-        </TilesContainer>
-    )
+// Types
+interface TopSite {
+  title: string;
+  url: string;
 }
 
+interface TileData {
+  title: string;
+  url: string;
+  favicon: string;
+}
+
+// Styled components
+const TilesContainer = styled.div`
+  display: flex;
+  max-width: 600px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem auto 0 auto;
+  gap: 1.5rem;
+`;
+
+const LoadingText = styled.div`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-top: 1rem;
+`;
+
+// Default max tiles fallback
+const DEFAULT_MAX_TILES = 8;
+
+/**
+ * Get hostname without www prefix
+ */
+function getNormalizedHostname(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Convert top sites to tile data with favicon paths
+ */
+function mapToTileData(sites: TopSite[]): TileData[] {
+  return sites.map((site) => {
+    try {
+      const url = new URL(site.url);
+      const faviconPath = `${url.origin}/favicon.ico`;
+      return {
+        title: site.title,
+        url: site.url,
+        favicon: faviconPath,
+      };
+    } catch {
+      return {
+        title: site.title,
+        url: site.url,
+        favicon: '',
+      };
+    }
+  });
+}
+
+/**
+ * Fill missing slots with default sites
+ */
+function fillWithDefaults(topSites: TopSite[], maxTiles: number): TopSite[] {
+  if (topSites.length >= maxTiles) {
+    return topSites.slice(0, maxTiles);
+  }
+
+  // Create a set of existing hostnames for deduplication
+  const existingHostnames = new Set<string>(
+    topSites.map((site) => getNormalizedHostname(site.url))
+  );
+
+  const filledSites = [...topSites];
+
+  // Add default sites that don't already exist
+  for (const site of defaultTopSites) {
+    if (filledSites.length >= maxTiles) break;
+
+    const hostname = getNormalizedHostname(site.url);
+    if (!existingHostnames.has(hostname)) {
+      filledSites.push(site);
+      existingHostnames.add(hostname);
+    }
+  }
+
+  return filledSites;
+}
+
+export function TopSites(): JSX.Element | null {
+  const { general } = useSettings();
+  const [sites, setSites] = useState<TileData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const maxTiles = general.maxQuickLinks || DEFAULT_MAX_TILES;
+
+  useEffect(() => {
+    const loadTopSites = (): void => {
+      chrome.topSites.get((topSites: chrome.topSites.MostVisitedURL[]) => {
+        const filledSites = fillWithDefaults(topSites, maxTiles);
+        const tiles = mapToTileData(filledSites);
+        setSites(tiles);
+        setLoading(false);
+      });
+    };
+
+    loadTopSites();
+  }, [maxTiles]);
+
+  // Respect the showTopSites setting
+  if (!general.showTopSites) {
+    return null;
+  }
+
+  if (loading) {
+    return <LoadingText>Loading...</LoadingText>;
+  }
+
+  return (
+    <TilesContainer>
+      {sites.map((site) => (
+        <Tile
+          key={site.url}
+          title={site.title}
+          url={site.url}
+          icon={site.favicon}
+        />
+      ))}
+    </TilesContainer>
+  );
+}

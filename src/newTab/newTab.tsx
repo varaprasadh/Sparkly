@@ -3,37 +3,39 @@
 import React, { useState, useReducer, useEffect } from 'react'
 import { render } from 'react-dom';
 import styled from 'styled-components';
-import OutsideClickHandler from 'react-outside-click-handler';
 
 import { Page } from "./components/index";
 
 import SearchBar from './components/SearchBar';
-import { TopSites } from './components/Tiles'; 
-import { AuthorInfoWindow } from './SettingsWindow';
+import { TopSites } from './components/Tiles';
 import { AppContext, reducer } from './Context';
-import { getObjectFromStorageLocal, getObjectFromStorageSync } from '../helpers/storage';
-import list1 from '../data/list1.json';
-import list2 from '../data/list2.json';
-import list3 from '../data/list3.json';
+import { getObjectFromStorageLocal } from '../helpers/storage';
 
 import appIcon from '../icons/Sparkly_x.png';
 import fallBackWallpaper from '../assets/images/fallback_wallpaper.jpg';
 import { defaultBookMarks } from '../data/index';
 import settingsIcon from "../assets/svg/settings_filled.svg";
-import closeIcon from "../assets/svg/close.svg";
-import plusIcon from "../assets/svg/plus.svg";
-import cursorIcon from "../icons/cursor.png"
-import { WallpaperHistory, WallpaperSelector } from './components/WallpaperSelector';
-import { RandomWallpaperConfigPlaceHolder } from './components/RandomWallpaperConfigPlaceHolder';
-import AddBookMarkForm from './components/Forms/AddBookMarkForm';
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 import TabManager from './components/TabManager';
 import LocalDateTime from './components/LocalDatetime';
 
-const images = [...list1, ...list2, ...list3];
+// New plugin system imports
+import { AppProvider } from '../store/AppContext';
+import { PluginProvider, pluginRegistry } from '../plugins';
+import { registerBuiltinPlugins } from '../plugins/builtin';
+import { SettingsModal } from '../settings';
+import { useUI, useSettings, useInitialization } from '../store/hooks';
+import { ThemeProvider } from '../components/ThemeProvider';
+import { hackerNewsInstance } from '../plugins/builtin/hackernews';
+import { githubInstance } from '../plugins/builtin/github';
+import { devtoInstance } from '../plugins/builtin/devto';
+
+const HackerNewsWidget = hackerNewsInstance.Component;
+const GitHubWidget = githubInstance.Component;
+const DevToWidget = devtoInstance.Component;
 
 const StyledMainColumn = styled.div`
     display: flex;
@@ -49,21 +51,57 @@ const StyledMainColumn = styled.div`
 
 const TopSection = styled.section`
   /* clock + setting icon on right */
-  padding: 1rem; 
+  padding: 1rem;
   display: flex;
 `;
 const MiddleSection = styled.section`
     /* main search bar + top sites */
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
 `;
+
+const DashboardGrid = styled.section`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--layout-gap, 24px);
+    padding: var(--layout-padding, 24px);
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+`;
+
+const WidgetContainer = styled.div`
+    height: 380px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    border-radius: var(--widget-border-radius, 12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: border-radius var(--transition-duration, 0.2s);
+
+    /* Make internal container fill the space with a blur */
+    & > div {
+       background: transparent !important;
+       color: white;
+       height: 100% !important;
+    }
+
+    /* Modify specific widget internal elements */
+    & h3 { color: white !important; }
+    & a { color: rgba(255,255,255,0.9) !important; }
+    & a:hover { background: rgba(255,255,255,0.1) !important; }
+    & div { border-color: rgba(255,255,255,0.1) !important; }
+`;
+
 const BottomSection = styled.section`
     /* author + info */
     display: flex;
     justify-content: center;
-    padding:1em;
+    padding: 0 1em 1em 1em;
 `;
 
 
@@ -73,48 +111,7 @@ const Right = styled.div`
     display: flex;
 `;
 
-const Left = styled.div`
-    justify-self: start;
-    display: flex;
-`;
-
-const RoundedIcon = styled.div`
-    padding: 0.1rem;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    color: black;
-    position: relative;
-    transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    &:active{
-        transform: scale(0.8);
-    }
-    background: white;
-    width: 32px;
-    height: 32px;
-`;
-
-const ActionButton = ({ icon, title, children }: any) => {
-    const [open, setOpen] = useState(false);
-    return (
-        <OutsideClickHandler onOutsideClick={()=>setOpen(false)}>
-        <div style={{position:'relative'}}>
-            <RoundedIcon title={title} onClick={e=>setOpen(!open)}>
-                {icon}
-            </RoundedIcon>
-            {open && children}
-        </div>
-        </OutsideClickHandler>
-
-    )
-};
-
-
-const StyledBackgroundImage = styled.img<{src:any}>`
+const StyledBackgroundImage = styled.img<{ src: any }>`
     height: 100%;
     width: 100%;
     object-fit: cover;
@@ -128,7 +125,7 @@ const StyledBackgroundWrapper = styled.div`
     overflow: hidden;
     z-index: -1;
 `;
- const StyledBackgroundOverlay = styled.div`
+const StyledBackgroundOverlay = styled.div`
     width: 100%;
     height: 100%;
     background: rgb(0 0 0 / 10%);
@@ -136,7 +133,7 @@ const StyledBackgroundWrapper = styled.div`
     top: 0%;
     position: absolute;
  `;
-const StyledBackgroundGradient = styled.div<{ gradient:any}>`
+const StyledBackgroundGradient = styled.div<{ gradient: any }>`
     position: absolute;
     height: 100%;
     width: 100%;
@@ -146,12 +143,29 @@ const StyledBackgroundGradient = styled.div<{ gradient:any}>`
     background: ${props => props.gradient};
 `;
 
-function PageBackground({ availableImage, onError }){
+function PageBackground({ availableImage, onError, solidColor, blur, dim }: {
+    availableImage: string | null;
+    onError: () => void;
+    solidColor?: string;
+    blur?: boolean;
+    dim?: boolean;
+}) {
+    if (solidColor) {
+        return <StyledBackgroundGradient gradient={solidColor} />;
+    }
+
     if (availableImage) {
         return (
             <StyledBackgroundWrapper>
-                <StyledBackgroundImage src={availableImage} onError={onError} />
-                <StyledBackgroundOverlay></StyledBackgroundOverlay>
+                <StyledBackgroundImage
+                    src={availableImage}
+                    onError={onError}
+                    style={{
+                        filter: blur ? 'blur(6px)' : undefined,
+                        transform: blur ? 'scale(1.05)' : undefined,
+                    }}
+                />
+                {dim && <StyledBackgroundOverlay />}
             </StyledBackgroundWrapper>
         );
     }
@@ -160,10 +174,7 @@ function PageBackground({ availableImage, onError }){
 }
 
 const AppTitle = styled.div`
-    & > img {
-        width: 300px;
-        -webkit-user-drag: none;
-    }
+    display: none;
 `;
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
@@ -191,378 +202,305 @@ function dataURItoBlob(dataURI) {
 }
 
 
-const StyledBookMarkBarWrapper = styled.div`
-    background: rgb(0 0 0 / 50%);
+// Styled components for the Action Bar (right sidebar with quick access)
+const StyledActionBar = styled.div`
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
+    z-index: 50;
+    padding: 16px 8px;
 `;
 
 const StyledBookMarks = styled.div`
     flex: 1;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     &::-webkit-scrollbar {
         width: 0 !important;
         height: 0 !important;
     }
 `;
-const StyledBookMark = styled.a`
-    height: 24px;
-    display: block;
-    background: white;
-    margin: 0.5rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0.2rem;
-    &:active {
-        transform: scale(0.8);
-    }
-`;
-const StyledBookMarkThumbnail = styled.img`
-    width: 24px;
-`;
 
-const StyledSettingsAction = styled.div`
-    height: 24px;
-    background: white;
+const StyledBookMark = styled.a`
+    width: 44px;
+    height: 44px;
     display: flex;
     justify-content: center;
     align-items: center;
-    display: block;
-    background: white;
-    margin: 0.5rem;
-    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--default-radius, 12px);
     cursor: pointer;
-    transition: all 0.3s ease 0s;
-    padding: 0.2rem
+    transition: all var(--transition-duration, 0.3s) cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 `;
+
+const StyledBookMarkThumbnail = styled.img`
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+`;
+
+const Divider = styled.div`
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 12px 0;
+`;
+
+const StyledSettingsAction = styled.div`
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 24px auto;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--default-radius, 12px);
+    cursor: pointer;
+    transition: all var(--transition-duration, 0.3s) cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(45deg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+        transform: scale(0.95) rotate(45deg);
+    }
+`;
+
 const StyledSettingsIcon = styled.img`
     width: 24px;
+    height: 24px;
+    filter: invert(1);
+    opacity: 0.9;
 `;
 
+const AppDockSection = styled.div`
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 8px;
+`;
 
-function ActionBar({ userBookmarks = [], onOpenSettings = () => {}, onOpenAddBookMark = () => {} }) {
+// Action Bar component with quick access bookmarks, apps, and settings
+function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
+    const { general } = useSettings();
 
     return (
-        <StyledBookMarkBarWrapper>
-            <StyledBookMarks>
-                {
-                    defaultBookMarks.map((bookmark) => (
+        <StyledActionBar>
+            {/* Quick Access Bookmarks - respect showBookmarks setting */}
+            {general.showBookmarks && (
+                <StyledBookMarks>
+                    {defaultBookMarks.map((bookmark) => (
                         <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
-                            <StyledBookMarkThumbnail src={bookmark.thumbnail}/>
+                            <StyledBookMarkThumbnail src={bookmark.thumbnail} />
                         </StyledBookMark>
-                    ))
-                }
-                {/* {
-                    userBookmarks.map((bookmark) => (
-                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
-                            <StyledBookMarkThumbnail src={bookmark.thumbnail || cursorIcon}/>
-                        </StyledBookMark>
-                    ))
-                } */}
-                {/* <StyledBookMark onClick={onOpenAddBookMark}>
-                    <img src={plusIcon} />
-                </StyledBookMark> */}
-            </StyledBookMarks>
-            <StyledSettingsAction onClick={onOpenSettings}>
-                <StyledSettingsIcon src={settingsIcon}/>
+                    ))}
+                </StyledBookMarks>
+            )}
+
+            {general.showBookmarks && <Divider />}
+
+            {/* Settings Button */}
+            <StyledSettingsAction onClick={onOpenSettings} title="Settings">
+                <StyledSettingsIcon src={settingsIcon} />
             </StyledSettingsAction>
-        </StyledBookMarkBarWrapper>
+        </StyledActionBar>
     );
 }
 
-const StyledSettingsContainer = styled.div`
-    background: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    padding: 0.5rem 1rem;
-    border-radius: 0.2rem;
-    max-width: 800px;
-`;
-const StyledSettingsHeader = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0px;
-    border-bottom: 1px solid #dedde1;
-`;
-const StyledSettingsBody = styled.div``;
-const StyledTitle = styled.div`
-    font-size: 1.2rem;
-`;
-const StyledCloseIcon = styled.img`
-    width: 24px;
-    cursor: pointer;
-`;
-const StyledSettingsSection = styled.div`
-
-`;
-const StyledRadioGroup = styled.div`
-    display:flex;
-    align-items: center;
-    padding: 0.5rem;
-    border: 1px solid #bdbdbd;
-    margin: 0.1rem;
-    cursor: pointer !important;
-`;
-const StyledWallpaperConfigSelector = styled.div`
-    display:flex;
-    align-items: center;
-`;
-const StyledSettingsActionSection = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0.5rem 0rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid #dedde1;
-`;
-const StyledCloseButton = styled.div`
-    color: tomato;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 1.1em;
-`;
-const StyledSaveButton = styled.div`
-    background: black;
-    color: white;
-    padding: 0.5rem 0.7rem;
-    margin-left: 1rem;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    font-size: 1.1em;
-`;
-function Settings({ onClose = () => {}, onReloadWallpaper = () => {} }) {
-    const [wallpaperConfigType, setWallpaperConfigType] = useState('random')// get from store;
-    const [customWallpaperInfo, setCustomWallpaperInfo] = useState(null); // load from store if exist;
-    const [bufferingImage, setBufferingImage] = useState(false); 
-    const onCustomWallpaperSelected = (imageInfo) => {
-        setCustomWallpaperInfo(imageInfo);
-    }
-    useEffect(async () => {
-        const { wallpaperConfigType = 'random' } = await getObjectFromStorageLocal("wallpaperConfigType");
-        setWallpaperConfigType(wallpaperConfigType);
-    }, []);
-    const handleSaveAndClose = async () => {
-        // process the current configuration
-        // if random image
-        /*
-            fetch the random image object, load and cache
-        */
-        if (wallpaperConfigType === 'random') {
-            const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
-            const imageObject = await fetch(randomUrl).then(res => res.json());
-            // cache the imageObject
-            const imageURL = imageObject?.urls?.full;
-            setBufferingImage(true);
-            fetch(imageURL).then(res => res.blob()).then(blob => {
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    chrome.storage.local.set({ bufferedImage: reader.result });
-                    chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(imageObject) });
-                    chrome.storage.local.set({ wallpaperConfigType: wallpaperConfigType });
-                    setBufferingImage(false);
-                    onClose();
-                });
-                reader.readAsDataURL(blob);
-            });
-            // save the config to storage.
-        } else if (['custom', 'history'].includes(wallpaperConfigType)) {
-            if (customWallpaperInfo === null) return onClose();
-            const imageURL = customWallpaperInfo?.urls?.full;
-            setBufferingImage(true);
-            fetch(imageURL).then(res => res.blob()).then(blob => {
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    chrome.storage.local.set({ bufferedImage: reader.result });
-                    chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(customWallpaperInfo) });
-                    chrome.storage.local.set({ wallpaperConfigType: wallpaperConfigType });
-                    onReloadWallpaper();
-                    setBufferingImage(false);
-                    onClose();
-                });
-                reader.readAsDataURL(blob);
-            });
-        }
-    }
-    return (
-        <StyledSettingsContainer>
-            <StyledSettingsHeader>
-                <StyledTitle>Settings <sup style={{fontWeight: 'bold', fontSize: '0.6rem', letterSpacing: '1px'}}>Beta</sup></StyledTitle>
-                <StyledCloseIcon src={closeIcon} onClick={onClose}></StyledCloseIcon>
-            </StyledSettingsHeader>
-            <StyledSettingsBody>
-              <StyledSettingsSection>
-                    <StyledTitle>Wallpaper Preference</StyledTitle>
-                    <StyledWallpaperConfigSelector>
-                        <StyledRadioGroup>
-                            <input type="radio" name="wallpaperConfig" id="random"
-                                value={'random'}
-                                checked={wallpaperConfigType === 'random'}
-                                onChange={e => setWallpaperConfigType(e.target.value)}
-                            />
-                            <label htmlFor='random' style={{ cursor: 'pointer' }}>Random</label>
-                        </StyledRadioGroup>
-                        <StyledRadioGroup>
-                            <input type="radio" name="wallpaperConfig" id="custom"
-                                value={'custom'}
-                                checked={wallpaperConfigType === 'custom'}
-                                onChange={e => setWallpaperConfigType(e.target.value)}
-                            />
-                            <label htmlFor='custom' style={{ cursor: 'pointer' }}>Custom</label>
-                        </StyledRadioGroup>
-                        <StyledRadioGroup>
-                            <input type="radio" name="wallpaperConfig" id="history"
-                                value={'history'}
-                                checked={wallpaperConfigType === 'history'}
-                                onChange={e => setWallpaperConfigType(e.target.value)}
-                            />
-                            <label htmlFor='history' style={{ cursor: 'pointer' }}>From Your Wallpaper History</label>
-                        </StyledRadioGroup>
-                    </StyledWallpaperConfigSelector>
-                    {wallpaperConfigType === 'random' && <RandomWallpaperConfigPlaceHolder /> }
-                    {wallpaperConfigType === 'custom' && <WallpaperSelector onSelect={onCustomWallpaperSelected}/> }
-                    {wallpaperConfigType === 'history' && <WallpaperHistory onSelect={onCustomWallpaperSelected}/> }
-              </StyledSettingsSection>
-                <StyledSettingsActionSection>
-                    <StyledCloseButton onClick={onClose}>Close</StyledCloseButton>
-                    <StyledSaveButton onClick={handleSaveAndClose}>{bufferingImage ? 'Saving...' : 'Save & Close'}</StyledSaveButton>
-                </StyledSettingsActionSection>
-            </StyledSettingsBody>
-        </StyledSettingsContainer>
-    )
-}
-
-
-function NewTab() {
+// Main content component that uses the new store
+function NewTabContent() {
     const [store, dispatch] = useReducer(reducer, {});
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
-    const [showSettings, setShowSettings] = React.useState(false);
-    const [showBookmarkForm, setShowBookmarkForm] = React.useState(false);
-    const [userBookmarks, setUserBookmarks] = useState([]);
-    useEffect(async () => {
-        boot();
-    }, []);
-    const boot = async () => {
+
+    // Use the new store for settings
+    const { openSettings } = useUI();
+    const { wallpaper } = useSettings();
+    const { initialized } = useInitialization();
+    const hasBooted = React.useRef(false);
+
+    // Load wallpaper from chrome storage and display it
+    const loadBufferedWallpaper = React.useCallback(async () => {
         const { bufferedImage } = await getObjectFromStorageLocal("bufferedImage");
         const { bufferedImageMetadata } = await getObjectFromStorageLocal("bufferedImageMetadata");
-        const { wallpaperConfigType = 'random' } = await getObjectFromStorageLocal("wallpaperConfigType");
-        let { wallpapersTrail = '[]' } = await getObjectFromStorageLocal("wallpapersTrail");
-        if (wallpaperConfigType === 'random') {
-            // load the next wallpaper and cache it.
-            const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
-            const imageObject = await fetch(randomUrl).then(res => res.json());
-            // cache the imageObject
-            const imageURL = imageObject?.urls?.full;
-            fetch(imageURL).then(res => res.blob()).then(blob => {
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    chrome.storage.local.set({ bufferedImage: reader.result });
-                    chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(imageObject) });
-                    chrome.storage.local.set({ wallpaperConfigType: wallpaperConfigType });
-                });
-                reader.readAsDataURL(blob);
-            });
-        }
+
         const imageMetaData = JSON.parse(bufferedImageMetadata || '{}');
         const displayableImage = bufferedImage ? URL.createObjectURL(dataURItoBlob(bufferedImage)) : fallBackWallpaper;
         setImageInfo(imageMetaData);
         setAvailableImage(displayableImage);
-        // keep track of last 5 wallpapers
-        if(Object.keys(imageMetaData).length > 0) {
+
+        // Track wallpaper history
+        if (Object.keys(imageMetaData).length > 0) {
+            let { wallpapersTrail = '[]' } = await getObjectFromStorageLocal("wallpapersTrail");
             wallpapersTrail = JSON.parse(wallpapersTrail);
-            const isAlreadyInTrail = wallpapersTrail.find(o=>o.id === imageMetaData.id);
+            const isAlreadyInTrail = wallpapersTrail.find(o => o.id === imageMetaData.id);
             if (!isAlreadyInTrail) {
                 wallpapersTrail.push(imageMetaData);
             }
             if (wallpapersTrail.length > 10) wallpapersTrail.shift();
             chrome.storage.local.set({ wallpapersTrail: JSON.stringify(wallpapersTrail) });
         }
+    }, []);
 
-        // read the user bookmarks
-        const { userBookmarks: ub = [] } = await getObjectFromStorageLocal("userBookmarks");
-        setUserBookmarks(ub);
-    }
+    // Boot once after store is initialized (so we read the correct wallpaper.source)
+    useEffect(() => {
+        if (!initialized || hasBooted.current) return;
+        hasBooted.current = true;
+
+        const source = wallpaper.source || 'random';
+
+        if (source === 'color') {
+            setAvailableImage(null);
+            setImageInfo(null);
+            return;
+        }
+
+        // Only fetch a new random wallpaper when source is 'random'
+        if (source === 'random') {
+            (async () => {
+                try {
+                    const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
+                    const imageObject = await fetch(randomUrl).then(res => res.json());
+                    const imageURL = imageObject?.urls?.full;
+                    fetch(imageURL).then(res => res.blob()).then(blob => {
+                        const reader = new FileReader();
+                        reader.addEventListener('load', () => {
+                            chrome.storage.local.set({ bufferedImage: reader.result });
+                            chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(imageObject) });
+                        });
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (err) {
+                    console.error('Failed to fetch random wallpaper:', err);
+                }
+            })();
+        }
+
+        // For all image-based sources, display the currently cached image
+        loadBufferedWallpaper();
+    }, [initialized]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Re-apply wallpaper whenever wallpaper settings change in the store (i.e. after save)
+    const wallpaperJson = JSON.stringify(wallpaper);
+    useEffect(() => {
+        if (!hasBooted.current) return;
+
+        const source = wallpaper.source || 'random';
+
+        if (source === 'color') {
+            setAvailableImage(null);
+            setImageInfo(null);
+        } else {
+            loadBufferedWallpaper();
+        }
+    }, [wallpaperJson]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
     const showBottomBar = imageAuthor && imageAuthorUnsplashLink;
+
     const handleImageLoadError = () => {
         setImageInfo(null);
         setAvailableImage(fallBackWallpaper);
     }
+
     const onOpenSettings = () => {
-        setShowSettings(true);
-    };
-    const onCloseSettings = () => {
-        setShowSettings(false);
+        openSettings();
     };
 
-    const onOpenAddBookMark = () => {
-        setShowBookmarkForm(true);
-    }
-
-    const addNewBookMark = async (bookmark) => {
-        const existing = userBookmarks.some(b => b.url === bookmark.url);
-        if (existing) {
-            toast.warning("You've added the similar bookmark before, sparkly will not add this item now.")
-            setShowBookmarkForm(false);
-            return;
-        }
-        const updatedBookmarks =  [...userBookmarks, bookmark];
-        chrome.storage.local.set({
-            userBookmarks: updatedBookmarks
-        });
-    
-        setUserBookmarks(updatedBookmarks);
-        setShowBookmarkForm(false);
-        toast.success("Bookmark has been saved!");
-    }
-
-    return ( 
+    return (
         <AppContext.Provider value={[store, dispatch]}>
-            <Page relative style={{background:'black'}}>
-                <PageBackground availableImage={availableImage} onError={handleImageLoadError}/>
+            <Page relative style={{ background: 'black' }}>
+                <PageBackground
+                    availableImage={availableImage}
+                    onError={handleImageLoadError}
+                    solidColor={wallpaper.source === 'color' ? (wallpaper.solidColor || '#1f2937') : undefined}
+                    blur={wallpaper.blur}
+                    dim={wallpaper.dim}
+                />
                 <TabManager />
                 <StyledMainColumn>
-                    <TopSection>
-                        <Right>
-                            <LocalDateTime/>
-                        </Right>
-                    </TopSection>
                     <MiddleSection>
-                        <div style={{ textAlign: 'center' }}>
-                            <AppTitle>
-                                <img src={appIcon} alt="sparkly logo" />
-                            </AppTitle>
+                        <div style={{ textAlign: 'center', width: '100%' }}>
+                            <LocalDateTime />
                             <SearchBar />
                             <TopSites />
                         </div>
                     </MiddleSection>
+                    <DashboardGrid>
+                        <WidgetContainer>
+                            <HackerNewsWidget api={null as any} />
+                        </WidgetContainer>
+                        <WidgetContainer>
+                            <GitHubWidget api={null as any} />
+                        </WidgetContainer>
+                        <WidgetContainer>
+                            <DevToWidget api={null as any} />
+                        </WidgetContainer>
+                    </DashboardGrid>
                     {showBottomBar && <BottomSection>
-                        <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem" }}>
+                        <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
                             Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
                         </div>
                     </BottomSection>}
                 </StyledMainColumn>
-                <ActionBar
-                    userBookmarks={userBookmarks}
-                    onOpenSettings={onOpenSettings}
-                    onOpenAddBookMark={onOpenAddBookMark}
-                />
-                {showSettings && <Settings onClose={onCloseSettings} onReloadWallpaper={boot}/>}
-                {showBookmarkForm  && <AddBookMarkForm
-                    open={showBookmarkForm}
-                    handleCancel={() => setShowBookmarkForm(false)}
-                    onAddBookMark={addNewBookMark}
-                />}
+
+                {/* Right Action Bar with quick access apps, bookmarks, and settings */}
+                <ActionBar onOpenSettings={onOpenSettings} />
+
+                {/* Settings Modal */}
+                <SettingsModal />
             </Page>
             <ToastContainer />
-        </AppContext.Provider> 
+        </AppContext.Provider>
     )
-} 
+}
 
-render(<NewTab />, document.getElementById("app")); 
+// App wrapper that initializes plugins
+function NewTab() {
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        // Register built-in plugins
+        registerBuiltinPlugins(pluginRegistry);
+        setReady(true);
+    }, []);
+
+    if (!ready) {
+        return <div style={{ background: 'black', minHeight: '100vh' }} />;
+    }
+
+    return (
+        <AppProvider>
+            <PluginProvider>
+                <ThemeProvider>
+                    <NewTabContent />
+                </ThemeProvider>
+            </PluginProvider>
+        </AppProvider>
+    );
+}
+
+render(<NewTab />, document.getElementById("app"));
