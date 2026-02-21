@@ -37,7 +37,9 @@
         "topSites",
         "storage",
         "unlimitedStorage",
-        "tabs"
+        "tabs",
+        "alarms",
+        "notifications"
     ],
     "host_permissions":[
         "http://*/*",
