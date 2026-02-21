@@ -10,7 +10,7 @@ import googleIcon from '../../assets/images/google.png';
 import yahooIcon from '../../assets/images/yahoo.png';
 import bingIcon from '../../assets/images/bing.png';
 import duckDuckGoIcon from '../../assets/images/duckduckgo.png';
-import { getObjectFromStorageLocal } from '../../helpers/storage';
+import { useSettings } from '../../store/hooks';
 
 // Types
 interface SearchEngine {
@@ -291,21 +291,27 @@ function SearchEngineSelector({
  * Main SearchBar Component
  */
 export default function SearchBar(): JSX.Element {
+  const { general, updateGeneral } = useSettings();
   const [queryText, setQueryText] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-  const [engineId, setSearchEngineId] = useState('google');
+  const engineId = general.searchEngine || 'google';
   const isMounted = useRef(true);
 
   const doSearch = useCallback(
     (query: string): void => {
       const engine = SEARCH_ENGINES.find((e) => e.id === engineId);
       if (engine) {
-        window.location.href = engine.getSearchURL(query);
+        const url = engine.getSearchURL(query);
+        if (general.openLinksInNewTab) {
+          window.open(url, '_blank');
+        } else {
+          window.location.href = url;
+        }
       }
     },
-    [engineId]
+    [engineId, general.openLinksInNewTab]
   );
 
   const search = useCallback((): void => {
@@ -355,9 +361,8 @@ export default function SearchBar(): JSX.Element {
   );
 
   const onSearchEngineChange = useCallback((newEngineId: string): void => {
-    setSearchEngineId(newEngineId);
-    chrome.storage.local.set({ searchEngineId: newEngineId });
-  }, []);
+    updateGeneral({ searchEngine: newEngineId as any });
+  }, [updateGeneral]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
@@ -368,24 +373,9 @@ export default function SearchBar(): JSX.Element {
     [search]
   );
 
-  // Load saved search engine on mount
+  // Track mount state for async operations
   useEffect(() => {
     isMounted.current = true;
-
-    const loadSearchEngine = async (): Promise<void> => {
-      try {
-        const result = await getObjectFromStorageLocal('searchEngineId');
-        const savedEngineId = (result as { searchEngineId?: string })?.searchEngineId;
-        if (savedEngineId && isMounted.current) {
-          setSearchEngineId(savedEngineId);
-        }
-      } catch {
-        // Use default engine
-      }
-    };
-
-    loadSearchEngine();
-
     return () => {
       isMounted.current = false;
     };

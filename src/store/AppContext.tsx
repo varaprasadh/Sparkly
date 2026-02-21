@@ -51,7 +51,7 @@ const loadFromStorage = (key: string): Promise<unknown> => {
 export function AppProvider({ children }: AppProviderProps): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Load initial state from storage
+  // Load initial state from storage, migrating legacy keys if needed
   useEffect(() => {
     let mounted = true;
 
@@ -65,6 +65,9 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
           widgetPlacements,
           pluginSettings,
           openApps,
+          // Legacy keys for migration
+          legacySearchEngine,
+          legacyWallpaperConfig,
         ] = await Promise.all([
           loadFromStorage('sparkly_settings_general'),
           loadFromStorage('sparkly_settings_wallpaper'),
@@ -73,23 +76,33 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
           loadFromStorage('sparkly_widgets_placements'),
           loadFromStorage('sparkly_plugins_settings'),
           loadFromStorage('sparkly_open_apps'),
+          // Load legacy keys for first-time migration
+          loadFromStorage('searchEngineId'),
+          loadFromStorage('wallpaperConfigType'),
         ]);
 
         if (!mounted) return;
 
-        // Apply loaded settings
-        if (generalSettings) {
-          dispatch(actions.setGeneralSettings({
-            ...DEFAULT_GENERAL_SETTINGS,
-            ...(generalSettings as object)
-          }));
+        // Build general settings, migrating legacy searchEngineId if no new settings exist
+        const mergedGeneral = {
+          ...DEFAULT_GENERAL_SETTINGS,
+          ...(generalSettings ? (generalSettings as object) : {}),
+        };
+        if (!generalSettings && legacySearchEngine) {
+          mergedGeneral.searchEngine = legacySearchEngine as typeof mergedGeneral.searchEngine;
         }
-        if (wallpaperSettings) {
-          dispatch(actions.setWallpaperSettings({
-            ...DEFAULT_WALLPAPER_SETTINGS,
-            ...(wallpaperSettings as object)
-          }));
+        dispatch(actions.setGeneralSettings(mergedGeneral));
+
+        // Build wallpaper settings, migrating legacy wallpaperConfigType
+        const mergedWallpaper = {
+          ...DEFAULT_WALLPAPER_SETTINGS,
+          ...(wallpaperSettings ? (wallpaperSettings as object) : {}),
+        };
+        if (!wallpaperSettings && legacyWallpaperConfig) {
+          mergedWallpaper.source = legacyWallpaperConfig as typeof mergedWallpaper.source;
         }
+        dispatch(actions.setWallpaperSettings(mergedWallpaper));
+
         if (appearanceSettings) {
           dispatch(actions.setAppearanceSettings({
             ...DEFAULT_APPEARANCE_SETTINGS,
@@ -135,13 +148,17 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     };
   }, []);
 
-  // Persist settings changes to storage
+  // Persist settings changes to storage + sync legacy keys
   useEffect(() => {
     if (!state.initialized) return;
 
     saveToStorage('sparkly_settings_general', state.settings.general);
     saveToStorage('sparkly_settings_wallpaper', state.settings.wallpaper);
     saveToStorage('sparkly_settings_appearance', state.settings.appearance);
+
+    // Sync legacy keys so older components/boot logic can read them
+    saveToStorage('searchEngineId', state.settings.general.searchEngine);
+    saveToStorage('wallpaperConfigType', state.settings.wallpaper.source);
   }, [state.initialized, state.settings]);
 
   // Persist plugin state changes

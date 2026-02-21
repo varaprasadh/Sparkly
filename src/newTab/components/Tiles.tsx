@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Tile from './Tile';
 import { defaultTopSites } from '../../data/';
+import { useSettings } from '../../store/hooks';
 
 // Types
 interface TopSite {
@@ -32,8 +33,8 @@ const LoadingText = styled.div`
   margin-top: 1rem;
 `;
 
-// Constants
-const MAX_TILES = 8;
+// Default max tiles fallback
+const DEFAULT_MAX_TILES = 8;
 
 /**
  * Get hostname without www prefix
@@ -73,9 +74,9 @@ function mapToTileData(sites: TopSite[]): TileData[] {
 /**
  * Fill missing slots with default sites
  */
-function fillWithDefaults(topSites: TopSite[]): TopSite[] {
-  if (topSites.length >= MAX_TILES) {
-    return topSites.slice(0, MAX_TILES);
+function fillWithDefaults(topSites: TopSite[], maxTiles: number): TopSite[] {
+  if (topSites.length >= maxTiles) {
+    return topSites.slice(0, maxTiles);
   }
 
   // Create a set of existing hostnames for deduplication
@@ -87,7 +88,7 @@ function fillWithDefaults(topSites: TopSite[]): TopSite[] {
 
   // Add default sites that don't already exist
   for (const site of defaultTopSites) {
-    if (filledSites.length >= MAX_TILES) break;
+    if (filledSites.length >= maxTiles) break;
 
     const hostname = getNormalizedHostname(site.url);
     if (!existingHostnames.has(hostname)) {
@@ -99,14 +100,17 @@ function fillWithDefaults(topSites: TopSite[]): TopSite[] {
   return filledSites;
 }
 
-export function TopSites(): JSX.Element {
+export function TopSites(): JSX.Element | null {
+  const { general } = useSettings();
   const [sites, setSites] = useState<TileData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const maxTiles = general.maxQuickLinks || DEFAULT_MAX_TILES;
 
   useEffect(() => {
     const loadTopSites = (): void => {
       chrome.topSites.get((topSites: chrome.topSites.MostVisitedURL[]) => {
-        const filledSites = fillWithDefaults(topSites);
+        const filledSites = fillWithDefaults(topSites, maxTiles);
         const tiles = mapToTileData(filledSites);
         setSites(tiles);
         setLoading(false);
@@ -114,7 +118,12 @@ export function TopSites(): JSX.Element {
     };
 
     loadTopSites();
-  }, []);
+  }, [maxTiles]);
+
+  // Respect the showTopSites setting
+  if (!general.showTopSites) {
+    return null;
+  }
 
   if (loading) {
     return <LoadingText>Loading...</LoadingText>;

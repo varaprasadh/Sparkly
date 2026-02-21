@@ -55,8 +55,8 @@ const Select = styled.select`
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-color, #3b82f6);
+    box-shadow: 0 0 0 3px var(--accent-color-light, rgba(59, 130, 246, 0.1));
   }
 `;
 
@@ -70,7 +70,7 @@ const Toggle = styled.label`
 const ToggleSwitch = styled.div<{ checked: boolean }>`
   width: 48px;
   height: 26px;
-  background: ${(props) => (props.checked ? '#3b82f6' : '#d1d5db')};
+  background: ${(props) => (props.checked ? 'var(--accent-color, #3b82f6)' : '#d1d5db')};
   border-radius: 13px;
   position: relative;
   transition: background 0.2s;
@@ -110,14 +110,14 @@ const ThemeCard = styled.button<{ selected: boolean }>`
   align-items: center;
   gap: 8px;
   padding: 16px;
-  border: 2px solid ${(props) => (props.selected ? '#3b82f6' : '#e5e7eb')};
+  border: 2px solid ${(props) => (props.selected ? 'var(--accent-color, #3b82f6)' : '#e5e7eb')};
   border-radius: 12px;
-  background: ${(props) => (props.selected ? '#eff6ff' : 'white')};
+  background: ${(props) => (props.selected ? 'var(--accent-color-light, #eff6ff)' : 'white')};
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${(props) => (props.selected ? '#3b82f6' : '#d1d5db')};
+    border-color: ${(props) => (props.selected ? 'var(--accent-color, #3b82f6)' : '#d1d5db')};
   }
 `;
 
@@ -173,7 +173,7 @@ const Slider = styled.input`
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #3b82f6;
+    background: var(--accent-color, #3b82f6);
     cursor: pointer;
     transition: transform 0.2s;
 

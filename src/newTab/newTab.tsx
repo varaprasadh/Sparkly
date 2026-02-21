@@ -27,7 +27,7 @@ import { AppProvider } from '../store/AppContext';
 import { PluginProvider, pluginRegistry } from '../plugins';
 import { registerBuiltinPlugins } from '../plugins/builtin';
 import { SettingsModal } from '../settings';
-import { useUI } from '../store/hooks';
+import { useUI, useSettings, useInitialization } from '../store/hooks';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { hackerNewsInstance } from '../plugins/builtin/hackernews';
 import { githubInstance } from '../plugins/builtin/github';
@@ -66,8 +66,8 @@ const MiddleSection = styled.section`
 const DashboardGrid = styled.section`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    padding: 24px;
+    gap: var(--layout-gap, 24px);
+    padding: var(--layout-padding, 24px);
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
@@ -77,18 +77,19 @@ const WidgetContainer = styled.div`
     height: 380px;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(16px);
-    border-radius: 12px;
+    border-radius: var(--widget-border-radius, 12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    
+    transition: border-radius var(--transition-duration, 0.2s);
+
     /* Make internal container fill the space with a blur */
     & > div {
        background: transparent !important;
        color: white;
        height: 100% !important;
     }
-    
+
     /* Modify specific widget internal elements */
     & h3 { color: white !important; }
     & a { color: rgba(255,255,255,0.9) !important; }
@@ -142,12 +143,29 @@ const StyledBackgroundGradient = styled.div<{ gradient: any }>`
     background: ${props => props.gradient};
 `;
 
-function PageBackground({ availableImage, onError }) {
+function PageBackground({ availableImage, onError, solidColor, blur, dim }: {
+    availableImage: string | null;
+    onError: () => void;
+    solidColor?: string;
+    blur?: boolean;
+    dim?: boolean;
+}) {
+    if (solidColor) {
+        return <StyledBackgroundGradient gradient={solidColor} />;
+    }
+
     if (availableImage) {
         return (
             <StyledBackgroundWrapper>
-                <StyledBackgroundImage src={availableImage} onError={onError} />
-                <StyledBackgroundOverlay></StyledBackgroundOverlay>
+                <StyledBackgroundImage
+                    src={availableImage}
+                    onError={onError}
+                    style={{
+                        filter: blur ? 'blur(6px)' : undefined,
+                        transform: blur ? 'scale(1.05)' : undefined,
+                    }}
+                />
+                {dim && <StyledBackgroundOverlay />}
             </StyledBackgroundWrapper>
         );
     }
@@ -219,16 +237,16 @@ const StyledBookMark = styled.a`
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    border-radius: var(--default-radius, 12px);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
+    transition: all var(--transition-duration, 0.3s) cubic-bezier(0.25, 0.8, 0.25, 1);
+
     &:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    
+
     &:active {
         transform: scale(0.95);
     }
@@ -250,22 +268,22 @@ const Divider = styled.div`
 const StyledSettingsAction = styled.div`
     width: 44px;
     height: 44px;
-    margin: 0 auto;
+    margin: 0 auto 24px auto;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 12px;
+    border-radius: var(--default-radius, 12px);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
+    transition: all var(--transition-duration, 0.3s) cubic-bezier(0.25, 0.8, 0.25, 1);
+
     &:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: rotate(45deg);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    
+
     &:active {
         transform: scale(0.95) rotate(45deg);
     }
@@ -286,20 +304,22 @@ const AppDockSection = styled.div`
 
 // Action Bar component with quick access bookmarks, apps, and settings
 function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
+    const { general } = useSettings();
+
     return (
         <StyledActionBar>
-            {/* Quick Access Bookmarks */}
-            <StyledBookMarks>
-                {defaultBookMarks.map((bookmark) => (
-                    <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
-                        <StyledBookMarkThumbnail src={bookmark.thumbnail} />
-                    </StyledBookMark>
-                ))}
-            </StyledBookMarks>
+            {/* Quick Access Bookmarks - respect showBookmarks setting */}
+            {general.showBookmarks && (
+                <StyledBookMarks>
+                    {defaultBookMarks.map((bookmark) => (
+                        <StyledBookMark href={bookmark.url} title={bookmark.title} key={bookmark.url}>
+                            <StyledBookMarkThumbnail src={bookmark.thumbnail} />
+                        </StyledBookMark>
+                    ))}
+                </StyledBookMarks>
+            )}
 
-            {/* App Dock (Removed OS-like apps) */}
-
-            <Divider />
+            {general.showBookmarks && <Divider />}
 
             {/* Settings Button */}
             <StyledSettingsAction onClick={onOpenSettings} title="Settings">
@@ -315,40 +335,26 @@ function NewTabContent() {
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
 
-    // Use the new UI store for settings
-    const { openSettings } = useUI();
+    // Use the new store for settings
+    const { openSettings, settingsOpen } = useUI();
+    const { wallpaper } = useSettings();
+    const { initialized } = useInitialization();
+    const prevSettingsOpen = React.useRef(false);
+    const hasBooted = React.useRef(false);
 
-    useEffect(() => {
-        boot();
-    }, []);
-
-    const boot = async () => {
+    // Load wallpaper from chrome storage and display it
+    const loadBufferedWallpaper = React.useCallback(async () => {
         const { bufferedImage } = await getObjectFromStorageLocal("bufferedImage");
         const { bufferedImageMetadata } = await getObjectFromStorageLocal("bufferedImageMetadata");
-        const { wallpaperConfigType = 'random' } = await getObjectFromStorageLocal("wallpaperConfigType");
-        let { wallpapersTrail = '[]' } = await getObjectFromStorageLocal("wallpapersTrail");
-        if (wallpaperConfigType === 'random') {
-            // load the next wallpaper and cache it.
-            const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
-            const imageObject = await fetch(randomUrl).then(res => res.json());
-            // cache the imageObject
-            const imageURL = imageObject?.urls?.full;
-            fetch(imageURL).then(res => res.blob()).then(blob => {
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    chrome.storage.local.set({ bufferedImage: reader.result });
-                    chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(imageObject) });
-                    chrome.storage.local.set({ wallpaperConfigType: wallpaperConfigType });
-                });
-                reader.readAsDataURL(blob);
-            });
-        }
+
         const imageMetaData = JSON.parse(bufferedImageMetadata || '{}');
         const displayableImage = bufferedImage ? URL.createObjectURL(dataURItoBlob(bufferedImage)) : fallBackWallpaper;
         setImageInfo(imageMetaData);
         setAvailableImage(displayableImage);
-        // keep track of last 5 wallpapers
+
+        // Track wallpaper history
         if (Object.keys(imageMetaData).length > 0) {
+            let { wallpapersTrail = '[]' } = await getObjectFromStorageLocal("wallpapersTrail");
             wallpapersTrail = JSON.parse(wallpapersTrail);
             const isAlreadyInTrail = wallpapersTrail.find(o => o.id === imageMetaData.id);
             if (!isAlreadyInTrail) {
@@ -357,8 +363,63 @@ function NewTabContent() {
             if (wallpapersTrail.length > 10) wallpapersTrail.shift();
             chrome.storage.local.set({ wallpapersTrail: JSON.stringify(wallpapersTrail) });
         }
+    }, []);
 
-    }
+    // Boot once after store is initialized (so we read the correct wallpaper.source)
+    useEffect(() => {
+        if (!initialized || hasBooted.current) return;
+        hasBooted.current = true;
+
+        const source = wallpaper.source || 'random';
+
+        if (source === 'color') {
+            setAvailableImage(null);
+            setImageInfo(null);
+            return;
+        }
+
+        // Only fetch a new random wallpaper when source is 'random'
+        if (source === 'random') {
+            (async () => {
+                try {
+                    const randomUrl = `https://unsplash.com/napi/photos/random?query=nature,sky,cosmos,illustrations&per_page=20&page=1&orientation=landscape`;
+                    const imageObject = await fetch(randomUrl).then(res => res.json());
+                    const imageURL = imageObject?.urls?.full;
+                    fetch(imageURL).then(res => res.blob()).then(blob => {
+                        const reader = new FileReader();
+                        reader.addEventListener('load', () => {
+                            chrome.storage.local.set({ bufferedImage: reader.result });
+                            chrome.storage.local.set({ bufferedImageMetadata: JSON.stringify(imageObject) });
+                        });
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (err) {
+                    console.error('Failed to fetch random wallpaper:', err);
+                }
+            })();
+        }
+
+        // For all image-based sources, display the currently cached image
+        loadBufferedWallpaper();
+    }, [initialized]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // When settings modal closes, re-apply wallpaper from storage
+    useEffect(() => {
+        const wasPreviouslyOpen = prevSettingsOpen.current;
+        prevSettingsOpen.current = settingsOpen;
+
+        // Only act when modal transitions from open → closed
+        if (wasPreviouslyOpen && !settingsOpen) {
+            const source = wallpaper.source || 'random';
+
+            if (source === 'color') {
+                setAvailableImage(null);
+                setImageInfo(null);
+            } else {
+                loadBufferedWallpaper();
+            }
+        }
+    }, [settingsOpen, wallpaper.source, loadBufferedWallpaper]);
 
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
@@ -376,7 +437,13 @@ function NewTabContent() {
     return (
         <AppContext.Provider value={[store, dispatch]}>
             <Page relative style={{ background: 'black' }}>
-                <PageBackground availableImage={availableImage} onError={handleImageLoadError} />
+                <PageBackground
+                    availableImage={availableImage}
+                    onError={handleImageLoadError}
+                    solidColor={wallpaper.source === 'color' ? (wallpaper.solidColor || '#1f2937') : undefined}
+                    blur={wallpaper.blur}
+                    dim={wallpaper.dim}
+                />
                 <TabManager />
                 <StyledMainColumn>
                     <MiddleSection>

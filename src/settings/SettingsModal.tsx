@@ -2,7 +2,7 @@
  * Settings Modal - Main container for all settings tabs
  */
 
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useUI, useSettings } from '../store/hooks';
 import { GeneralTab } from './tabs/GeneralTab';
@@ -97,15 +97,15 @@ const TabButton = styled.button<{ active: boolean }>`
   padding: 12px 16px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s;
-  background: ${(props) => (props.active ? '#3b82f6' : 'transparent')};
+  transition: all var(--transition-duration, 0.2s);
+  background: ${(props) => (props.active ? 'var(--accent-color, #3b82f6)' : 'transparent')};
   color: ${(props) => (props.active ? 'white' : '#4b5563')};
 
   &:hover {
-    background: ${(props) => (props.active ? '#3b82f6' : '#f3f4f6')};
+    background: ${(props) => (props.active ? 'var(--accent-color, #3b82f6)' : '#f3f4f6')};
   }
 `;
 
@@ -137,15 +137,15 @@ const SaveButton = styled.button<{ hasChanges: boolean }>`
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 500;
   cursor: ${(props) => (props.hasChanges ? 'pointer' : 'default')};
-  transition: all 0.2s;
-  background: ${(props) => (props.hasChanges ? '#3b82f6' : '#9ca3af')};
+  transition: all var(--transition-duration, 0.2s);
+  background: ${(props) => (props.hasChanges ? 'var(--accent-color, #3b82f6)' : '#9ca3af')};
   color: white;
 
   &:hover {
-    background: ${(props) => (props.hasChanges ? '#2563eb' : '#9ca3af')};
+    background: ${(props) => (props.hasChanges ? 'var(--accent-color-hover, #2563eb)' : '#9ca3af')};
   }
 `;
 
@@ -196,9 +196,12 @@ export function SettingsModal(): JSX.Element | null {
   });
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Sync draft with actual settings when modal opens
+  // Track previous open state to detect when modal opens
+  const prevOpenRef = useRef(false);
+
+  // Sync draft with actual settings only when modal first opens
   useEffect(() => {
-    if (settingsOpen) {
+    if (settingsOpen && !prevOpenRef.current) {
       setDraft({
         general: settings.general,
         wallpaper: settings.wallpaper,
@@ -206,7 +209,8 @@ export function SettingsModal(): JSX.Element | null {
       });
       setHasChanges(false);
     }
-  }, [settingsOpen, settings.general, settings.wallpaper, settings.appearance]);
+    prevOpenRef.current = settingsOpen;
+  }, [settingsOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Update draft general settings
   const updateDraftGeneral = useCallback((updates: Partial<GeneralSettings>) => {

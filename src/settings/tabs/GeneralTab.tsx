@@ -54,8 +54,8 @@ const Input = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-color, #3b82f6);
+    box-shadow: 0 0 0 3px var(--accent-color-light, rgba(59, 130, 246, 0.1));
   }
 `;
 
@@ -69,8 +69,8 @@ const Select = styled.select`
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-color, #3b82f6);
+    box-shadow: 0 0 0 3px var(--accent-color-light, rgba(59, 130, 246, 0.1));
   }
 `;
 
@@ -84,7 +84,7 @@ const Toggle = styled.label`
 const ToggleSwitch = styled.div<{ checked: boolean }>`
   width: 48px;
   height: 26px;
-  background: ${(props) => (props.checked ? '#3b82f6' : '#d1d5db')};
+  background: ${(props) => (props.checked ? 'var(--accent-color, #3b82f6)' : '#d1d5db')};
   border-radius: 13px;
   position: relative;
   transition: background 0.2s;

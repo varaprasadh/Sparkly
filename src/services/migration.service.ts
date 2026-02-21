@@ -30,9 +30,12 @@ const migrations: Migration[] = [
       const legacyData = await getLegacyData();
 
       // Migrate wallpaper settings
+      // Map legacy 'custom' source to 'random' since custom URL option was removed
+      const legacySource = legacyData.wallpaperConfigType || 'random';
+      const migratedSource = legacySource === 'custom' ? 'random' : legacySource;
       const wallpaperSettings = {
         ...DEFAULT_WALLPAPER_SETTINGS,
-        source: legacyData.wallpaperConfigType || 'random',
+        source: migratedSource as typeof DEFAULT_WALLPAPER_SETTINGS.source,
         history: parseLegacyWallpapersTrail(legacyData.wallpapersTrail),
       };
 

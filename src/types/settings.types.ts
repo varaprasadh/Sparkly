@@ -45,7 +45,6 @@ export interface WallpaperSettings {
   source: WallpaperSource;
   refreshFrequency: WallpaperRefreshFrequency;
   categories: string[];
-  customUrl: string | null;
   uploadedImage: string | null;
   solidColor: Color;
   favorites: WallpaperInfo[];
@@ -132,7 +131,6 @@ export const DEFAULT_WALLPAPER_SETTINGS: WallpaperSettings = {
   source: 'random',
   refreshFrequency: 'every-tab',
   categories: ['nature', 'sky', 'cosmos'],
-  customUrl: null,
   uploadedImage: null,
   solidColor: '#1a1a2e',
   favorites: [],
