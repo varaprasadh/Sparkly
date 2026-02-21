@@ -2,7 +2,7 @@
  * Wallpaper Settings Tab
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { WallpaperSettings, WallpaperSource, WallpaperFrequency } from '../../types/settings.types';
 
@@ -155,7 +155,6 @@ const WALLPAPER_SOURCES: { id: WallpaperSource; label: string; icon: string }[] 
   { id: 'random', label: 'Random', icon: '🎲' },
   { id: 'search', label: 'Search', icon: '🔍' },
   { id: 'history', label: 'From History', icon: '📚' },
-  { id: 'upload', label: 'Upload', icon: '📁' },
   { id: 'color', label: 'Solid Color', icon: '🎨' },
 ];
 
@@ -225,78 +224,6 @@ const EmptyHistory = styled.div`
   font-size: 14px;
 `;
 
-const UploadArea = styled.div<{ isDragging?: boolean }>`
-  border: 2px dashed ${(props) => (props.isDragging ? 'var(--accent-color, #3b82f6)' : '#d1d5db')};
-  border-radius: 12px;
-  padding: 32px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: ${(props) => (props.isDragging ? 'var(--accent-color-light, #eff6ff)' : '#f9fafb')};
-
-  &:hover {
-    border-color: var(--accent-color, #3b82f6);
-    background: var(--accent-color-light, #eff6ff);
-  }
-`;
-
-const UploadIcon = styled.div`
-  font-size: 32px;
-  margin-bottom: 8px;
-`;
-
-const UploadText = styled.div`
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-`;
-
-const UploadHint = styled.div`
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 4px;
-`;
-
-const UploadPreview = styled.div`
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 2px solid var(--accent-color, #3b82f6);
-`;
-
-const UploadPreviewImage = styled.img`
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  display: block;
-`;
-
-const UploadPreviewActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px;
-  gap: 8px;
-  background: #f9fafb;
-`;
-
-const UploadButton = styled.button`
-  padding: 6px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  background: white;
-  color: #374151;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #f3f4f6;
-  }
-`;
-
-const HiddenFileInput = styled.input.attrs({ type: 'file', accept: 'image/*' })`
-  display: none;
-`;
 
 const SearchContainer = styled.div`
   display: flex;
@@ -471,10 +398,6 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
   const [historyWallpapers, setHistoryWallpapers] = useState<WallpaperHistoryItem[]>([]);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [loadingHistoryId, setLoadingHistoryId] = useState<string | null>(null);
-  const [uploadPreview, setUploadPreview] = useState<string | null>(settings.uploadedImage || null);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<WallpaperHistoryItem[]>([]);
@@ -616,42 +539,6 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
     onUpdate({ source: 'history' });
   };
 
-  // Handle file upload
-  const handleFileSelect = (file: File) => {
-    if (!file.type.startsWith('image/')) return;
-
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      const dataUrl = reader.result as string;
-      setUploadPreview(dataUrl);
-      // Store the uploaded image as data URL and cache it for display
-      onUpdate({ uploadedImage: dataUrl, source: 'upload' });
-      chrome.storage.local.set({
-        bufferedImage: dataUrl,
-        bufferedImageMetadata: JSON.stringify({}),
-      });
-    });
-    reader.readAsDataURL(file);
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFileSelect(file);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) handleFileSelect(file);
-  };
-
-  const handleRemoveUpload = () => {
-    setUploadPreview(null);
-    onUpdate({ uploadedImage: null, source: 'random' });
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
   return (
     <Container>
       <Section>
@@ -753,41 +640,6 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
                 </HistoryCard>
               ))}
             </HistoryGrid>
-          )}
-        </Section>
-      )}
-
-      {settings.source === 'upload' && (
-        <Section>
-          <SectionTitle>Upload Image</SectionTitle>
-          <HiddenFileInput
-            ref={fileInputRef}
-            onChange={handleFileInputChange}
-          />
-          {uploadPreview ? (
-            <UploadPreview>
-              <UploadPreviewImage src={uploadPreview} alt="Uploaded wallpaper" />
-              <UploadPreviewActions>
-                <UploadButton onClick={() => fileInputRef.current?.click()}>
-                  Change Image
-                </UploadButton>
-                <UploadButton onClick={handleRemoveUpload}>
-                  Remove
-                </UploadButton>
-              </UploadPreviewActions>
-            </UploadPreview>
-          ) : (
-            <UploadArea
-              isDragging={isDragging}
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-            >
-              <UploadIcon>📁</UploadIcon>
-              <UploadText>Click to upload or drag and drop</UploadText>
-              <UploadHint>PNG, JPG, or WebP</UploadHint>
-            </UploadArea>
           )}
         </Section>
       )}

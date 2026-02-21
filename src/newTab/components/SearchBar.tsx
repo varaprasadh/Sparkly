@@ -131,40 +131,47 @@ const StyledSuggestionsWrapper = styled.div`
   left: 0%;
   right: 0%;
   z-index: 99;
-  background: white;
-  margin-top: 0.2rem;
-  border-radius: 0.5rem;
+  background: rgba(15, 15, 20, 0.92);
+  backdrop-filter: blur(20px);
+  margin-top: 6px;
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 4px;
 `;
 
 const StyledSuggestion = styled.div<{ isActive: boolean }>`
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 8px 10px;
   cursor: pointer;
   text-align: left;
-  font-size: 1rem;
-  background: ${(props) => (props.isActive ? '#efefef' : 'transparent')};
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  background: ${(props) => (props.isActive ? 'rgba(255, 255, 255, 0.12)' : 'transparent')};
+  transition: background 0.15s ease;
+
   &:hover {
-    background: #efefef;
-  }
-  &:not(:last-child) {
-    border-bottom: 1px solid #e0e0e0;
+    background: rgba(255, 255, 255, 0.1);
   }
 `;
 
 const StyledSuggestionPreIcon = styled.div`
-  width: 5rem;
+  width: 28px;
   display: flex;
   justify-content: center;
+  flex-shrink: 0;
 `;
 
 const StyledSuggestionPostIcon = styled.div<{ isVisible: boolean }>`
-  justify-self: flex-end;
   margin-left: auto;
-  margin-right: 0.5rem;
+  padding-left: 8px;
   & > img {
-    width: 24px;
+    width: 16px;
+    filter: invert(1);
+    opacity: 0.35;
     display: ${(props) => (props.isVisible ? 'block' : 'none')};
   }
 `;
@@ -173,58 +180,73 @@ const StyledSearchEngineSelectWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding-left: 6px;
 `;
 
 const StyledSearchEngineSelectValue = styled.div`
   display: flex;
   align-items: center;
+  gap: 2px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+
   & > img {
-    width: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
   }
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background 0.2s ease;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
 `;
 
-const StyledSearchEngineOptions = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0%;
-  background: white;
-  margin-top: 0.5rem;
-  z-index: 99;
-  margin-left: 0.5rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  width: 150px;
-  border: 1px solid #efefef;
-  filter: drop-shadow(2px 2px 4px black);
+const StyledDownArrow = styled.img`
+  width: 8px;
+  height: 8px;
+  filter: invert(1);
+  opacity: 0.35;
 `;
 
-const StyledSearchEngineOption = styled.div`
+const StyledSearchEngineOptions = styled.div`
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 99;
+  background: rgba(15, 15, 20, 0.92);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 4px;
+`;
+
+const StyledSearchEngineOption = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
-  padding: 0.8rem 0.5rem;
+  padding: 8px 10px;
   cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+  background: ${(props) => (props.active ? 'rgba(255, 255, 255, 0.12)' : 'transparent')};
+
   & > img {
-    width: 24px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
   }
   & > span {
-    font-size: 1rem;
-    margin-left: 0.5rem;
+    font-size: 13px;
+    margin-left: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    white-space: nowrap;
   }
   &:hover {
-    background: #efefef;
-  }
-  &:not(:last-child) {
-    border-bottom: 1px solid #e0e0e0;
+    background: rgba(255, 255, 255, 0.1);
   }
 `;
 
@@ -268,12 +290,14 @@ function SearchEngineSelector({
       <StyledSearchEngineSelectWrapper>
         <StyledSearchEngineSelectValue onClick={() => setShow(!show)} title="Select Search Engine">
           <img src={currentEngineInfo?.icon} alt="search engine" />
+          <StyledDownArrow src={downArrow} alt="" />
         </StyledSearchEngineSelectValue>
         {show && (
           <StyledSearchEngineOptions>
             {searchEngines.map((engine) => (
               <StyledSearchEngineOption
                 key={engine.id}
+                active={engine.id === currentEngineId}
                 onClick={() => setEngine(engine.id)}
               >
                 <img src={engine.icon} alt={engine.label} />
@@ -449,7 +473,9 @@ export default function SearchBar(): JSX.Element {
                 isActive={i === activeSuggestionIndex}
                 onClick={() => selectAndSearch(suggestion)}
               >
-                <StyledSuggestionPreIcon />
+                <StyledSuggestionPreIcon>
+                  <img src={searchIcon} alt="" style={{ width: 14, height: 14, filter: 'invert(1)', opacity: 0.4 }} />
+                </StyledSuggestionPreIcon>
                 <div>{suggestion}</div>
                 <StyledSuggestionPostIcon isVisible={i === activeSuggestionIndex}>
                   <img src={returnKey} alt="enter" />

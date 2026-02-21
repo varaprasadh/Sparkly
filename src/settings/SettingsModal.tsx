@@ -239,7 +239,7 @@ export function SettingsModal(): JSX.Element | null {
     setHasChanges(true);
   }, []);
 
-  // Save all changes
+  // Save all changes (keep modal open)
   const handleSave = useCallback(() => {
     settings.updateGeneral(draft.general);
     settings.updateWallpaper(draft.wallpaper);

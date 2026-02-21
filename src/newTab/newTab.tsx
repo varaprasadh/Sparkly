@@ -336,10 +336,9 @@ function NewTabContent() {
     const [imageInfo, setImageInfo] = React.useState(null);
 
     // Use the new store for settings
-    const { openSettings, settingsOpen } = useUI();
+    const { openSettings } = useUI();
     const { wallpaper } = useSettings();
     const { initialized } = useInitialization();
-    const prevSettingsOpen = React.useRef(false);
     const hasBooted = React.useRef(false);
 
     // Load wallpaper from chrome storage and display it
@@ -403,23 +402,20 @@ function NewTabContent() {
         loadBufferedWallpaper();
     }, [initialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // When settings modal closes, re-apply wallpaper from storage
+    // Re-apply wallpaper whenever wallpaper settings change in the store (i.e. after save)
+    const wallpaperJson = JSON.stringify(wallpaper);
     useEffect(() => {
-        const wasPreviouslyOpen = prevSettingsOpen.current;
-        prevSettingsOpen.current = settingsOpen;
+        if (!hasBooted.current) return;
 
-        // Only act when modal transitions from open → closed
-        if (wasPreviouslyOpen && !settingsOpen) {
-            const source = wallpaper.source || 'random';
+        const source = wallpaper.source || 'random';
 
-            if (source === 'color') {
-                setAvailableImage(null);
-                setImageInfo(null);
-            } else {
-                loadBufferedWallpaper();
-            }
+        if (source === 'color') {
+            setAvailableImage(null);
+            setImageInfo(null);
+        } else {
+            loadBufferedWallpaper();
         }
-    }, [settingsOpen, wallpaper.source, loadBufferedWallpaper]);
+    }, [wallpaperJson]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
