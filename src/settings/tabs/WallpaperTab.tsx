@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { WallpaperSettings, WallpaperSource, WallpaperFrequency } from '../../types/settings.types';
+import { WallpaperSettings, WallpaperSource } from '../../types/settings.types';
 
 const Container = styled.div`
   display: flex;
@@ -43,21 +43,6 @@ const Description = styled.p`
   margin: 0;
   font-size: 12px;
   color: #6b7280;
-`;
-
-const Select = styled.select`
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent-color, #3b82f6);
-    box-shadow: 0 0 0 3px var(--accent-color-light, rgba(59, 130, 246, 0.1));
-  }
 `;
 
 const Toggle = styled.label`
@@ -158,12 +143,6 @@ const WALLPAPER_SOURCES: { id: WallpaperSource; label: string; icon: string }[] 
   { id: 'color', label: 'Solid Color', icon: '🎨' },
 ];
 
-const REFRESH_OPTIONS: { id: WallpaperFrequency; label: string }[] = [
-  { id: 'never', label: 'Never' },
-  { id: 'every-tab', label: 'Every new tab' },
-  { id: 'hourly', label: 'Every hour' },
-  { id: 'daily', label: 'Once a day' },
-];
 
 const SOLID_COLORS = [
   '#1f2937', '#374151', '#4b5563', '#6b7280',
@@ -662,25 +641,6 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
           </FormGroup>
         </Section>
       )}
-
-      <Section>
-        <SectionTitle>Refresh Settings</SectionTitle>
-
-        <FormGroup>
-          <Label>Refresh frequency</Label>
-          <Select
-            value={settings.refreshFrequency}
-            onChange={(e) => onUpdate({ refreshFrequency: e.target.value as WallpaperFrequency })}
-          >
-            {REFRESH_OPTIONS.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
-          <Description>How often to change the wallpaper</Description>
-        </FormGroup>
-      </Section>
 
       <Section>
         <SectionTitle>Display Options</SectionTitle>
