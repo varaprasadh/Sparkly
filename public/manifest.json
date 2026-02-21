@@ -2,8 +2,8 @@
     "version": "4.3",
     "version_name": "4.3",
     "manifest_version": 3,
-    "name": "Sparkly: New Tab, Tab Manager, Bookmarks",
-    "description": "A super charged new tab extension built with productivity in mind",
+    "name": "Sparkly: New Tab for Productive People",
+    "description": "Replace your new tab with a beautiful dashboard — wallpapers, news feed, tab manager, and search — all in one place.",
     "icons": {
         "16": "images/icon-16.png",
         "48": "images/icon-48.png",
@@ -37,9 +37,7 @@
         "topSites",
         "storage",
         "unlimitedStorage",
-        "tabs",
-        "alarms",
-        "notifications"
+        "tabs"
     ],
     "host_permissions":[
         "http://*/*",
