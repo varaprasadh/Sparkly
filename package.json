@@ -8,8 +8,7 @@
     "build": "webpack",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "publish": "node upload.js",
-    "build-publish": "npm run build && npm run publish"
+    "zip": "npm run build && node zip.js"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
