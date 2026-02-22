@@ -302,6 +302,83 @@ const AppDockSection = styled.div`
     margin-top: 8px;
 `;
 
+// Chrome footer tip banner
+const TipBanner = styled.div`
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 20, 0.92);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 520px;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    animation: tipSlideUp 0.3s ease;
+
+    @keyframes tipSlideUp {
+        from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+`;
+
+const TipText = styled.div`
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    line-height: 1.4;
+    flex: 1;
+`;
+
+const TipDismiss = styled.button`
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+`;
+
+function ChromeFooterTip() {
+    const [visible, setVisible] = React.useState(false);
+
+    React.useEffect(() => {
+        chrome.storage.local.get(['sparkly_footer_tip_dismissed'], (result) => {
+            if (!result.sparkly_footer_tip_dismissed) {
+                setVisible(true);
+            }
+        });
+    }, []);
+
+    const dismiss = () => {
+        setVisible(false);
+        chrome.storage.local.set({ sparkly_footer_tip_dismissed: true });
+    };
+
+    if (!visible) return null;
+
+    return (
+        <TipBanner>
+            <TipText>
+                Seeing a bar at the bottom? Right-click it and select <strong style={{ color: 'white' }}>"Hide footer on New Tab page"</strong> for a cleaner look.
+            </TipText>
+            <TipDismiss onClick={dismiss}>Got it</TipDismiss>
+        </TipBanner>
+    );
+}
+
 // Action Bar component with quick access bookmarks, apps, and settings
 function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     const { general } = useSettings();
@@ -472,6 +549,9 @@ function NewTabContent() {
 
                 {/* Settings Modal */}
                 <SettingsModal />
+
+                {/* One-time tip about Chrome's footer bar */}
+                <ChromeFooterTip />
             </Page>
             <ToastContainer />
         </AppContext.Provider>
