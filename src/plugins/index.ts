@@ -19,6 +19,4 @@ export { createPluginAPI } from './core/PluginAPI';
 export type {
   PluginAPI,
   PluginStorageAPI,
-  PluginNotificationAPI,
-  PluginAlarmAPI,
 } from './core/PluginAPI';

@@ -314,38 +314,48 @@ function TabManager(): JSX.Element {
           </StyledSuspendButton>
 
           {/* Recently Closed */}
-          {recentTabs.length > 0 && (
-            <StyledCollapsibleSection>
-              <StyledCollapsibleHeader onClick={() => setRecentOpen(!recentOpen)}>
-                <StyledCollapsibleArrow open={recentOpen}>&#9654;</StyledCollapsibleArrow>
-                Recently Closed ({recentTabs.length})
-              </StyledCollapsibleHeader>
-              {recentOpen &&
-                recentTabs.map((tab) => (
-                  <StyledRecentTabItem key={tab.sessionId}>
-                    <StyledTabThumbnailBG
-                      as="div"
-                      style={{ width: 22, height: 22, marginRight: 8, flexShrink: 0 }}
-                    >
-                      <StyledTabThumbnail
-                        src={tab.favIconUrl || sparklyIcon}
-                        alt=""
-                        style={{ width: 12, height: 12 }}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = sparklyIcon;
-                        }}
-                      />
-                    </StyledTabThumbnailBG>
-                    <StyledTabTitle style={{ fontSize: 12 }}>
-                      {tab.title || tab.url || 'Untitled'}
-                    </StyledTabTitle>
-                    <StyledRestoreButton onClick={() => restoreRecentSession(tab.sessionId)}>
+          <StyledCollapsibleSection>
+            <StyledCollapsibleHeader onClick={() => setRecentOpen(!recentOpen)}>
+              <StyledCollapsibleArrow open={recentOpen}>&#9654;</StyledCollapsibleArrow>
+              Recently Closed ({recentTabs.length})
+            </StyledCollapsibleHeader>
+            {recentOpen && recentTabs.length === 0 && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  color: 'rgba(255,255,255,0.3)',
+                  fontSize: 11,
+                  padding: '8px',
+                }}
+              >
+                No recently closed tabs
+              </div>
+            )}
+            {recentOpen &&
+              recentTabs.map((tab, index) => (
+                <StyledRecentTabItem key={`${tab.sessionId}-${index}`}>
+                  <StyledTabThumbnailBG
+                    as="div"
+                    style={{ width: 22, height: 22, marginRight: 8, flexShrink: 0 }}
+                  >
+                    <StyledTabThumbnail
+                      src={tab.favIconUrl || sparklyIcon}
+                      alt=""
+                      style={{ width: 12, height: 12 }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = sparklyIcon;
+                      }}
+                    />
+                  </StyledTabThumbnailBG>
+                  <StyledTabTitle style={{ fontSize: 12 }}>
+                    {tab.title || tab.url || 'Untitled'}
+                  </StyledTabTitle>
+                  <StyledRestoreButton onClick={() => restoreRecentSession(tab.sessionId)}>
                       Restore
                     </StyledRestoreButton>
                   </StyledRecentTabItem>
                 ))}
-            </StyledCollapsibleSection>
-          )}
+          </StyledCollapsibleSection>
 
           {/* Saved Sessions */}
           <StyledSessionPanel>
