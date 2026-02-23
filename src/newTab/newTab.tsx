@@ -29,13 +29,9 @@ import { registerBuiltinPlugins } from '../plugins/builtin';
 import { SettingsModal } from '../settings';
 import { useUI, useSettings, useInitialization } from '../store/hooks';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { hackerNewsInstance } from '../plugins/builtin/hackernews';
-import { githubInstance } from '../plugins/builtin/github';
-import { devtoInstance } from '../plugins/builtin/devto';
+import { feedHubInstance } from '../plugins/builtin/feedhub';
 
-const HackerNewsWidget = hackerNewsInstance.Component;
-const GitHubWidget = githubInstance.Component;
-const DevToWidget = devtoInstance.Component;
+const FeedHubWidget = feedHubInstance.Component;
 
 const StyledMainColumn = styled.div`
     display: flex;
@@ -70,7 +66,7 @@ const DashboardGrid = styled.section`
     padding: var(--layout-padding, 24px);
     max-width: 1200px;
     margin: 0 auto;
-    width: 100%;
+    width: 80%;
 `;
 
 const WidgetContainer = styled.div`
@@ -527,14 +523,8 @@ function NewTabContent() {
                         </div>
                     </MiddleSection>
                     <DashboardGrid>
-                        <WidgetContainer>
-                            <HackerNewsWidget api={null as any} />
-                        </WidgetContainer>
-                        <WidgetContainer>
-                            <GitHubWidget api={null as any} />
-                        </WidgetContainer>
-                        <WidgetContainer>
-                            <DevToWidget api={null as any} />
+                        <WidgetContainer style={{ gridColumn: '1 / -1' }}>
+                            <FeedHubWidget api={null as any} />
                         </WidgetContainer>
                     </DashboardGrid>
                     {showBottomBar && <BottomSection>
