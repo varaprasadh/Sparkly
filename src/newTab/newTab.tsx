@@ -70,7 +70,7 @@ const DashboardGrid = styled.section`
 `;
 
 const WidgetContainer = styled.div`
-    height: 380px;
+    height: 500px;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(16px);
     border-radius: var(--widget-border-radius, 12px);
