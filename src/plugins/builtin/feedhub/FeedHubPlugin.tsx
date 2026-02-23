@@ -2,13 +2,25 @@
  * FeedHub Plugin Component
  *
  * A unified feed reader with multiple sources, horizontal tab switching,
- * and inline settings to enable/disable feeds via checkboxes.
+ * topic filtering, custom RSS feeds, and multi-column layout toggle.
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { PluginProps } from '../../../types/plugin.types';
-import { FeedItem, FeedState, FEED_STORAGE_KEY, FEED_CACHE_KEY } from './types';
+import {
+  FeedItem,
+  FeedSource,
+  FeedState,
+  CustomFeed,
+  FEED_STORAGE_KEY,
+  FEED_CACHE_KEY,
+  TOPIC_STORAGE_KEY,
+  CUSTOM_FEEDS_KEY,
+  LAYOUT_MODE_KEY,
+  TOPIC_LIST,
+} from './types';
 import { FEED_SOURCES, DEFAULT_ENABLED_FEEDS } from './sources';
+import { parseRSS } from './rssParser';
 import {
   Container,
   Header,
@@ -35,6 +47,18 @@ import {
   SkeletonCard,
   SkeletonLine,
   SkeletonMeta,
+  TopicBar,
+  TopicChip,
+  CustomFeedSection,
+  CustomFeedInputRow,
+  CustomFeedInput,
+  CustomFeedAddBtn,
+  CustomFeedItem,
+  CustomFeedDeleteBtn,
+  MultiColumnGrid,
+  ColumnPane,
+  ColumnHeader,
+  ColumnScroll,
 } from './styles';
 
 // ── Relative time helper ──
@@ -66,6 +90,31 @@ function timeAgo(dateStr: string): string {
   return `${years}y ago`;
 }
 
+// ── Topic matching helper ──
+
+function matchesTopic(item: FeedItem, topics: string[]): boolean {
+  if (topics.length === 0) return true;
+
+  const lowerTopics = topics.map((t) => t.toLowerCase());
+
+  // Check tags
+  if (item.tags && item.tags.length > 0) {
+    return item.tags.some((tag) =>
+      lowerTopics.some(
+        (topic) => tag.toLowerCase().includes(topic) || topic.includes(tag.toLowerCase())
+      )
+    );
+  }
+
+  // Check meta field (e.g. GitHub Trending language)
+  if (item.meta) {
+    return lowerTopics.some((topic) => item.meta!.toLowerCase().includes(topic));
+  }
+
+  // Untagged items always pass through
+  return true;
+}
+
 // ── Skeleton placeholder ──
 
 function SkeletonLoader() {
@@ -86,77 +135,168 @@ function SkeletonLoader() {
   );
 }
 
+// ── Feed Card Renderer ──
+
+function FeedCardList({
+  items,
+  cardKey,
+}: {
+  items: FeedItem[];
+  cardKey: number;
+}) {
+  return (
+    <CardList key={cardKey}>
+      {items.map((item, index) => (
+        <Card key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" delay={index}>
+          <CardTitle>{item.title}</CardTitle>
+          {item.description && <CardDescription>{item.description}</CardDescription>}
+          <CardMeta>
+            {item.author && <MetaItem>{item.author}</MetaItem>}
+            {item.score !== undefined && <MetaItem>▲ {item.score.toLocaleString()}</MetaItem>}
+            {item.comments !== undefined && <MetaItem>💬 {item.comments}</MetaItem>}
+            {item.time && <MetaItem>{timeAgo(item.time)}</MetaItem>}
+            {item.meta && <MetaItem>{item.meta}</MetaItem>}
+            {item.tags &&
+              item.tags.slice(0, 3).map((tag) => (
+                <Tag key={tag}>#{tag}</Tag>
+              ))}
+          </CardMeta>
+        </Card>
+      ))}
+    </CardList>
+  );
+}
+
+// ── Main Component ──
+
 export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
   const [enabledFeeds, setEnabledFeeds] = useState<string[]>(DEFAULT_ENABLED_FEEDS);
   const [activeFeedId, setActiveFeedId] = useState<string>(DEFAULT_ENABLED_FEEDS[0]);
   const [feedStates, setFeedStates] = useState<Record<string, FeedState>>({});
   const [showSettings, setShowSettings] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  // Used to re-trigger fade-in animation on tab switch
   const [cardKey, setCardKey] = useState(0);
 
-  // Load enabled feeds from storage
+  // Topic filtering
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+
+  // Custom feeds
+  const [customFeeds, setCustomFeeds] = useState<CustomFeed[]>([]);
+  const [customUrl, setCustomUrl] = useState('');
+  const [customName, setCustomName] = useState('');
+  const [addingCustom, setAddingCustom] = useState(false);
+
+  // Multi-column layout
+  const [multiColumn, setMultiColumn] = useState(false);
+
+  // ── Load persisted state ──
+
   useEffect(() => {
-    chrome.storage.local.get([FEED_STORAGE_KEY], (result) => {
-      const saved = result[FEED_STORAGE_KEY];
-      if (Array.isArray(saved) && saved.length > 0) {
-        setEnabledFeeds(saved);
-        // If current active is not in saved, switch to first
-        if (!saved.includes(activeFeedId)) {
-          setActiveFeedId(saved[0]);
+    chrome.storage.local.get(
+      [FEED_STORAGE_KEY, TOPIC_STORAGE_KEY, CUSTOM_FEEDS_KEY, LAYOUT_MODE_KEY],
+      (result) => {
+        const saved = result[FEED_STORAGE_KEY];
+        if (Array.isArray(saved) && saved.length > 0) {
+          setEnabledFeeds(saved);
+          if (!saved.includes(activeFeedId)) {
+            setActiveFeedId(saved[0]);
+          }
+        }
+
+        const savedTopics = result[TOPIC_STORAGE_KEY];
+        if (Array.isArray(savedTopics)) {
+          setSelectedTopics(savedTopics);
+        }
+
+        const savedCustom = result[CUSTOM_FEEDS_KEY];
+        if (Array.isArray(savedCustom)) {
+          setCustomFeeds(savedCustom);
+        }
+
+        if (result[LAYOUT_MODE_KEY] === 'multi') {
+          setMultiColumn(true);
         }
       }
-    });
+    );
   }, []);
 
-  // Get the enabled source objects in order
-  const enabledSources = useMemo(
-    () => FEED_SOURCES.filter((s) => enabledFeeds.includes(s.id)),
-    [enabledFeeds]
+  // ── Build complete source list (built-in + custom) ──
+
+  const customSources: FeedSource[] = useMemo(
+    () =>
+      customFeeds.map((cf) => ({
+        id: cf.id,
+        name: cf.name,
+        icon: cf.icon || '📡',
+        color: cf.color || '#666',
+        fetcher: async (): Promise<FeedItem[]> => {
+          const res = await fetch(cf.url);
+          if (!res.ok) throw new Error(`Failed to fetch ${cf.name}`);
+          const xml = await res.text();
+          return parseRSS(xml, 20).map((item, i) => ({
+            ...item,
+            id: `custom-${cf.id}-${i}-${item.url}`,
+          }));
+        },
+      })),
+    [customFeeds]
   );
 
-  // Fetch a specific feed
-  const fetchFeed = useCallback(async (feedId: string, isManualRefresh = false) => {
-    const source = FEED_SOURCES.find((s) => s.id === feedId);
-    if (!source) return;
+  const allSources = useMemo(
+    () => [...FEED_SOURCES, ...customSources],
+    [customSources]
+  );
 
-    if (isManualRefresh) setRefreshing(true);
+  const enabledSources = useMemo(
+    () => allSources.filter((s) => enabledFeeds.includes(s.id)),
+    [enabledFeeds, allSources]
+  );
 
-    setFeedStates((prev) => ({
-      ...prev,
-      [feedId]: { items: prev[feedId]?.items || [], loading: true, error: null },
-    }));
+  // ── Fetch feed ──
 
-    try {
-      const items = await source.fetcher();
+  const fetchFeed = useCallback(
+    async (feedId: string, isManualRefresh = false) => {
+      const source = allSources.find((s) => s.id === feedId);
+      if (!source) return;
+
+      if (isManualRefresh) setRefreshing(true);
+
       setFeedStates((prev) => ({
         ...prev,
-        [feedId]: { items, loading: false, error: null },
+        [feedId]: { items: prev[feedId]?.items || [], loading: true, error: null },
       }));
-      setCardKey((k) => k + 1); // Re-trigger fade-in
-      // Cache
-      chrome.storage.local.get([FEED_CACHE_KEY], (result) => {
-        const cache = result[FEED_CACHE_KEY] || {};
-        cache[feedId] = { items, timestamp: Date.now() };
-        chrome.storage.local.set({ [FEED_CACHE_KEY]: cache });
-      });
-    } catch (err: any) {
-      setFeedStates((prev) => ({
-        ...prev,
-        [feedId]: {
-          items: prev[feedId]?.items || [],
-          loading: false,
-          error: 'Failed to load feed.',
-        },
-      }));
-    } finally {
-      if (isManualRefresh) setRefreshing(false);
-    }
-  }, []);
 
-  // Load cache and fetch active feed on mount / active change
+      try {
+        const items = await source.fetcher();
+        setFeedStates((prev) => ({
+          ...prev,
+          [feedId]: { items, loading: false, error: null },
+        }));
+        setCardKey((k) => k + 1);
+        chrome.storage.local.get([FEED_CACHE_KEY], (result) => {
+          const cache = result[FEED_CACHE_KEY] || {};
+          cache[feedId] = { items, timestamp: Date.now() };
+          chrome.storage.local.set({ [FEED_CACHE_KEY]: cache });
+        });
+      } catch (err: any) {
+        setFeedStates((prev) => ({
+          ...prev,
+          [feedId]: {
+            items: prev[feedId]?.items || [],
+            loading: false,
+            error: 'Failed to load feed.',
+          },
+        }));
+      } finally {
+        if (isManualRefresh) setRefreshing(false);
+      }
+    },
+    [allSources]
+  );
+
+  // ── Cache + fetch on active change ──
+
   useEffect(() => {
-    // Load from cache first
     chrome.storage.local.get([FEED_CACHE_KEY], (result) => {
       const cache = result[FEED_CACHE_KEY] || {};
       const cached = cache[activeFeedId];
@@ -167,7 +307,6 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
           [activeFeedId]: { items: cached.items, loading: age > 5 * 60 * 1000, error: null },
         }));
         setCardKey((k) => k + 1);
-        // Re-fetch if cache is older than 5 minutes
         if (age > 5 * 60 * 1000) {
           fetchFeed(activeFeedId);
         }
@@ -177,16 +316,44 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
     });
   }, [activeFeedId, fetchFeed]);
 
-  // Toggle a feed on/off
+  // ── Multi-column: fetch all enabled feeds on mount ──
+
+  useEffect(() => {
+    if (multiColumn) {
+      enabledSources.forEach((source) => {
+        const state = feedStates[source.id];
+        if (!state || (state.items.length === 0 && !state.loading)) {
+          // Load from cache or fetch
+          chrome.storage.local.get([FEED_CACHE_KEY], (result) => {
+            const cache = result[FEED_CACHE_KEY] || {};
+            const cached = cache[source.id];
+            if (cached && cached.items) {
+              const age = Date.now() - (cached.timestamp || 0);
+              setFeedStates((prev) => ({
+                ...prev,
+                [source.id]: { items: cached.items, loading: age > 5 * 60 * 1000, error: null },
+              }));
+              if (age > 5 * 60 * 1000) {
+                fetchFeed(source.id);
+              }
+            } else {
+              fetchFeed(source.id);
+            }
+          });
+        }
+      });
+    }
+  }, [multiColumn, enabledSources.length]);
+
+  // ── Toggle feed on/off ──
+
   const handleToggleFeed = useCallback(
     (feedId: string) => {
       setEnabledFeeds((prev) => {
         let next: string[];
         if (prev.includes(feedId)) {
-          // Don't allow disabling the last one
           if (prev.length <= 1) return prev;
           next = prev.filter((id) => id !== feedId);
-          // If we just disabled the active feed, switch to first remaining
           if (activeFeedId === feedId) {
             setActiveFeedId(next[0]);
           }
@@ -200,17 +367,116 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
     [activeFeedId]
   );
 
+  // ── Topic toggle ──
+
+  const handleToggleTopic = useCallback((topic: string) => {
+    setSelectedTopics((prev) => {
+      const next = prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic];
+      chrome.storage.local.set({ [TOPIC_STORAGE_KEY]: next });
+      return next;
+    });
+  }, []);
+
+  // ── Custom feed add/remove ──
+
+  const handleAddCustomFeed = useCallback(async () => {
+    if (!customUrl.trim() || !customName.trim()) return;
+    setAddingCustom(true);
+
+    try {
+      // Validate by attempting to fetch and parse
+      const res = await fetch(customUrl.trim());
+      if (!res.ok) throw new Error('Could not fetch URL');
+      const xml = await res.text();
+      const items = parseRSS(xml, 5);
+      if (items.length === 0) throw new Error('No feed items found');
+
+      const newFeed: CustomFeed = {
+        id: `custom-${Date.now()}`,
+        name: customName.trim(),
+        url: customUrl.trim(),
+        icon: '📡',
+        color: '#666',
+      };
+
+      setCustomFeeds((prev) => {
+        const next = [...prev, newFeed];
+        chrome.storage.local.set({ [CUSTOM_FEEDS_KEY]: next });
+        return next;
+      });
+
+      // Auto-enable the new feed
+      setEnabledFeeds((prev) => {
+        const next = [...prev, newFeed.id];
+        chrome.storage.local.set({ [FEED_STORAGE_KEY]: next });
+        return next;
+      });
+
+      setCustomUrl('');
+      setCustomName('');
+    } catch (err) {
+      alert('Failed to add feed. Make sure the URL is a valid RSS/Atom feed.');
+    } finally {
+      setAddingCustom(false);
+    }
+  }, [customUrl, customName]);
+
+  const handleRemoveCustomFeed = useCallback(
+    (feedId: string) => {
+      setCustomFeeds((prev) => {
+        const next = prev.filter((f) => f.id !== feedId);
+        chrome.storage.local.set({ [CUSTOM_FEEDS_KEY]: next });
+        return next;
+      });
+      setEnabledFeeds((prev) => {
+        const next = prev.filter((id) => id !== feedId);
+        chrome.storage.local.set({ [FEED_STORAGE_KEY]: next });
+        return next;
+      });
+      if (activeFeedId === feedId) {
+        setActiveFeedId(enabledFeeds[0] || DEFAULT_ENABLED_FEEDS[0]);
+      }
+    },
+    [activeFeedId, enabledFeeds]
+  );
+
+  // ── Layout toggle ──
+
+  const handleToggleLayout = useCallback(() => {
+    setMultiColumn((prev) => {
+      const next = !prev;
+      chrome.storage.local.set({ [LAYOUT_MODE_KEY]: next ? 'multi' : 'single' });
+      return next;
+    });
+  }, []);
+
   const handleRefresh = useCallback(() => {
-    fetchFeed(activeFeedId, true);
-  }, [activeFeedId, fetchFeed]);
+    if (multiColumn) {
+      enabledSources.forEach((s) => fetchFeed(s.id, false));
+      setRefreshing(true);
+      setTimeout(() => setRefreshing(false), 2000);
+    } else {
+      fetchFeed(activeFeedId, true);
+    }
+  }, [activeFeedId, fetchFeed, multiColumn, enabledSources]);
 
   const handleTabSwitch = useCallback((feedId: string) => {
     setActiveFeedId(feedId);
-    setCardKey((k) => k + 1); // Re-trigger fade-in
+    setCardKey((k) => k + 1);
   }, []);
 
+  // ── Filter items by topic ──
+
+  const filterItems = useCallback(
+    (items: FeedItem[]): FeedItem[] => {
+      if (selectedTopics.length === 0) return items;
+      return items.filter((item) => matchesTopic(item, selectedTopics));
+    },
+    [selectedTopics]
+  );
+
   const currentState = feedStates[activeFeedId] || { items: [], loading: true, error: null };
-  const activeSource = FEED_SOURCES.find((s) => s.id === activeFeedId);
+  const filteredItems = filterItems(currentState.items);
 
   return (
     <Container>
@@ -219,10 +485,12 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
         <Title>Feeds</Title>
         <HeaderActions>
           <IconButton
-            onClick={handleRefresh}
-            spinning={refreshing}
-            title="Refresh feed"
+            onClick={handleToggleLayout}
+            title={multiColumn ? 'Single column view' : 'Multi-column view'}
           >
+            {multiColumn ? '▤' : '▥'}
+          </IconButton>
+          <IconButton onClick={handleRefresh} spinning={refreshing} title="Refresh feed">
             ↻
           </IconButton>
           <IconButton onClick={() => setShowSettings(!showSettings)} title="Feed settings">
@@ -235,7 +503,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
       {showSettings && (
         <SettingsPanel>
           <SettingsTitle>Enable Feeds</SettingsTitle>
-          {FEED_SOURCES.map((source) => (
+          {allSources.map((source) => (
             <FeedCheckbox key={source.id}>
               <input
                 type="checkbox"
@@ -246,59 +514,126 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
               <FeedCheckboxName>{source.name}</FeedCheckboxName>
             </FeedCheckbox>
           ))}
+
+          {/* Custom RSS Feeds */}
+          <CustomFeedSection>
+            <SettingsTitle>Custom RSS Feeds</SettingsTitle>
+            {customFeeds.map((cf) => (
+              <CustomFeedItem key={cf.id}>
+                <span>📡 {cf.name}</span>
+                <CustomFeedDeleteBtn onClick={() => handleRemoveCustomFeed(cf.id)} title="Remove">
+                  ✕
+                </CustomFeedDeleteBtn>
+              </CustomFeedItem>
+            ))}
+            <CustomFeedInputRow>
+              <CustomFeedInput
+                placeholder="Feed name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                style={{ maxWidth: '120px' }}
+              />
+              <CustomFeedInput
+                placeholder="RSS/Atom URL"
+                value={customUrl}
+                onChange={(e) => setCustomUrl(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomFeed()}
+              />
+              <CustomFeedAddBtn
+                onClick={handleAddCustomFeed}
+                disabled={addingCustom || !customUrl.trim() || !customName.trim()}
+              >
+                {addingCustom ? '...' : 'Add'}
+              </CustomFeedAddBtn>
+            </CustomFeedInputRow>
+          </CustomFeedSection>
         </SettingsPanel>
       )}
 
-      {/* Feed tabs — horizontally scrollable */}
-      <FeedTabs>
-        {enabledSources.map((source) => (
-          <FeedTab
-            key={source.id}
-            active={activeFeedId === source.id}
-            accentColor={source.color}
-            onClick={() => handleTabSwitch(source.id)}
+      {/* Topic filter chips */}
+      <TopicBar>
+        <TopicChip
+          active={selectedTopics.length === 0}
+          onClick={() => {
+            setSelectedTopics([]);
+            chrome.storage.local.set({ [TOPIC_STORAGE_KEY]: [] });
+          }}
+        >
+          All
+        </TopicChip>
+        {TOPIC_LIST.map((topic) => (
+          <TopicChip
+            key={topic}
+            active={selectedTopics.includes(topic)}
+            onClick={() => handleToggleTopic(topic)}
           >
-            {source.icon} {source.name}
-          </FeedTab>
+            {topic}
+          </TopicChip>
         ))}
-      </FeedTabs>
+      </TopicBar>
 
-      {/* Feed items */}
-      <FeedCardsScroll>
-        {/* Skeleton loading */}
-        {currentState.loading && currentState.items.length === 0 && (
-          <SkeletonLoader />
-        )}
-
-        {/* Error with retry */}
-        {currentState.error && currentState.items.length === 0 && (
-          <StateMessage>
-            {currentState.error}
-            <RetryButton onClick={handleRefresh}>Retry</RetryButton>
-          </StateMessage>
-        )}
-
-        {/* Cards with staggered fade-in */}
-        <CardList key={cardKey}>
-          {currentState.items.map((item, index) => (
-            <Card key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" delay={index}>
-              <CardTitle>{item.title}</CardTitle>
-              {item.description && <CardDescription>{item.description}</CardDescription>}
-              <CardMeta>
-                {item.author && <MetaItem>{item.author}</MetaItem>}
-                {item.score !== undefined && <MetaItem>▲ {item.score.toLocaleString()}</MetaItem>}
-                {item.comments !== undefined && <MetaItem>💬 {item.comments}</MetaItem>}
-                {item.time && <MetaItem>{timeAgo(item.time)}</MetaItem>}
-                {item.meta && <MetaItem>{item.meta}</MetaItem>}
-                {item.tags &&
-                  item.tags.map((tag) => (
-                    <Tag key={tag}>#{tag}</Tag>
-                  ))}
-              </CardMeta>
-            </Card>
+      {/* Feed tabs — only in single-column mode */}
+      {!multiColumn && (
+        <FeedTabs>
+          {enabledSources.map((source) => (
+            <FeedTab
+              key={source.id}
+              active={activeFeedId === source.id}
+              accentColor={source.color}
+              onClick={() => handleTabSwitch(source.id)}
+            >
+              {source.icon} {source.name}
+            </FeedTab>
           ))}
-        </CardList>
-      </FeedCardsScroll>
+        </FeedTabs>
+      )}
+
+      {/* Single-column view */}
+      {!multiColumn && (
+        <FeedCardsScroll>
+          {currentState.loading && currentState.items.length === 0 && <SkeletonLoader />}
+          {currentState.error && currentState.items.length === 0 && (
+            <StateMessage>
+              {currentState.error}
+              <RetryButton onClick={handleRefresh}>Retry</RetryButton>
+            </StateMessage>
+          )}
+          {filteredItems.length === 0 && currentState.items.length > 0 && !currentState.loading && (
+            <StateMessage>No items match the selected topics.</StateMessage>
+          )}
+          <FeedCardList items={filteredItems} cardKey={cardKey} />
+        </FeedCardsScroll>
+      )}
+
+      {/* Multi-column view */}
+      {multiColumn && (
+        <MultiColumnGrid>
+          {enabledSources.slice(0, 3).map((source) => {
+            const state = feedStates[source.id] || { items: [], loading: true, error: null };
+            const filtered = filterItems(state.items);
+            return (
+              <ColumnPane key={source.id}>
+                <ColumnHeader accentColor={source.color}>
+                  {source.icon} {source.name}
+                </ColumnHeader>
+                <ColumnScroll>
+                  {state.loading && state.items.length === 0 && <SkeletonLoader />}
+                  {state.error && state.items.length === 0 && (
+                    <StateMessage>
+                      {state.error}
+                      <RetryButton onClick={() => fetchFeed(source.id, true)}>Retry</RetryButton>
+                    </StateMessage>
+                  )}
+                  {filtered.length === 0 && state.items.length > 0 && !state.loading && (
+                    <StateMessage>No matches.</StateMessage>
+                  )}
+                  <FeedCardList items={filtered} cardKey={cardKey} />
+                </ColumnScroll>
+              </ColumnPane>
+            );
+          })}
+        </MultiColumnGrid>
+      )}
     </Container>
   );
 }

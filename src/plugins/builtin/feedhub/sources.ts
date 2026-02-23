@@ -289,6 +289,38 @@ export const FEED_SOURCES: FeedSource[] = [
       }));
     },
   },
+
+  {
+    id: 'freecodecamp',
+    name: 'freeCodeCamp',
+    icon: '🔥',
+    color: '#0a0a23',
+    fetcher: async (): Promise<FeedItem[]> => {
+      const res = await fetch('https://www.freecodecamp.org/news/rss/');
+      if (!res.ok) throw new Error('freeCodeCamp feed error');
+      const xml = await res.text();
+      return parseRSS(xml, 20).map((item, i) => ({
+        ...item,
+        id: `fcc-${i}-${item.url}`,
+      }));
+    },
+  },
+
+  {
+    id: 'hackernoon',
+    name: 'HackerNoon',
+    icon: '🌙',
+    color: '#00ff00',
+    fetcher: async (): Promise<FeedItem[]> => {
+      const res = await fetch('https://hackernoon.com/feed');
+      if (!res.ok) throw new Error('HackerNoon feed error');
+      const xml = await res.text();
+      return parseRSS(xml, 20).map((item, i) => ({
+        ...item,
+        id: `hn2-${i}-${item.url}`,
+      }));
+    },
+  },
 ];
 
 export const DEFAULT_ENABLED_FEEDS = ['hackernews', 'github', 'devto'];

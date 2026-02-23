@@ -25,6 +25,11 @@ export function parseRSS(xml: string, limit = 20): FeedItem[] {
         item.querySelector('description')?.textContent?.trim() || '';
       const pubDate =
         item.querySelector('pubDate')?.textContent?.trim() || '';
+      const categories: string[] = [];
+      item.querySelectorAll('category').forEach((cat) => {
+        const text = cat.textContent?.trim();
+        if (text) categories.push(text);
+      });
 
       if (title && link) {
         items.push({
@@ -34,6 +39,7 @@ export function parseRSS(xml: string, limit = 20): FeedItem[] {
           author: creator || undefined,
           description: stripHtml(desc).slice(0, 120) || undefined,
           time: pubDate || undefined,
+          tags: categories.length > 0 ? categories.slice(0, 5) : undefined,
         });
       }
     });
@@ -57,6 +63,11 @@ export function parseRSS(xml: string, limit = 20): FeedItem[] {
       entry.querySelector('updated')?.textContent?.trim() ||
       entry.querySelector('published')?.textContent?.trim() ||
       '';
+    const categories: string[] = [];
+    entry.querySelectorAll('category').forEach((cat) => {
+      const text = cat.getAttribute('term') || cat.textContent?.trim() || '';
+      if (text) categories.push(text);
+    });
 
     if (title && link) {
       items.push({
@@ -66,6 +77,7 @@ export function parseRSS(xml: string, limit = 20): FeedItem[] {
         author: author || undefined,
         description: stripHtml(summary).slice(0, 120) || undefined,
         time: updated || undefined,
+        tags: categories.length > 0 ? categories.slice(0, 5) : undefined,
       });
     }
   });

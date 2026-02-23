@@ -359,3 +359,161 @@ export const SkeletonMeta = styled.div`
   gap: 10px;
   margin-top: 2px;
 `;
+
+// ── Topic Filter Chips ──
+
+export const TopicBar = styled.div`
+  display: flex;
+  gap: 6px;
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+  flex-shrink: 0;
+  ${darkScrollbar}
+
+  &::-webkit-scrollbar {
+    height: 3px;
+  }
+`;
+
+export const TopicChip = styled.button<{ active: boolean }>`
+  padding: 3px 10px;
+  background: ${(props) => (props.active ? 'rgba(59, 130, 246, 0.3)' : 'rgba(255, 255, 255, 0.06)')};
+  border: 1px solid ${(props) => (props.active ? 'rgba(59, 130, 246, 0.5)' : 'rgba(255, 255, 255, 0.1)')};
+  color: ${(props) => (props.active ? '#93c5fd' : 'rgba(255, 255, 255, 0.45)')};
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${(props) => (props.active ? 'rgba(59, 130, 246, 0.4)' : 'rgba(255, 255, 255, 0.12)')};
+    color: ${(props) => (props.active ? '#bfdbfe' : 'rgba(255, 255, 255, 0.7)')};
+  }
+`;
+
+// ── Custom Feed Settings ──
+
+export const CustomFeedSection = styled.div`
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+export const CustomFeedInputRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+`;
+
+export const CustomFeedInput = styled.input`
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+`;
+
+export const CustomFeedAddBtn = styled.button`
+  background: rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.5);
+    color: white;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+`;
+
+export const CustomFeedItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+`;
+
+export const CustomFeedDeleteBtn = styled.button`
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+  }
+`;
+
+// ── Multi-Column Layout ──
+
+export const MultiColumnGrid = styled.div`
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0;
+  overflow: hidden;
+`;
+
+export const ColumnPane = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+
+  &:last-child {
+    border-right: none;
+  }
+`;
+
+export const ColumnHeader = styled.div<{ accentColor: string }>`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 2px solid ${(props) => props.accentColor};
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+`;
+
+export const ColumnScroll = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  ${darkScrollbar}
+`;
