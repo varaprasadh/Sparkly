@@ -106,9 +106,9 @@ export const StyledCollapse = styled.div`
 export const StyledActions = styled.div`
   position: absolute;
   top: 0;
-  right: -60px;
+  right: -70px;
   height: 100%;
-  width: 60px;
+  width: 70px;
   background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.8));
   transition: right 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;

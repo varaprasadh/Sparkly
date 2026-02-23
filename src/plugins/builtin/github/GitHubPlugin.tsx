@@ -36,6 +36,33 @@ const Content = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+
+  &:hover {
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
 `;
 
 const RepoList = styled.div`
