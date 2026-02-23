@@ -33,6 +33,7 @@ export const FEED_SOURCES: FeedSource[] = [
           author: s.by,
           score: s.score,
           comments: s.descendants || 0,
+          time: s.time ? new Date(s.time * 1000).toISOString() : undefined,
         }));
     },
   },
@@ -58,6 +59,7 @@ export const FEED_SOURCES: FeedSource[] = [
         description: r.description || undefined,
         score: r.stargazers_count,
         meta: r.language || undefined,
+        time: r.created_at || undefined,
       }));
     },
   },
@@ -80,6 +82,7 @@ export const FEED_SOURCES: FeedSource[] = [
         score: a.public_reactions_count,
         comments: a.comments_count,
         tags: a.tag_list?.slice(0, 3),
+        time: a.published_at || undefined,
       }));
     },
   },
@@ -113,6 +116,7 @@ export const FEED_SOURCES: FeedSource[] = [
             score: c.data.score,
             comments: c.data.num_comments,
             meta: `r/${sub}`,
+            time: c.data.created_utc ? new Date(c.data.created_utc * 1000).toISOString() : undefined,
           }));
 
       const prog = mapPosts(progData, 'programming');
@@ -163,6 +167,7 @@ export const FEED_SOURCES: FeedSource[] = [
         score: s.score,
         comments: s.comment_count,
         tags: s.tags?.slice(0, 3),
+        time: s.created_at || undefined,
       }));
     },
   },

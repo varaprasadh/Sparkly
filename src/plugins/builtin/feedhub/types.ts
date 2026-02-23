@@ -13,6 +13,7 @@ export interface FeedItem {
   description?: string;
   avatarUrl?: string;
   meta?: string;
+  time?: string; // ISO date string or unix timestamp for relative time display
 }
 
 export interface FeedSource {

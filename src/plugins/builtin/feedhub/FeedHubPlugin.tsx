@@ -13,7 +13,8 @@ import {
   Container,
   Header,
   Title,
-  SettingsToggle,
+  HeaderActions,
+  IconButton,
   FeedTabs,
   FeedTab,
   FeedCardsScroll,
@@ -30,13 +31,69 @@ import {
   FeedCheckboxIcon,
   FeedCheckboxName,
   StateMessage,
+  RetryButton,
+  SkeletonCard,
+  SkeletonLine,
+  SkeletonMeta,
 } from './styles';
+
+// ── Relative time helper ──
+
+function timeAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+
+  const now = Date.now();
+  const diff = now - date.getTime();
+  if (diff < 0) return 'just now';
+
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return 'just now';
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+
+  const years = Math.floor(months / 12);
+  return `${years}y ago`;
+}
+
+// ── Skeleton placeholder ──
+
+function SkeletonLoader() {
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <SkeletonCard key={i} style={{ animationDelay: `${i * 50}ms` }}>
+          <SkeletonLine width={`${75 + Math.random() * 25}%`} height="14px" />
+          <SkeletonLine width={`${50 + Math.random() * 40}%`} height="11px" />
+          <SkeletonMeta>
+            <SkeletonLine width="60px" height="10px" />
+            <SkeletonLine width="40px" height="10px" />
+            <SkeletonLine width="50px" height="10px" />
+          </SkeletonMeta>
+        </SkeletonCard>
+      ))}
+    </>
+  );
+}
 
 export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
   const [enabledFeeds, setEnabledFeeds] = useState<string[]>(DEFAULT_ENABLED_FEEDS);
   const [activeFeedId, setActiveFeedId] = useState<string>(DEFAULT_ENABLED_FEEDS[0]);
   const [feedStates, setFeedStates] = useState<Record<string, FeedState>>({});
   const [showSettings, setShowSettings] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  // Used to re-trigger fade-in animation on tab switch
+  const [cardKey, setCardKey] = useState(0);
 
   // Load enabled feeds from storage
   useEffect(() => {
@@ -59,9 +116,11 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
   );
 
   // Fetch a specific feed
-  const fetchFeed = useCallback(async (feedId: string) => {
+  const fetchFeed = useCallback(async (feedId: string, isManualRefresh = false) => {
     const source = FEED_SOURCES.find((s) => s.id === feedId);
     if (!source) return;
+
+    if (isManualRefresh) setRefreshing(true);
 
     setFeedStates((prev) => ({
       ...prev,
@@ -74,6 +133,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
         ...prev,
         [feedId]: { items, loading: false, error: null },
       }));
+      setCardKey((k) => k + 1); // Re-trigger fade-in
       // Cache
       chrome.storage.local.get([FEED_CACHE_KEY], (result) => {
         const cache = result[FEED_CACHE_KEY] || {};
@@ -86,9 +146,11 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
         [feedId]: {
           items: prev[feedId]?.items || [],
           loading: false,
-          error: 'Failed to load. Try again later.',
+          error: 'Failed to load feed.',
         },
       }));
+    } finally {
+      if (isManualRefresh) setRefreshing(false);
     }
   }, []);
 
@@ -104,6 +166,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
           ...prev,
           [activeFeedId]: { items: cached.items, loading: age > 5 * 60 * 1000, error: null },
         }));
+        setCardKey((k) => k + 1);
         // Re-fetch if cache is older than 5 minutes
         if (age > 5 * 60 * 1000) {
           fetchFeed(activeFeedId);
@@ -137,6 +200,15 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
     [activeFeedId]
   );
 
+  const handleRefresh = useCallback(() => {
+    fetchFeed(activeFeedId, true);
+  }, [activeFeedId, fetchFeed]);
+
+  const handleTabSwitch = useCallback((feedId: string) => {
+    setActiveFeedId(feedId);
+    setCardKey((k) => k + 1); // Re-trigger fade-in
+  }, []);
+
   const currentState = feedStates[activeFeedId] || { items: [], loading: true, error: null };
   const activeSource = FEED_SOURCES.find((s) => s.id === activeFeedId);
 
@@ -145,9 +217,18 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
       {/* Header */}
       <Header>
         <Title>Feeds</Title>
-        <SettingsToggle onClick={() => setShowSettings(!showSettings)} title="Feed settings">
-          ⚙
-        </SettingsToggle>
+        <HeaderActions>
+          <IconButton
+            onClick={handleRefresh}
+            spinning={refreshing}
+            title="Refresh feed"
+          >
+            ↻
+          </IconButton>
+          <IconButton onClick={() => setShowSettings(!showSettings)} title="Feed settings">
+            ⚙
+          </IconButton>
+        </HeaderActions>
       </Header>
 
       {/* Settings panel (toggled) */}
@@ -175,7 +256,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
             key={source.id}
             active={activeFeedId === source.id}
             accentColor={source.color}
-            onClick={() => setActiveFeedId(source.id)}
+            onClick={() => handleTabSwitch(source.id)}
           >
             {source.icon} {source.name}
           </FeedTab>
@@ -184,21 +265,30 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
 
       {/* Feed items */}
       <FeedCardsScroll>
+        {/* Skeleton loading */}
         {currentState.loading && currentState.items.length === 0 && (
-          <StateMessage>Loading {activeSource?.name || 'feed'}...</StateMessage>
+          <SkeletonLoader />
         )}
+
+        {/* Error with retry */}
         {currentState.error && currentState.items.length === 0 && (
-          <StateMessage>{currentState.error}</StateMessage>
+          <StateMessage>
+            {currentState.error}
+            <RetryButton onClick={handleRefresh}>Retry</RetryButton>
+          </StateMessage>
         )}
-        <CardList>
-          {currentState.items.map((item) => (
-            <Card key={item.id} href={item.url} target="_blank" rel="noopener noreferrer">
+
+        {/* Cards with staggered fade-in */}
+        <CardList key={cardKey}>
+          {currentState.items.map((item, index) => (
+            <Card key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" delay={index}>
               <CardTitle>{item.title}</CardTitle>
               {item.description && <CardDescription>{item.description}</CardDescription>}
               <CardMeta>
                 {item.author && <MetaItem>{item.author}</MetaItem>}
                 {item.score !== undefined && <MetaItem>▲ {item.score.toLocaleString()}</MetaItem>}
                 {item.comments !== undefined && <MetaItem>💬 {item.comments}</MetaItem>}
+                {item.time && <MetaItem>{timeAgo(item.time)}</MetaItem>}
                 {item.meta && <MetaItem>{item.meta}</MetaItem>}
                 {item.tags &&
                   item.tags.map((tag) => (

@@ -2,7 +2,7 @@
  * FeedHub Styled Components
  */
 
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const darkScrollbar = `
   scrollbar-width: thin;
@@ -62,7 +62,13 @@ export const Title = styled.h3`
   font-weight: 600;
 `;
 
-export const SettingsToggle = styled.button`
+export const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const IconButton = styled.button<{ spinning?: boolean }>`
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.7);
@@ -80,6 +86,14 @@ export const SettingsToggle = styled.button`
     background: rgba(255, 255, 255, 0.2);
     color: white;
   }
+
+  ${(props) => props.spinning ? `
+    animation: spin 1s linear infinite;
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  ` : ''}
 `;
 
 // ── Feed Tabs (horizontal scroll of enabled feed names) ──
@@ -118,7 +132,18 @@ export const FeedTab = styled.button<{ active: boolean; accentColor: string }>`
   }
 `;
 
-// ── Feed Content (the horizontal scrollable card area) ──
+// ── Feed Content (the scrollable card area) ──
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 export const FeedCardsScroll = styled.div`
   flex: 1;
@@ -132,7 +157,7 @@ export const CardList = styled.div`
   flex-direction: column;
 `;
 
-export const Card = styled.a`
+export const Card = styled.a<{ delay?: number }>`
   display: flex;
   flex-direction: column;
   padding: 12px 16px;
@@ -140,6 +165,8 @@ export const Card = styled.a`
   text-decoration: none;
   color: inherit;
   transition: background 0.2s;
+  animation: ${fadeIn} 0.35s ease-out both;
+  animation-delay: ${(props) => (props.delay || 0) * 30}ms;
 
   &:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -265,6 +292,7 @@ export const FeedCheckboxName = styled.span`
 
 export const StateMessage = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -273,4 +301,61 @@ export const StateMessage = styled.div`
   font-size: 13px;
   padding: 20px;
   text-align: center;
+  gap: 12px;
+`;
+
+export const RetryButton = styled.button`
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+`;
+
+// ── Skeleton Loading ──
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const skeletonBg = `
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+`;
+
+export const SkeletonCard = styled.div`
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: ${fadeIn} 0.3s ease-out both;
+`;
+
+export const SkeletonLine = styled.div<{ width?: string; height?: string }>`
+  width: ${(props) => props.width || '100%'};
+  height: ${(props) => props.height || '12px'};
+  ${skeletonBg}
+  animation: ${shimmer} 1.5s ease-in-out infinite;
+`;
+
+export const SkeletonMeta = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
 `;
