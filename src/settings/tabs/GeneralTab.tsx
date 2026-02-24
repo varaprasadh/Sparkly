@@ -163,18 +163,6 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
         <SectionTitle>Quick Links</SectionTitle>
 
         <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showTopSites}
-              onChange={(e) => onUpdate({ showTopSites: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showTopSites} />
-            <ToggleLabel>Show most visited sites</ToggleLabel>
-          </Toggle>
-          <Description>Display shortcuts to your most frequently visited websites</Description>
-        </FormGroup>
-
-        <FormGroup>
           <Label>Maximum quick links</Label>
           <Select
             value={settings.maxQuickLinks}
@@ -192,6 +180,18 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
 
       <Section>
         <SectionTitle>Widgets</SectionTitle>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showTopSites}
+              onChange={(e) => onUpdate({ showTopSites: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showTopSites} />
+            <ToggleLabel>Show recently visited</ToggleLabel>
+          </Toggle>
+          <Description>Display your most recently visited websites</Description>
+        </FormGroup>
 
         <FormGroup>
           <Toggle>

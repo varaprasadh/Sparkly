@@ -521,7 +521,7 @@ function NewTabContent() {
                             <LocalDateTime />
                             {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
                             <SearchBar />
-                            <TopSites />
+                            {general.showTopSites && <TopSites />}
                         </div>
                     </MiddleSection>
                     {general.showFeedHub && (
