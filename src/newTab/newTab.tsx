@@ -514,7 +514,7 @@ function NewTabContent() {
                     blur={wallpaper.blur}
                     dim={wallpaper.dim}
                 />
-                <TabManager />
+                {general.showTabManager && <TabManager />}
                 <StyledMainColumn>
                     <MiddleSection>
                         <div style={{ textAlign: 'center', width: '100%' }}>
@@ -524,11 +524,13 @@ function NewTabContent() {
                             <TopSites />
                         </div>
                     </MiddleSection>
+                    {general.showFeedHub && (
                     <DashboardGrid>
                         <WidgetContainer style={{ gridColumn: '1 / -1' }}>
                             <FeedHubWidget api={null as any} />
                         </WidgetContainer>
                     </DashboardGrid>
+                    )}
                     {showBottomBar && <BottomSection>
                         <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
                             Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash

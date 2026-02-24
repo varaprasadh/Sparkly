@@ -175,18 +175,6 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
         </FormGroup>
 
         <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showBookmarks}
-              onChange={(e) => onUpdate({ showBookmarks: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showBookmarks} />
-            <ToggleLabel>Show custom bookmarks</ToggleLabel>
-          </Toggle>
-          <Description>Display your custom bookmark shortcuts</Description>
-        </FormGroup>
-
-        <FormGroup>
           <Label>Maximum quick links</Label>
           <Select
             value={settings.maxQuickLinks}
@@ -204,6 +192,42 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
 
       <Section>
         <SectionTitle>Widgets</SectionTitle>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showTabManager}
+              onChange={(e) => onUpdate({ showTabManager: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showTabManager} />
+            <ToggleLabel>Show tab manager</ToggleLabel>
+          </Toggle>
+          <Description>Display the tab manager bar at the top of the page</Description>
+        </FormGroup>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showFeedHub}
+              onChange={(e) => onUpdate({ showFeedHub: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showFeedHub} />
+            <ToggleLabel>Show feed hub</ToggleLabel>
+          </Toggle>
+          <Description>Display the developer news feed below the search bar</Description>
+        </FormGroup>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showBookmarks}
+              onChange={(e) => onUpdate({ showBookmarks: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showBookmarks} />
+            <ToggleLabel>Show Google Apps</ToggleLabel>
+          </Toggle>
+          <Description>Display Google app shortcuts in the right sidebar</Description>
+        </FormGroup>
 
         <FormGroup>
           <Toggle>

@@ -38,6 +38,7 @@ export interface GeneralSettings {
   dateFormat: 'short' | 'long' | 'full';
   showBookmarks: boolean;
   maxQuickLinks: number;
+  showFeedHub: boolean;
   showWeather: boolean;
   temperatureUnit: 'celsius' | 'fahrenheit';
 }
@@ -126,6 +127,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   dateFormat: 'long',
   showBookmarks: true,
   maxQuickLinks: 8,
+  showFeedHub: true,
   showWeather: true,
   temperatureUnit: 'celsius',
 };
