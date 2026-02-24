@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sparkly — Your New Tab, Supercharged</title>
+  <meta name="description" content="Sparkly transforms your browser's new tab into a powerful productivity dashboard. Smart tab management, dev feeds, beautiful wallpapers, one-click Google apps, and deep customization." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════ Background Orbs ═══════════ -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- ═══════════ Navigation ═══════════ -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">&#10024;</span>
+        <span class="logo-text">Sparkly</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#showcase">Showcase</a>
+        <a href="#demo">Demo</a>
+        <a href="#testimonials">Testimonials</a>
+      </div>
+      <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer" class="btn btn-sm">
+        Add to Chrome
+      </a>
+    </div>
+  </nav>
+
+  <!-- ═══════════ Hero ═══════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-content reveal">
+      <div class="hero-badge">Chrome Extension</div>
+      <h1 class="hero-title">
+        Your New Tab,<br />
+        <span class="gradient-text">Supercharged.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Sparkly replaces your browser's blank new tab with a stunning productivity dashboard.
+        Manage tabs, read dev feeds, launch Google apps, search anything &mdash; all from one 
+        beautiful, customizable home base.
+      </p>
+      <div class="hero-actions">
+        <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          Add to Chrome &mdash; It's Free
+        </a>
+        <a href="#demo" class="btn btn-ghost btn-lg">
+          Watch Demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">13+</span>
+          <span class="hero-stat-label">Feed Sources</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">10</span>
+          <span class="hero-stat-label">Google Apps</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">100%</span>
+          <span class="hero-stat-label">Free &amp; Open</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual reveal reveal-delay-1">
+      <div class="browser-mockup">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="browser-tab">
+            <span class="browser-tab-icon">&#10024;</span>
+            New Tab
+          </div>
+        </div>
+        <div class="browser-content">
+          <div class="mock-dashboard">
+            <!-- Left: Tab Manager -->
+            <div class="mock-sidebar">
+              <div class="mock-sidebar-header">
+                <span class="mock-sidebar-title">Tabs</span>
+                <span class="mock-tab-count">24</span>
+              </div>
+              <div class="mock-tab-item active-tab">
+                <div class="mock-tab-favicon"></div>
+                <div class="mock-tab-text" style="width:70%"></div>
+              </div>
+              <div class="mock-tab-item">
+                <div class="mock-tab-favicon"></div>
+                <div class="mock-tab-text" style="width:55%"></div>
+              </div>
+              <div class="mock-tab-item duplicate">
+                <div class="mock-tab-favicon"></div>
+                <div class="mock-tab-text" style="width:65%"></div>
+              </div>
+              <div class="mock-tab-item">
+                <div class="mock-tab-favicon"></div>
+                <div class="mock-tab-text" style="width:50%"></div>
+              </div>
+              <div class="mock-tab-item">
+                <div class="mock-tab-favicon"></div>
+                <div class="mock-tab-text" style="width:60%"></div>
+              </div>
+            </div>
+            <!-- Center: Main content -->
+            <div class="mock-center">
+              <div class="mock-clock">
+                <div class="mock-time" id="mock-time">10:42</div>
+                <div class="mock-date">Tuesday, February 24th</div>
+              </div>
+              <div class="mock-search">
+                <div class="mock-search-icon">&#128269;</div>
+                <div class="mock-search-text"></div>
+              </div>
+              <div class="mock-topsites">
+                <div class="mock-site"></div>
+                <div class="mock-site"></div>
+                <div class="mock-site"></div>
+                <div class="mock-site"></div>
+                <div class="mock-site"></div>
+                <div class="mock-site"></div>
+              </div>
+              <div class="mock-feeds">
+                <div class="mock-feed-tabs">
+                  <span class="active">HackerNews</span>
+                  <span>GitHub</span>
+                  <span>Dev.to</span>
+                  <span>Reddit</span>
+                </div>
+                <div class="mock-feed-items">
+                  <div class="mock-feed-item"></div>
+                  <div class="mock-feed-item"></div>
+                  <div class="mock-feed-item"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Right: Action Bar -->
+            <div class="mock-actionbar">
+              <div class="mock-app-icon"></div>
+              <div class="mock-app-icon"></div>
+              <div class="mock-app-icon"></div>
+              <div class="mock-app-icon"></div>
+              <div class="mock-app-icon"></div>
+              <div class="mock-app-divider"></div>
+              <div class="mock-app-icon gear"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Feature Marquee ═══════════ -->
+  <section class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>Tab Manager</span><span class="marquee-dot"></span>
+        <span>Duplicate Detection</span><span class="marquee-dot"></span>
+        <span>Session Save &amp; Restore</span><span class="marquee-dot"></span>
+        <span>Unsplash Wallpapers</span><span class="marquee-dot"></span>
+        <span>Gmail</span><span class="marquee-dot"></span>
+        <span>Google Drive</span><span class="marquee-dot"></span>
+        <span>Google Calendar</span><span class="marquee-dot"></span>
+        <span>YouTube</span><span class="marquee-dot"></span>
+        <span>Smart Search</span><span class="marquee-dot"></span>
+        <span>HackerNews</span><span class="marquee-dot"></span>
+        <span>GitHub Trending</span><span class="marquee-dot"></span>
+        <span>Reddit</span><span class="marquee-dot"></span>
+        <span>Topic Filtering</span><span class="marquee-dot"></span>
+        <span>Custom RSS</span><span class="marquee-dot"></span>
+        <span>Themes</span><span class="marquee-dot"></span>
+        <span>Accent Colors</span><span class="marquee-dot"></span>
+        <span>Tab Manager</span><span class="marquee-dot"></span>
+        <span>Duplicate Detection</span><span class="marquee-dot"></span>
+        <span>Session Save &amp; Restore</span><span class="marquee-dot"></span>
+        <span>Unsplash Wallpapers</span><span class="marquee-dot"></span>
+        <span>Gmail</span><span class="marquee-dot"></span>
+        <span>Google Drive</span><span class="marquee-dot"></span>
+        <span>Google Calendar</span><span class="marquee-dot"></span>
+        <span>YouTube</span><span class="marquee-dot"></span>
+        <span>Smart Search</span><span class="marquee-dot"></span>
+        <span>HackerNews</span><span class="marquee-dot"></span>
+        <span>GitHub Trending</span><span class="marquee-dot"></span>
+        <span>Reddit</span><span class="marquee-dot"></span>
+        <span>Topic Filtering</span><span class="marquee-dot"></span>
+        <span>Custom RSS</span><span class="marquee-dot"></span>
+        <span>Themes</span><span class="marquee-dot"></span>
+        <span>Accent Colors</span><span class="marquee-dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Features Grid ═══════════ -->
+  <section class="section features-section" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">Features</div>
+        <h2 class="section-title">Everything you need,<br/><span class="gradient-text">right in your new tab.</span></h2>
+        <p class="section-subtitle">Not just another pretty new tab. Sparkly is a full productivity suite packed into the page you open 50+ times a day.</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Tab Manager -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #8b5cf6;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="feature-title">Smart Tab Manager</h3>
+          <p class="feature-desc">A full tab management sidebar built into every new tab. See all your tabs across every window, grouped by window or domain. Find any tab instantly with real-time search.</p>
+          <div class="feature-tags">
+            <span>Live Tab List</span>
+            <span>Group by Window/Domain</span>
+            <span>Search</span>
+          </div>
+        </div>
+
+        <!-- Duplicate Detection -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #ec4899;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="2" width="13" height="13" rx="2"/><rect x="3" y="9" width="13" height="13" rx="2"/></svg>
+          </div>
+          <h3 class="feature-title">Duplicate Detection</h3>
+          <p class="feature-desc">Duplicate tabs are automatically highlighted. One click to close all duplicates at once &mdash; keeping only the first instance of each. No more 40-tab chaos.</p>
+          <div class="feature-tags">
+            <span>Auto-Detect</span>
+            <span>Bulk Close</span>
+            <span>Highlighted</span>
+          </div>
+        </div>
+
+        <!-- Session Save & Restore -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #10b981;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          </div>
+          <h3 class="feature-title">Session Save &amp; Restore</h3>
+          <p class="feature-desc">Save your entire workspace &mdash; all windows and tabs &mdash; as a named session. Restore it later with one click. Plus recently closed tabs are always recoverable.</p>
+          <div class="feature-tags">
+            <span>Save Workspace</span>
+            <span>One-Click Restore</span>
+            <span>Recently Closed</span>
+          </div>
+        </div>
+
+        <!-- Wallpapers -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #f59e0b;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3 class="feature-title">Beautiful Wallpapers</h3>
+          <p class="feature-desc">Stunning wallpapers from Unsplash with 4 modes: random auto-refresh, search by keyword with 8 category chips, pick from your history, or use a solid color. Add blur and dim for readability.</p>
+          <div class="feature-tags">
+            <span>Unsplash</span>
+            <span>Search &amp; Browse</span>
+            <span>History</span>
+            <span>Blur &amp; Dim</span>
+          </div>
+        </div>
+
+        <!-- Google Apps -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #3b82f6;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="17" cy="7" r="1"/><circle cx="7" cy="17" r="1"/><circle cx="17" cy="17" r="1"/><circle cx="7" cy="7" r="1"/></svg>
+          </div>
+          <h3 class="feature-title">Google Apps, One Click Away</h3>
+          <p class="feature-desc">A sleek sidebar with 10 Google services: Gmail, Drive, Calendar, Docs, Sheets, Meet, Keep, YouTube, Photos, and Maps. Every app you use daily, always within reach.</p>
+          <div class="feature-tags">
+            <span>Gmail</span>
+            <span>Drive</span>
+            <span>Calendar</span>
+            <span>+7 more</span>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #06b6d4;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3 class="feature-title">Smart Search</h3>
+          <p class="feature-desc">A glassmorphic search bar front and center. Live suggestions from Google, keyboard navigation with arrow keys, and your choice of 4 engines: Google, DuckDuckGo, Bing, or Yahoo.</p>
+          <div class="feature-tags">
+            <span>4 Engines</span>
+            <span>Live Suggestions</span>
+            <span>Keyboard Nav</span>
+          </div>
+        </div>
+
+        <!-- FeedHub -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #f97316;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+          </div>
+          <h3 class="feature-title">FeedHub &mdash; 13+ Sources</h3>
+          <p class="feature-desc">HackerNews, GitHub Trending, Dev.to, Reddit, Product Hunt, Lobsters, Hashnode, Medium, TechCrunch, The Verge, freeCodeCamp, HackerNoon. Plus add your own custom RSS feeds.</p>
+          <div class="feature-tags">
+            <span>Multi-Column</span>
+            <span>Topic Filter</span>
+            <span>Custom RSS</span>
+          </div>
+        </div>
+
+        <!-- Customization -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #a855f7;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 class="feature-title">Deep Customization</h3>
+          <p class="feature-desc">Light, dark, or auto theme. 9 accent colors. Adjustable font size, layout density, border radius, and animation toggles. Transparency and blur controls. Make it yours.</p>
+          <div class="feature-tags">
+            <span>Themes</span>
+            <span>9 Accent Colors</span>
+            <span>Density</span>
+            <span>Radius</span>
+          </div>
+        </div>
+
+        <!-- Top Sites -->
+        <div class="feature-card glass reveal">
+          <div class="feature-icon" style="--accent: #14b8a6;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <h3 class="feature-title">Quick Links &amp; Top Sites</h3>
+          <p class="feature-desc">Your most visited sites appear automatically with favicons and notification badges. Configure 4 to 12 tiles. Sites with unread counts (like Gmail) show live badge numbers.</p>
+          <div class="feature-tags">
+            <span>Auto-Detect</span>
+            <span>Notification Badges</span>
+            <span>Configurable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Feature Showcase (Detailed) ═══════════ -->
+  <section class="section showcase-section" id="showcase">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">In-Depth</div>
+        <h2 class="section-title">Built for developers<br/><span class="gradient-text">who live in their browser.</span></h2>
+      </div>
+
+      <!-- Showcase 1: Tab Manager -->
+      <div class="showcase-row reveal" style="--accent: #8b5cf6;">
+        <div class="showcase-text">
+          <div class="showcase-label">Tab Manager</div>
+          <h3 class="showcase-title">Tame your tab chaos.</h3>
+          <p class="showcase-desc">A full sidebar tab manager that updates in real-time. See every tab across all windows, group them by window or domain, search instantly, and close duplicates in one click.</p>
+          <ul class="showcase-list">
+            <li>Live tab count and real-time updates</li>
+            <li>Group by <strong>window</strong> (color-coded) or <strong>domain</strong></li>
+            <li>Duplicate tabs auto-highlighted in pink &mdash; bulk close with one button</li>
+            <li>Suspend inactive tabs to free memory</li>
+            <li>Save entire workspace as a named session</li>
+            <li>Restore saved sessions or recently closed tabs</li>
+            <li>Click any tab to instantly switch to it</li>
+          </ul>
+        </div>
+        <div class="showcase-visual glass">
+          <div class="showcase-mock-tabs">
+            <div class="smt-header">
+              <span>Sparkly Tab Manager</span>
+              <span class="smt-badge">24</span>
+            </div>
+            <div class="smt-toggle">
+              <span class="active">Windows</span>
+              <span>Sites</span>
+            </div>
+            <div class="smt-group">
+              <div class="smt-group-header"><span class="smt-dot" style="background:#EA047E"></span> Window 1 (8 tabs)</div>
+              <div class="smt-tab"><div class="smt-fav"></div><div class="smt-title" style="width:80%"></div><div class="smt-close">&#215;</div></div>
+              <div class="smt-tab duplicate"><div class="smt-fav"></div><div class="smt-title" style="width:65%"></div><div class="smt-close">&#215;</div></div>
+              <div class="smt-tab"><div class="smt-fav"></div><div class="smt-title" style="width:72%"></div><div class="smt-close">&#215;</div></div>
+            </div>
+            <div class="smt-group">
+              <div class="smt-group-header"><span class="smt-dot" style="background:#ABD9FF"></span> Window 2 (5 tabs)</div>
+              <div class="smt-tab"><div class="smt-fav"></div><div class="smt-title" style="width:60%"></div><div class="smt-close">&#215;</div></div>
+              <div class="smt-tab"><div class="smt-fav"></div><div class="smt-title" style="width:75%"></div><div class="smt-close">&#215;</div></div>
+            </div>
+            <div class="smt-dup-banner">2 duplicate tabs found <span>Close All</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Showcase 2: Google Apps -->
+      <div class="showcase-row reverse reveal" style="--accent: #3b82f6;">
+        <div class="showcase-text">
+          <div class="showcase-label">Google Apps</div>
+          <h3 class="showcase-title">Your Google workspace, one click away.</h3>
+          <p class="showcase-desc">A permanent sidebar with 10 Google services. No more typing URLs or hunting through bookmarks. Gmail, Drive, Calendar, Meet &mdash; all right there on every new tab.</p>
+          <ul class="showcase-list">
+            <li><strong>Gmail</strong> &mdash; jump straight to your inbox</li>
+            <li><strong>Google Drive</strong> &mdash; access files instantly</li>
+            <li><strong>Calendar</strong> &mdash; check your schedule</li>
+            <li><strong>Docs, Sheets</strong> &mdash; open documents fast</li>
+            <li><strong>Meet</strong> &mdash; start or join meetings</li>
+            <li><strong>Keep, YouTube, Photos, Maps</strong></li>
+            <li>Can be hidden via settings if you don't need it</li>
+          </ul>
+        </div>
+        <div class="showcase-visual glass">
+          <div class="showcase-mock-apps">
+            <div class="sma-grid">
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #ea4335, #fbbc04)"></div><span>Gmail</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #4285f4, #34a853)"></div><span>Drive</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #4285f4, #ea4335)"></div><span>Calendar</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #4285f4, #1a73e8)"></div><span>Docs</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #34a853, #0f9d58)"></div><span>Sheets</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #00897b, #00bfa5)"></div><span>Meet</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #fbbc04, #f9ab00)"></div><span>Keep</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #ff0000, #cc0000)"></div><span>YouTube</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #ea4335, #fbbc04)"></div><span>Photos</span></div>
+              <div class="sma-app"><div class="sma-icon" style="background: linear-gradient(135deg, #34a853, #4285f4)"></div><span>Maps</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Showcase 3: Wallpapers -->
+      <div class="showcase-row reveal" style="--accent: #f59e0b;">
+        <div class="showcase-text">
+          <div class="showcase-label">Wallpapers</div>
+          <h3 class="showcase-title">Start every session inspired.</h3>
+          <p class="showcase-desc">Four wallpaper modes powered by Unsplash. Every new tab can greet you with a fresh landscape, a searched theme, or a solid color. Add blur and dim for perfect text readability.</p>
+          <ul class="showcase-list">
+            <li><strong>Random</strong> &mdash; fresh nature/cosmos photo on every tab</li>
+            <li><strong>Search</strong> &mdash; find any wallpaper with 8 quick category chips</li>
+            <li><strong>History</strong> &mdash; pick from your last 5 wallpapers</li>
+            <li><strong>Solid Color</strong> &mdash; 18 curated color options</li>
+            <li>Toggle <strong>blur</strong> and <strong>dim overlay</strong> for readability</li>
+            <li>Photographer attribution from Unsplash</li>
+          </ul>
+        </div>
+        <div class="showcase-visual glass">
+          <div class="showcase-mock-wallpaper">
+            <div class="smw-modes">
+              <div class="smw-mode active">&#127922; Random</div>
+              <div class="smw-mode">&#128269; Search</div>
+              <div class="smw-mode">&#128218; History</div>
+              <div class="smw-mode">&#127912; Color</div>
+            </div>
+            <div class="smw-preview">
+              <div class="smw-img"></div>
+              <div class="smw-attribution">Photo by John Doe &mdash; Unsplash</div>
+            </div>
+            <div class="smw-controls">
+              <label><span class="smw-toggle on"></span> Blur</label>
+              <label><span class="smw-toggle on"></span> Dim</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Demo / Video ═══════════ -->
+  <section class="section demo-section" id="demo">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">See it in Action</div>
+        <h2 class="section-title">Watch Sparkly<br/><span class="gradient-text">transform your workflow.</span></h2>
+        <p class="section-subtitle">A quick walkthrough of everything Sparkly brings to your new tab experience.</p>
+      </div>
+      <div class="video-wrapper reveal">
+        <div class="video-container glass">
+          <div class="video-placeholder">
+            <div class="video-play-btn">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <p class="video-coming">Product video coming soon</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Impact / Stats ═══════════ -->
+  <section class="section impact-section" id="impact">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">Productivity Impact</div>
+        <h2 class="section-title">Stop context-switching.<br/><span class="gradient-text">Start flowing.</span></h2>
+        <p class="section-subtitle">Every new tab is a chance to either lose focus or gain it. Sparkly makes sure it's the latter.</p>
+      </div>
+
+      <div class="impact-grid">
+        <div class="impact-card glass reveal">
+          <div class="impact-number" data-count="50">0</div>
+          <div class="impact-unit">tabs/day</div>
+          <p class="impact-desc">The average developer opens 50+ new tabs daily. Each one is a touchpoint with Sparkly &mdash; your feeds, your tabs, your apps.</p>
+        </div>
+        <div class="impact-card glass reveal">
+          <div class="impact-number" data-count="12">0</div>
+          <div class="impact-unit">min saved</div>
+          <p class="impact-desc">No more switching between HN, GitHub, Gmail, and Drive. Everything lives in one place &mdash; your new tab.</p>
+        </div>
+        <div class="impact-card glass reveal">
+          <div class="impact-number" data-count="0">0</div>
+          <div class="impact-unit">cost</div>
+          <p class="impact-desc">Completely free. No subscriptions, no premium tiers, no data harvesting. Open source forever.</p>
+        </div>
+      </div>
+
+      <div class="impact-comparison reveal">
+        <div class="comparison glass">
+          <div class="comparison-col comparison-before">
+            <h4>Without Sparkly</h4>
+            <ul>
+              <li>Open new tab &rarr; blank page</li>
+              <li>Type gmail.com to check email</li>
+              <li>Type drive.google.com for files</li>
+              <li>Open HN in another tab</li>
+              <li>Can't find that tab from yesterday</li>
+              <li>30 duplicate tabs piling up</li>
+              <li>Lose 10+ minutes of context daily</li>
+            </ul>
+          </div>
+          <div class="comparison-divider">
+            <span>vs</span>
+          </div>
+          <div class="comparison-col comparison-after">
+            <h4>With Sparkly</h4>
+            <ul>
+              <li>Open new tab &rarr; everything is here</li>
+              <li>Gmail one click away in the sidebar</li>
+              <li>Drive, Calendar, Meet &mdash; always there</li>
+              <li>13 feeds in one widget, filter by topic</li>
+              <li>Search any tab instantly, switch in one click</li>
+              <li>Duplicates auto-detected and bulk-closed</li>
+              <li>Save &amp; restore sessions across days</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Testimonials ═══════════ -->
+  <section class="section testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">What Developers Say</div>
+        <h2 class="section-title">Loved by developers<br/><span class="gradient-text">who value their time.</span></h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;The tab manager alone is worth installing. I had 40+ tabs and didn't realize half were duplicates. One click and they were gone. The session save is clutch when I need to restart Chrome.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6366f1)">A</div>
+            <div>
+              <div class="testimonial-name">Alex R.</div>
+              <div class="testimonial-role">Full-Stack Developer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;Having Gmail, Drive, and Calendar one click away on every new tab is a game changer. I used to type those URLs dozens of times a day. Now they're just&hellip; there.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #3b82f6, #06b6d4)">S</div>
+            <div>
+              <div class="testimonial-name">Sarah K.</div>
+              <div class="testimonial-role">Product Manager</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;The wallpapers from Unsplash are gorgeous. I search for &lsquo;ocean&rsquo; or &lsquo;space&rsquo; and get stunning backgrounds. The blur effect makes text readable without ruining the view.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f59e0b, #f97316)">M</div>
+            <div>
+              <div class="testimonial-name">Marcus T.</div>
+              <div class="testimonial-role">UI/UX Designer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;I work with Python and AI. The topic filter lets me see only relevant content across HackerNews, Reddit, and Dev.to at once. Multi-column view shows them all side-by-side. Perfect.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f97316, #ef4444)">J</div>
+            <div>
+              <div class="testimonial-name">James L.</div>
+              <div class="testimonial-role">ML Engineer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;I save my work session at EOD and restore it the next morning. Every tab, every window, exactly where I left it. This should be built into Chrome honestly.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #10b981, #14b8a6)">P</div>
+            <div>
+              <div class="testimonial-name">Priya M.</div>
+              <div class="testimonial-role">DevOps Engineer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass reveal">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="testimonial-quote">
+            &ldquo;The customization depth is wild &mdash; accent colors, border radius slider, layout density, animation toggles. I have a dark purple theme with rounded corners and it looks incredible.&rdquo;
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #a855f7, #ec4899)">D</div>
+            <div>
+              <div class="testimonial-name">David C.</div>
+              <div class="testimonial-role">Frontend Engineer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CTA ═══════════ -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-card glass reveal">
+        <h2 class="cta-title">Ready to supercharge<br/>your new tab?</h2>
+        <p class="cta-subtitle">Tab manager. Dev feeds. Google apps. Beautiful wallpapers. All free, open-source, and privacy-first.</p>
+        <div class="cta-actions">
+          <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+            Add to Chrome &mdash; Free
+          </a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Footer ═══════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">&#10024;</span>
+        <span class="logo-text">Sparkly</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>
+        <a href="#features">Features</a>
+      </div>
+      <div class="footer-copy">
+        Built with care for developers. Open source and free.
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
