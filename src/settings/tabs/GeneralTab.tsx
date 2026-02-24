@@ -160,26 +160,19 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
 
 
       <Section>
-        <SectionTitle>Quick Links</SectionTitle>
+        <SectionTitle>Widgets</SectionTitle>
 
         <FormGroup>
-          <Label>Maximum quick links</Label>
-          <Select
-            value={settings.maxQuickLinks}
-            onChange={(e) => onUpdate({ maxQuickLinks: parseInt(e.target.value) })}
-          >
-            <option value="4">4 links</option>
-            <option value="6">6 links</option>
-            <option value="8">8 links</option>
-            <option value="10">10 links</option>
-            <option value="12">12 links</option>
-          </Select>
-          <Description>Maximum number of quick links to display</Description>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showClock}
+              onChange={(e) => onUpdate({ showClock: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showClock} />
+            <ToggleLabel>Show clock</ToggleLabel>
+          </Toggle>
+          <Description>Display the clock and date at the center of the page</Description>
         </FormGroup>
-      </Section>
-
-      <Section>
-        <SectionTitle>Widgets</SectionTitle>
 
         <FormGroup>
           <Toggle>
@@ -190,8 +183,24 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
             <ToggleSwitch checked={settings.showTopSites} />
             <ToggleLabel>Show recently visited</ToggleLabel>
           </Toggle>
-          <Description>Display your most recently visited websites</Description>
+          <Description>Display your most recently visited websites. Set max links below when enabled.</Description>
         </FormGroup>
+
+        {settings.showTopSites && (
+          <FormGroup>
+            <Label>Maximum links</Label>
+            <Select
+              value={settings.maxQuickLinks}
+              onChange={(e) => onUpdate({ maxQuickLinks: parseInt(e.target.value) })}
+            >
+              <option value="4">4 links</option>
+              <option value="6">6 links</option>
+              <option value="8">8 links</option>
+              <option value="10">10 links</option>
+              <option value="12">12 links</option>
+            </Select>
+          </FormGroup>
+        )}
 
         <FormGroup>
           <Toggle>

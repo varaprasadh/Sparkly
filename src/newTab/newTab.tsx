@@ -94,11 +94,19 @@ const WidgetContainer = styled.div`
     & div { border-color: rgba(255,255,255,0.1) !important; }
 `;
 
-const BottomSection = styled.section`
-    /* author + info */
+const BottomSection = styled.section<{ fixed?: boolean }>`
     display: flex;
     justify-content: center;
-    padding: 0 1em 1em 1em;
+    padding: 1rem 0;
+    grid-column: 1 / -1;
+    ${p => p.fixed && `
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        padding: 0;
+    `}
 `;
 
 
@@ -200,14 +208,18 @@ function dataURItoBlob(dataURI) {
 
 
 // Styled components for the Action Bar (right sidebar with quick access)
-const StyledActionBar = styled.div`
+const StyledActionBar = styled.div<{ hasBookmarks?: boolean }>`
     position: fixed;
     right: 0;
     top: 0;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    ${p => p.hasBookmarks ? `
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    ` : `
+        background: transparent;
+    `}
     display: flex;
     flex-direction: column;
     z-index: 50;
@@ -262,12 +274,12 @@ const Divider = styled.div`
     margin: 12px 0;
 `;
 
-const StyledSettingsAction = styled.div`
+const StyledSettingsAction = styled.div<{ hasBookmarks?: boolean }>`
     width: 44px;
     height: 44px;
-    margin: 0 auto 24px auto;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: auto 0 24px 0;
+    background: ${p => p.hasBookmarks ? 'rgba(255, 255, 255, 0.1)' : 'black'};
+    border: 1px solid ${p => p.hasBookmarks ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.5)'};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -381,7 +393,7 @@ function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     const { general } = useSettings();
 
     return (
-        <StyledActionBar>
+        <StyledActionBar hasBookmarks={general.showBookmarks}>
             {/* Quick Access Bookmarks - respect showBookmarks setting */}
             {general.showBookmarks && (
                 <StyledBookMarks>
@@ -395,8 +407,8 @@ function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
 
             {general.showBookmarks && <Divider />}
 
-            {/* Settings Button */}
-            <StyledSettingsAction onClick={onOpenSettings} title="Settings">
+            {/* Settings Button - always visible */}
+            <StyledSettingsAction hasBookmarks={general.showBookmarks} onClick={onOpenSettings} title="Settings">
                 <StyledSettingsIcon src={settingsIcon} />
             </StyledSettingsAction>
         </StyledActionBar>
@@ -518,7 +530,7 @@ function NewTabContent() {
                 <StyledMainColumn>
                     <MiddleSection>
                         <div style={{ textAlign: 'center', width: '100%' }}>
-                            <LocalDateTime />
+                            {general.showClock && <LocalDateTime />}
                             {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
                             <SearchBar />
                             {general.showTopSites && <TopSites />}
@@ -529,13 +541,21 @@ function NewTabContent() {
                         <WidgetContainer style={{ gridColumn: '1 / -1' }}>
                             <FeedHubWidget api={null as any} />
                         </WidgetContainer>
+                        {showBottomBar && <BottomSection>
+                            <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
+                                Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                            </div>
+                        </BottomSection>}
                     </DashboardGrid>
                     )}
-                    {showBottomBar && <BottomSection>
-                        <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
-                            Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
-                        </div>
-                    </BottomSection>}
+
+                    {!general.showFeedHub && showBottomBar && (
+                        <BottomSection fixed>
+                            <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
+                                Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                            </div>
+                        </BottomSection>
+                    )}
                 </StyledMainColumn>
 
                 {/* Right Action Bar with quick access apps, bookmarks, and settings */}
