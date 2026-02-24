@@ -201,6 +201,35 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
           <Description>Maximum number of quick links to display</Description>
         </FormGroup>
       </Section>
+
+      <Section>
+        <SectionTitle>Widgets</SectionTitle>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.showWeather}
+              onChange={(e) => onUpdate({ showWeather: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showWeather} />
+            <ToggleLabel>Show weather</ToggleLabel>
+          </Toggle>
+          <Description>Display current weather below the clock. Requires location permission.</Description>
+        </FormGroup>
+
+        {settings.showWeather && (
+          <FormGroup>
+            <Label>Temperature unit</Label>
+            <Select
+              value={settings.temperatureUnit}
+              onChange={(e) => onUpdate({ temperatureUnit: e.target.value as 'celsius' | 'fahrenheit' })}
+            >
+              <option value="celsius">Celsius (°C)</option>
+              <option value="fahrenheit">Fahrenheit (°F)</option>
+            </Select>
+          </FormGroup>
+        )}
+      </Section>
     </Container>
   );
 }

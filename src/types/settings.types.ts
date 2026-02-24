@@ -38,6 +38,8 @@ export interface GeneralSettings {
   dateFormat: 'short' | 'long' | 'full';
   showBookmarks: boolean;
   maxQuickLinks: number;
+  showWeather: boolean;
+  temperatureUnit: 'celsius' | 'fahrenheit';
 }
 
 // Wallpaper settings
@@ -124,6 +126,8 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   dateFormat: 'long',
   showBookmarks: true,
   maxQuickLinks: 8,
+  showWeather: true,
+  temperatureUnit: 'celsius',
 };
 
 export const DEFAULT_WALLPAPER_SETTINGS: WallpaperSettings = {

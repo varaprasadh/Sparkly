@@ -21,6 +21,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TabManager from './components/TabManager';
 import LocalDateTime from './components/LocalDatetime';
+import { WeatherWidget } from './components/Weather';
 
 // New plugin system imports
 import { AppProvider } from '../store/AppContext';
@@ -410,7 +411,7 @@ function NewTabContent() {
 
     // Use the new store for settings
     const { openSettings } = useUI();
-    const { wallpaper } = useSettings();
+    const { wallpaper, general } = useSettings();
     const { initialized } = useInitialization();
     const hasBooted = React.useRef(false);
 
@@ -518,6 +519,7 @@ function NewTabContent() {
                     <MiddleSection>
                         <div style={{ textAlign: 'center', width: '100%' }}>
                             <LocalDateTime />
+                            {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
                             <SearchBar />
                             <TopSites />
                         </div>
