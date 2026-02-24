@@ -532,7 +532,7 @@ function NewTabContent() {
                         <div style={{ textAlign: 'center', width: '100%' }}>
                             {general.showClock && <LocalDateTime />}
                             {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
-                            <SearchBar />
+                            {general.showSearch && <SearchBar />}
                             {general.showTopSites && <TopSites />}
                         </div>
                     </MiddleSection>

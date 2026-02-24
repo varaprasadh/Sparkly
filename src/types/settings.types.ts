@@ -33,6 +33,7 @@ export interface GeneralSettings {
   topSitesCount: number;
   showTabManager: boolean;
   showClock: boolean;
+  showSearch: boolean;
   clockFormat: '12h' | '24h';
   showSeconds: boolean;
   showDate: boolean;
@@ -123,6 +124,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   topSitesCount: 8,
   showTabManager: true,
   showClock: true,
+  showSearch: true,
   clockFormat: '12h',
   showSeconds: false,
   showDate: true,

@@ -205,6 +205,18 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
         <FormGroup>
           <Toggle>
             <HiddenCheckbox
+              checked={settings.showSearch}
+              onChange={(e) => onUpdate({ showSearch: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showSearch} />
+            <ToggleLabel>Show search bar</ToggleLabel>
+          </Toggle>
+          <Description>Display the search bar below the clock</Description>
+        </FormGroup>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
               checked={settings.showTabManager}
               onChange={(e) => onUpdate({ showTabManager: e.target.checked })}
             />
