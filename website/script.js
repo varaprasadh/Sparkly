@@ -159,4 +159,208 @@
   if (!('ontouchstart' in window)) {
     animateOrbs();
   }
+
+  // ── Feature Carousel ──
+
+  const carousel = document.querySelector('.carousel');
+  if (carousel) {
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-wrapper .dot');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    let currentSlide = 0;
+    let autoPlayInterval;
+
+    function showSlide(index) {
+      slides.forEach((slide) => slide.classList.remove('active'));
+      dots.forEach((dot) => dot.classList.remove('active'));
+      
+      currentSlide = (index + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+      dots[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+
+    function startAutoPlay() {
+      autoPlayInterval = setInterval(nextSlide, 5000);
+    }
+
+    function stopAutoPlay() {
+      clearInterval(autoPlayInterval);
+    }
+
+    // Event listeners - use document-level selectors
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        prevSlide();
+        stopAutoPlay();
+        startAutoPlay();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        nextSlide();
+        stopAutoPlay();
+        startAutoPlay();
+      });
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', function() {
+        showSlide(index);
+        stopAutoPlay();
+        startAutoPlay();
+      });
+    });
+
+    // Pause on hover
+    carousel.addEventListener('mouseenter', stopAutoPlay);
+    carousel.addEventListener('mouseleave', startAutoPlay);
+
+    // Start autoplay
+    startAutoPlay();
+  }
+
+  // ── Interactive Playground ──
+
+  const pgClock = document.getElementById('pg-clock');
+  const pgWeather = document.getElementById('pg-weather');
+  const pgSearch = document.getElementById('pg-search');
+  const pgTiles = document.getElementById('pg-tiles');
+  const pgFeed = document.getElementById('pg-feed');
+  const pgApps = document.getElementById('pg-apps');
+  const pgTabs = document.getElementById('pg-tabs');
+  const pg24h = document.getElementById('pg-24h');
+  const pgWeatherSelect = document.getElementById('pg-weather-select');
+  const pgWallpaperSelect = document.getElementById('pg-wallpaper-select');
+
+  const pgClockSection = document.getElementById('pg-clock-section');
+  const pgWeatherPill = document.getElementById('pg-weather-pill');
+  const pgSearchBar = document.getElementById('pg-search-bar');
+  const pgTilesEl = document.getElementById('pg-tiles');
+  const pgFeedHub = document.getElementById('pg-feed-hub');
+  const pgSidebar = document.getElementById('pg-sidebar');
+  const pgTabManager = document.getElementById('pg-tab-manager');
+  const previewMock = document.getElementById('preview-mock');
+
+  const pgClockDisplay = document.getElementById('pg-clock');
+  const pgDateDisplay = document.getElementById('pg-date');
+  const pgWeatherIcon = document.getElementById('pg-weather-icon');
+  const pgTemp = document.getElementById('pg-temp');
+
+  // Widget toggles
+  if (pgClock) {
+    pgClock.addEventListener('change', () => {
+      pgClockSection.classList.toggle('hidden', !pgClock.checked);
+    });
+  }
+
+  if (pgWeather) {
+    pgWeather.addEventListener('change', () => {
+      pgWeatherPill.classList.toggle('hidden', !pgWeather.checked);
+    });
+  }
+
+  if (pgSearch) {
+    pgSearch.addEventListener('change', () => {
+      pgSearchBar.classList.toggle('hidden', !pgSearch.checked);
+    });
+  }
+
+  if (pgTiles) {
+    pgTiles.addEventListener('change', () => {
+      pgTilesEl.classList.toggle('hidden', !pgTiles.checked);
+    });
+  }
+
+  if (pgFeed) {
+    pgFeed.addEventListener('change', () => {
+      pgFeedHub.classList.toggle('hidden', !pgFeed.checked);
+    });
+  }
+
+  if (pgApps) {
+    pgApps.addEventListener('change', () => {
+      pgSidebar.classList.toggle('hidden', !pgApps.checked);
+    });
+  }
+
+  if (pgTabs) {
+    pgTabs.addEventListener('change', () => {
+      pgTabManager.classList.toggle('hidden', !pgTabs.checked);
+    });
+  }
+
+  // 24-hour format toggle
+  if (pg24h) {
+    pg24h.addEventListener('change', () => {
+      updateClock();
+    });
+  }
+
+  // Weather condition selector
+  if (pgWeatherSelect) {
+    pgWeatherSelect.addEventListener('change', (e) => {
+      const conditions = {
+        sunny: { icon: '☀️', temp: '24°' },
+        cloudy: { icon: '☁️', temp: '18°' },
+        rainy: { icon: '🌧️', temp: '14°' },
+        snowy: { icon: '❄️', temp: '-2°' },
+        night: { icon: '🌙', temp: '16°' }
+      };
+      const cond = conditions[e.target.value];
+      if (pgWeatherIcon) pgWeatherIcon.textContent = cond.icon;
+      if (pgTemp) pgTemp.textContent = cond.temp;
+    });
+  }
+
+  // Wallpaper selector
+  if (pgWallpaperSelect) {
+    pgWallpaperSelect.addEventListener('change', (e) => {
+      if (previewMock) {
+        previewMock.className = 'preview-mock ' + e.target.value;
+      }
+    });
+  }
+
+  // Real-time clock
+  function updateClock() {
+    if (!pgClockDisplay || !pgDateDisplay) return;
+    
+    const now = new Date();
+    const is24h = pg24h && pg24h.checked;
+    
+    const hours = is24h 
+      ? now.getHours().toString().padStart(2, '0')
+      : (now.getHours() % 12 || 12).toString();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    
+    pgClockDisplay.textContent = `${hours}:${minutes}`;
+    
+    const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    const day = days[now.getDay()];
+    const month = months[now.getMonth()];
+    const date = now.getDate();
+    pgDateDisplay.textContent = `${day}, ${month} ${date}${getOrdinal(date)}`;
+  }
+
+  function getOrdinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
 })();

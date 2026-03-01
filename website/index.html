@@ -31,7 +31,8 @@
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#showcase">Showcase</a>
-        <a href="#demo">Demo</a>
+        <a href="#carousel">Features</a>
+        <a href="#playground">Customization</a>
         <a href="#testimonials">Testimonials</a>
       </div>
       <a href="https://chromewebstore.google.com/detail/sparkly-new-tab-for-produ/finlildobfdjhkemcieihnkgmgoikgan" target="_blank" rel="noopener noreferrer" class="btn btn-sm">
@@ -58,8 +59,13 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
           Add to Chrome &mdash; It's Free
         </a>
-        <a href="#demo" class="btn btn-ghost btn-lg">
+        <!-- <a href="#demo" class="btn btn-ghost btn-lg">
           Watch Demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </a> -->
+        <!-- learn more -->
+        <a href="#features" class="btn btn-ghost btn-lg">
+          Learn More
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </a>
       </div>
@@ -471,21 +477,448 @@
     </div>
   </section>
 
-  <!-- ═══════════ Demo / Video ═══════════ -->
-  <section class="section demo-section" id="demo">
+  <!-- ═══════════ Feature Carousel ═══════════ -->
+  <section class="section carousel-section" id="carousel">
     <div class="container">
       <div class="section-header reveal">
-        <div class="section-badge">See it in Action</div>
-        <h2 class="section-title">Watch Sparkly<br/><span class="gradient-text">transform your workflow.</span></h2>
-        <p class="section-subtitle">A quick walkthrough of everything Sparkly brings to your new tab experience.</p>
+        <div class="section-badge">Features</div>
+        <h2 class="section-title">Everything you need,<br/><span class="gradient-text">right on your new tab.</span></h2>
+        <p class="section-subtitle">Explore what makes Sparkly your perfect productivity companion.</p>
       </div>
-      <div class="video-wrapper reveal">
-        <div class="video-container glass">
-          <div class="video-placeholder">
-            <div class="video-play-btn">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      
+      <div class="carousel-wrapper reveal">
+        <div class="carousel">
+          <!-- Slide 1: Clock & Weather -->
+          <div class="carousel-slide active">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab">
+                  <div class="mock-clock">8:30</div>
+                  <div class="mock-date">MONDAY, MARCH 1ST</div>
+                  <div class="mock-weather-pill">
+                    <span class="mock-weather-icon">☀️</span>
+                    <span class="mock-temp">24°</span>
+                    <span class="mock-location">San Francisco</span>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Smart Clock & Weather</h3>
+                <p>A beautiful clock with date, and real-time weather updates. Toggle widgets on or off from settings — you control what you see.</p>
+                <ul class="feature-list">
+                  <li>12h / 24h format</li>
+                  <li>Weather with Celsius/Fahrenheit</li>
+                  <li>Fully customizable widgets</li>
+                </ul>
+              </div>
             </div>
-            <p class="video-coming">Product video coming soon</p>
+          </div>
+
+          <!-- Slide 2: Search Bar -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab">
+                  <div class="mock-search-bar">
+                    <span class="mock-search-icon">🔍</span>
+                    <span class="mock-search-input">Search the web...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Powerful Search Bar</h3>
+                <p>Your favorite search engine, always ready. Switch between Google, Bing, Yahoo, or DuckDuckGo with instant suggestions.</p>
+                <ul class="feature-list">
+                  <li>4 search engines</li>
+                  <li>Keyboard navigation</li>
+                  <li>Instant suggestions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Recently Visited -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab">
+                  <div class="mock-tiles">
+                    <div class="mock-tile"></div>
+                    <div class="mock-tile"></div>
+                    <div class="mock-tile"></div>
+                    <div class="mock-tile"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Recently Visited Sites</h3>
+                <p>Your most visited sites appear automatically. Configure 4 to 12 tiles. Sites with unread counts show live badges.</p>
+                <ul class="feature-list">
+                  <li>Auto-populated tiles</li>
+                  <li>4-12 tiles configurable</li>
+                  <li>Live notification badges</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Google Apps -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab mock-with-sidebar">
+                  <div class="mock-sidebar">
+                    <div class="mock-app-icon"></div>
+                    <div class="mock-app-icon"></div>
+                    <div class="mock-app-icon"></div>
+                    <div class="mock-app-icon"></div>
+                    <div class="mock-app-icon gear"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Google Apps Sidebar</h3>
+                <p>One-click access to Gmail, Drive, Calendar, Docs, Meet, Keep, YouTube, and more. Always available on the right.</p>
+                <ul class="feature-list">
+                  <li>10 Google services</li>
+                  <li>Customizable toggle</li>
+                  <li>Settings always accessible</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Dev Feed -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab mock-with-feed">
+                  <div class="mock-feed">
+                    <div class="mock-feed-header">
+                      <span class="mock-feed-title">📡 Developer News</span>
+                    </div>
+                    <div class="mock-feed-item"></div>
+                    <div class="mock-feed-item"></div>
+                    <div class="mock-feed-item"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Developer News Feed</h3>
+                <p>Stay updated with Hacker News, GitHub Trending, Dev.to, Medium, and more. Custom RSS feeds supported.</p>
+                <ul class="feature-list">
+                  <li>13+ built-in sources</li>
+                  <li>Custom RSS feeds</li>
+                  <li>Topic filtering</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Tab Manager -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab mock-with-tabs">
+                  <div class="mock-tabs-header">
+                    <span>🔍 Search tabs...</span>
+                    <span class="mock-tab-count">12 tabs</span>
+                  </div>
+                  <div class="mock-tabs-list">
+                    <div class="mock-tab"></div>
+                    <div class="mock-tab"></div>
+                    <div class="mock-tab"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Advanced Tab Manager</h3>
+                <p>Search, filter, group, and manage all your tabs. Find duplicates, suspend inactive tabs, and restore recently closed ones.</p>
+                <ul class="feature-list">
+                  <li>Real-time tab sync</li>
+                  <li>Duplicate detection</li>
+                  <li>Session save/restore</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Wallpapers -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab mock-wallpaper"></div>
+              </div>
+              <div class="carousel-text">
+                <h3>Stunning Wallpapers</h3>
+                <p>HD wallpapers from Unsplash on every tab. Search by keyword, pick from history, or choose a solid color. Add blur and dim for readability.</p>
+                <ul class="feature-list">
+                  <li>Unsplash integration</li>
+                  <li>Search & favorites</li>
+                  <li>Blur & dim options</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Settings -->
+          <div class="carousel-slide">
+            <div class="carousel-content">
+              <div class="carousel-mock">
+                <div class="mock-newtab mock-settings">
+                  <div class="mock-settings-panel">
+                    <div class="mock-settings-header">Settings</div>
+                    <div class="mock-settings-tabs">
+                      <span class="active">General</span>
+                      <span>Wallpaper</span>
+                      <span>Appearance</span>
+                    </div>
+                    <div class="mock-settings-content">
+                      <div class="mock-toggle-item">
+                        <span>Show clock</span>
+                        <span class="toggle on"></span>
+                      </div>
+                      <div class="mock-toggle-item">
+                        <span>Show weather</span>
+                        <span class="toggle on"></span>
+                      </div>
+                      <div class="mock-toggle-item">
+                        <span>Show search bar</span>
+                        <span class="toggle on"></span>
+                      </div>
+                      <div class="mock-toggle-item">
+                        <span>Show recently visited</span>
+                        <span class="toggle on"></span>
+                      </div>
+                      <div class="mock-toggle-item">
+                        <span>Show feed hub</span>
+                        <span class="toggle on"></span>
+                      </div>
+                      <div class="mock-toggle-item">
+                        <span>Show Google Apps</span>
+                        <span class="toggle on"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-text">
+                <h3>Fully Customizable</h3>
+                <p>Toggle any widget on or off. Control appearance, accent colors, fonts, layout density, and more. Your tab, your rules.</p>
+                <ul class="feature-list">
+                  <li>Widget toggles</li>
+                  <li>Appearance controls</li>
+                  <li>Privacy-first design</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-nav">
+          <button type="button" class="carousel-btn prev" aria-label="Previous">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="carousel-dots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
+            <span class="dot" data-slide="3"></span>
+            <span class="dot" data-slide="4"></span>
+            <span class="dot" data-slide="5"></span>
+            <span class="dot" data-slide="6"></span>
+            <span class="dot" data-slide="7"></span>
+          </div>
+          <button type="button" class="carousel-btn next" aria-label="Next">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ Interactive Playground ═══════════ -->
+  <section class="section playground-section" id="playground">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-badge">Try It Out</div>
+        <h2 class="section-title">Your new tab,<br/><span class="gradient-text">your rules.</span></h2>
+        <p class="section-subtitle">Toggle widgets on and off. Change settings. See how Sparkly adapts to your needs.</p>
+      </div>
+
+      <div class="playground-wrapper reveal">
+        <!-- Controls Panel -->
+        <div class="playground-controls">
+          <h3>Widgets</h3>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-clock" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Clock</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-weather" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Weather</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-search" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Search Bar</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-tiles" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Recently Visited</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-feed" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Dev Feed</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-apps" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Google Apps</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-tabs" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Tab Manager</span>
+            </label>
+          </div>
+
+          <h3>Settings</h3>
+          <div class="control-group">
+            <label class="playground-toggle">
+              <input type="checkbox" id="pg-24h" />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">24-hour format</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="pg-select-group">
+              <span class="pg-select-label">Weather</span>
+              <select id="pg-weather-select" class="pg-select">
+                <option value="sunny">☀️ Sunny</option>
+                <option value="cloudy">☁️ Cloudy</option>
+                <option value="rainy">🌧️ Rainy</option>
+                <option value="snowy">❄️ Snowy</option>
+                <option value="night">🌙 Clear Night</option>
+              </select>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="pg-select-group">
+              <span class="pg-select-label">Wallpaper</span>
+              <select id="pg-wallpaper-select" class="pg-select">
+                <option value="gradient1">Purple Aurora</option>
+                <option value="gradient2">Ocean Blue</option>
+                <option value="gradient3">Sunset Glow</option>
+                <option value="gradient4">Forest Green</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="playground-preview">
+          <div class="preview-mock" id="preview-mock">
+            <!-- Tab Manager (top) -->
+            <div class="pg-tab-manager" id="pg-tab-manager">
+              <div class="pg-tab-bar">
+                <span class="pg-tab-search">🔍 Search tabs...</span>
+                <span class="pg-tab-badge">12 tabs</span>
+              </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="pg-main">
+              <!-- Clock -->
+              <div class="pg-clock-section" id="pg-clock-section">
+                <div class="pg-clock" id="pg-clock">8:30</div>
+                <div class="pg-date" id="pg-date">MONDAY, MARCH 1ST</div>
+              </div>
+
+              <!-- Weather -->
+              <div class="pg-weather-pill" id="pg-weather-pill">
+                <span class="pg-weather-icon" id="pg-weather-icon">☀️</span>
+                <span class="pg-temp" id="pg-temp">24°</span>
+                <span class="pg-location" id="pg-location">San Francisco</span>
+              </div>
+
+              <!-- Search -->
+              <div class="pg-search-bar" id="pg-search-bar">
+                <span>🔍</span>
+                <span>Search the web...</span>
+              </div>
+
+              <!-- Tiles -->
+              <div class="pg-tiles" id="pg-tiles">
+                <div class="pg-tile" style="background: linear-gradient(135deg, #ea4335, #fbbc04)"></div>
+                <div class="pg-tile" style="background: linear-gradient(135deg, #4285f4, #34a853)"></div>
+                <div class="pg-tile" style="background: linear-gradient(135deg, #4285f4, #ea4335)"></div>
+                <div class="pg-tile" style="background: linear-gradient(135deg, #0066cc, #00a0dc)"></div>
+                <div class="pg-tile" style="background: linear-gradient(135deg, #1a73e8, #8ab4f8)"></div>
+                <div class="pg-tile" style="background: linear-gradient(135deg, #34a853, #81c995)"></div>
+              </div>
+            </div>
+
+            <!-- Feed Hub -->
+            <div class="pg-feed-hub" id="pg-feed-hub">
+              <div class="pg-feed-header">
+                <span>📡 Developer News</span>
+                <span class="pg-feed-refresh">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6M1 20v-6h6"/>
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="pg-feed-content">
+                <div class="pg-feed-item">
+                  <div class="pg-feed-item-title"></div>
+                  <div class="pg-feed-item-meta"></div>
+                </div>
+                <div class="pg-feed-item">
+                  <div class="pg-feed-item-title"></div>
+                  <div class="pg-feed-item-meta"></div>
+                </div>
+                <div class="pg-feed-item">
+                  <div class="pg-feed-item-title"></div>
+                  <div class="pg-feed-item-meta"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar (right) -->
+            <div class="pg-sidebar" id="pg-sidebar">
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #ea4335, #fbbc04)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #4285f4, #34a853)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #4285f4, #ea4335)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #4285f4, #1a73e8)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #34a853, #0f9d58)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #fbbc04, #f9ab00)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #00897b, #00bfa5)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #ff0000, #cc0000)"></div>
+              <div class="pg-app-icon" style="background: linear-gradient(135deg, #34a853, #4285f4)"></div>
+              <div class="pg-app-icon gear" style="background: rgba(255,255,255,0.15)"></div>
+            </div>
+
+            <!-- Attribution -->
+            <div class="pg-attribution">Photo by Unsplash</div>
           </div>
         </div>
       </div>
