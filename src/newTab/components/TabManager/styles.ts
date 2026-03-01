@@ -60,7 +60,7 @@ export const StyledTabThumbnailBG = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  // background: rgba(255, 255, 255, 0.9);
   margin-right: 0.75rem;
   border-radius: 6px;
   cursor: pointer;

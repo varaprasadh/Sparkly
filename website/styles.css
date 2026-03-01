@@ -214,6 +214,12 @@ img {
   font-size: 20px;
 }
 
+.logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .logo-icon {
   font-size: 24px;
 }
@@ -1492,6 +1498,11 @@ img {
   gap: 8px;
   font-weight: 700;
   font-size: 18px;
+}
+
+.footer-brand .logo-img {
+  width: 24px;
+  height: 24px;
 }
 
 .footer-links {

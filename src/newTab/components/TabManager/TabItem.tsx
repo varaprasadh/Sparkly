@@ -2,7 +2,7 @@
 import React from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import type { TabInfo } from './types';
-import sparklyIcon from '../../../icons/Sparkly.png';
+import sparklyIcon from '../../../icons/Sparkly_x.png';
 import {
   StyledTabItem,
   StyledTabThumbnailBG,

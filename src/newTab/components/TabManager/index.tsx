@@ -1,7 +1,7 @@
 /// <reference types="chrome"/>
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DoubleRightOutlined, DoubleLeftOutlined, CloseOutlined } from '@ant-design/icons';
-import sparklyIcon from '../../../icons/Sparkly.png';
+import sparklyIcon from '../../../icons/Sparkly_x.png';
 import type { TabInfo, DomainGroup, GroupingMode } from './types';
 import { STORAGE_KEYS, WINDOW_COLORS } from './constants';
 import { useTabQuery } from './useTabQuery';
