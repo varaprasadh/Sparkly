@@ -36,9 +36,6 @@ export interface PluginStorageSchema {
   // Sticky notes plugin
   'plugin:sticky-notes:notes': StickyNoteStorage[];
 
-  // Reminder plugin
-  'plugin:reminder:reminders': ReminderStorage[];
-  'plugin:reminder:history': ReminderHistoryItem[];
 }
 
 // Cached data storage keys
@@ -122,41 +119,6 @@ export interface StickyNoteStorage {
   createdAt: string;
   updatedAt: string;
   zIndex: number;
-}
-
-// Reminder plugin storage
-export interface ReminderStorage {
-  id: string;
-  title: string;
-  description: string | null;
-  type: 'time-based' | 'interval';
-
-  // For time-based reminders
-  scheduledTime: string | null; // ISO date string
-
-  // For interval-based reminders
-  intervalMinutes: number | null;
-  lastTriggered: string | null;
-
-  isActive: boolean;
-  snoozeCount: number;
-  maxSnoozeCount: number;
-  snoozeMinutes: number;
-
-  // Notification settings
-  soundEnabled: boolean;
-  vibrationEnabled: boolean;
-
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ReminderHistoryItem {
-  id: string;
-  reminderId: string;
-  title: string;
-  triggeredAt: string;
-  action: 'triggered' | 'snoozed' | 'dismissed' | 'completed';
 }
 
 // Storage service interface

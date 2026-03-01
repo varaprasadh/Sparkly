@@ -6,7 +6,7 @@ import { WidgetZone } from './widget.types';
 import { PluginAPI } from '../plugins/core/PluginAPI';
 
 // Plugin permission types
-export type PluginPermission = 'notifications' | 'alarms' | 'storage';
+export type PluginPermission = 'storage';
 
 // Plugin status
 export type PluginStatus = 'registered' | 'enabled' | 'disabled' | 'error';

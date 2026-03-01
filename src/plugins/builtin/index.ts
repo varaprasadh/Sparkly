@@ -2,19 +2,11 @@
  * Built-in Plugins Index
  */
 
-// Hacker News Plugin
-export { hackerNewsManifest, hackerNewsInstance, HackerNewsPlugin } from './hackernews';
-
-// GitHub Trending Plugin
-export { githubManifest, githubInstance, GitHubPlugin } from './github';
-
-// Dev.to Plugin
-export { devtoManifest, devtoInstance, DevToPlugin } from './devto';
+// Feed Hub (replaces individual HN, GitHub, DevTo plugins)
+export { feedHubManifest, feedHubInstance, FeedHubPlugin } from './feedhub';
 
 // All built-in plugins for registration
-import { hackerNewsManifest, hackerNewsInstance } from './hackernews';
-import { githubManifest, githubInstance } from './github';
-import { devtoManifest, devtoInstance } from './devto';
+import { feedHubManifest, feedHubInstance } from './feedhub';
 import { PluginManifest, PluginInstance } from '../../types/plugin.types';
 
 export interface BuiltinPlugin {
@@ -23,9 +15,7 @@ export interface BuiltinPlugin {
 }
 
 export const BUILTIN_PLUGINS: BuiltinPlugin[] = [
-  { manifest: hackerNewsManifest, instance: hackerNewsInstance },
-  { manifest: githubManifest, instance: githubInstance },
-  { manifest: devtoManifest, instance: devtoInstance },
+  { manifest: feedHubManifest, instance: feedHubInstance },
 ];
 
 /**

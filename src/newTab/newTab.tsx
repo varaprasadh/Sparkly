@@ -21,6 +21,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TabManager from './components/TabManager';
 import LocalDateTime from './components/LocalDatetime';
+import { WeatherWidget } from './components/Weather';
 
 // New plugin system imports
 import { AppProvider } from '../store/AppContext';
@@ -29,13 +30,9 @@ import { registerBuiltinPlugins } from '../plugins/builtin';
 import { SettingsModal } from '../settings';
 import { useUI, useSettings, useInitialization } from '../store/hooks';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { hackerNewsInstance } from '../plugins/builtin/hackernews';
-import { githubInstance } from '../plugins/builtin/github';
-import { devtoInstance } from '../plugins/builtin/devto';
+import { feedHubInstance } from '../plugins/builtin/feedhub';
 
-const HackerNewsWidget = hackerNewsInstance.Component;
-const GitHubWidget = githubInstance.Component;
-const DevToWidget = devtoInstance.Component;
+const FeedHubWidget = feedHubInstance.Component;
 
 const StyledMainColumn = styled.div`
     display: flex;
@@ -70,11 +67,11 @@ const DashboardGrid = styled.section`
     padding: var(--layout-padding, 24px);
     max-width: 1200px;
     margin: 0 auto;
-    width: 100%;
+    width: 80%;
 `;
 
 const WidgetContainer = styled.div`
-    height: 380px;
+    height: 500px;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(16px);
     border-radius: var(--widget-border-radius, 12px);
@@ -97,11 +94,19 @@ const WidgetContainer = styled.div`
     & div { border-color: rgba(255,255,255,0.1) !important; }
 `;
 
-const BottomSection = styled.section`
-    /* author + info */
+const BottomSection = styled.section<{ fixed?: boolean }>`
     display: flex;
     justify-content: center;
-    padding: 0 1em 1em 1em;
+    padding: 1rem 0;
+    grid-column: 1 / -1;
+    ${p => p.fixed && `
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        padding: 0;
+    `}
 `;
 
 
@@ -203,14 +208,18 @@ function dataURItoBlob(dataURI) {
 
 
 // Styled components for the Action Bar (right sidebar with quick access)
-const StyledActionBar = styled.div`
+const StyledActionBar = styled.div<{ hasBookmarks?: boolean }>`
     position: fixed;
     right: 0;
     top: 0;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    ${p => p.hasBookmarks ? `
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    ` : `
+        background: transparent;
+    `}
     display: flex;
     flex-direction: column;
     z-index: 50;
@@ -265,12 +274,12 @@ const Divider = styled.div`
     margin: 12px 0;
 `;
 
-const StyledSettingsAction = styled.div`
+const StyledSettingsAction = styled.div<{ hasBookmarks?: boolean }>`
     width: 44px;
     height: 44px;
-    margin: 0 auto 24px auto;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: auto 0 24px 0;
+    background: ${p => p.hasBookmarks ? 'rgba(255, 255, 255, 0.1)' : 'black'};
+    border: 1px solid ${p => p.hasBookmarks ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.5)'};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -384,7 +393,7 @@ function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     const { general } = useSettings();
 
     return (
-        <StyledActionBar>
+        <StyledActionBar hasBookmarks={general.showBookmarks}>
             {/* Quick Access Bookmarks - respect showBookmarks setting */}
             {general.showBookmarks && (
                 <StyledBookMarks>
@@ -398,8 +407,8 @@ function ActionBar({ onOpenSettings }: { onOpenSettings: () => void }) {
 
             {general.showBookmarks && <Divider />}
 
-            {/* Settings Button */}
-            <StyledSettingsAction onClick={onOpenSettings} title="Settings">
+            {/* Settings Button - always visible */}
+            <StyledSettingsAction hasBookmarks={general.showBookmarks} onClick={onOpenSettings} title="Settings">
                 <StyledSettingsIcon src={settingsIcon} />
             </StyledSettingsAction>
         </StyledActionBar>
@@ -414,7 +423,7 @@ function NewTabContent() {
 
     // Use the new store for settings
     const { openSettings } = useUI();
-    const { wallpaper } = useSettings();
+    const { wallpaper, general } = useSettings();
     const { initialized } = useInitialization();
     const hasBooted = React.useRef(false);
 
@@ -517,31 +526,36 @@ function NewTabContent() {
                     blur={wallpaper.blur}
                     dim={wallpaper.dim}
                 />
-                <TabManager />
+                {general.showTabManager && <TabManager />}
                 <StyledMainColumn>
                     <MiddleSection>
                         <div style={{ textAlign: 'center', width: '100%' }}>
-                            <LocalDateTime />
-                            <SearchBar />
-                            <TopSites />
+                            {general.showClock && <LocalDateTime />}
+                            {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
+                            {general.showSearch && <SearchBar />}
+                            {general.showTopSites && <TopSites />}
                         </div>
                     </MiddleSection>
+                    {general.showFeedHub && (
                     <DashboardGrid>
-                        <WidgetContainer>
-                            <HackerNewsWidget api={null as any} />
+                        <WidgetContainer style={{ gridColumn: '1 / -1' }}>
+                            <FeedHubWidget api={null as any} />
                         </WidgetContainer>
-                        <WidgetContainer>
-                            <GitHubWidget api={null as any} />
-                        </WidgetContainer>
-                        <WidgetContainer>
-                            <DevToWidget api={null as any} />
-                        </WidgetContainer>
+                        {showBottomBar && <BottomSection>
+                            <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
+                                Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                            </div>
+                        </BottomSection>}
                     </DashboardGrid>
-                    {showBottomBar && <BottomSection>
-                        <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
-                            Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
-                        </div>
-                    </BottomSection>}
+                    )}
+
+                    {!general.showFeedHub && showBottomBar && (
+                        <BottomSection fixed>
+                            <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
+                                Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
+                            </div>
+                        </BottomSection>
+                    )}
                 </StyledMainColumn>
 
                 {/* Right Action Bar with quick access apps, bookmarks, and settings */}
