@@ -23,6 +23,7 @@ import {
   StyledWindowGroup,
   StyledSearchInput,
   StyledSearchClear,
+  StyledSearchShortcutHint,
   StyledDuplicatesBanner,
   StyledDuplicatesCloseAll,
   StyledGroupingToggle,
@@ -268,10 +269,15 @@ function TabManager(): JSX.Element {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            {searchQuery && (
+            {searchQuery ? (
               <StyledSearchClear onClick={() => setSearchQuery('')}>
                 <CloseOutlined />
               </StyledSearchClear>
+            ) : (
+              <StyledSearchShortcutHint>
+                <span>{navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl'}</span>
+                <span>K</span>
+              </StyledSearchShortcutHint>
             )}
           </StyledSearchInput>
 

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Page } from "./components/index";
 
 import SearchBar from './components/SearchBar';
+import UniversalSearch from './components/UniversalSearch';
 import { TopSites } from './components/Tiles';
 import { AppContext, reducer } from './Context';
 import { getObjectFromStorageLocal } from '../helpers/storage';
@@ -420,6 +421,19 @@ function NewTabContent() {
     const [store, dispatch] = useReducer(reducer, {});
     const [availableImage, setAvailableImage] = React.useState(null);
     const [imageInfo, setImageInfo] = React.useState(null);
+    const [universalSearchOpen, setUniversalSearchOpen] = React.useState(false);
+
+    // Keyboard shortcut for universal search
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                setUniversalSearchOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     // Use the new store for settings
     const { openSettings } = useUI();
@@ -532,7 +546,7 @@ function NewTabContent() {
                         <div style={{ textAlign: 'center', width: '100%' }}>
                             {general.showClock && <LocalDateTime />}
                             {general.showWeather && <WeatherWidget unit={general.temperatureUnit} />}
-                            {general.showSearch && <SearchBar />}
+                            {general.showSearch && <SearchBar onClick={() => setUniversalSearchOpen(true)} />}
                             {general.showTopSites && <TopSites />}
                         </div>
                     </MiddleSection>
@@ -563,6 +577,9 @@ function NewTabContent() {
 
                 {/* Settings Modal */}
                 <SettingsModal />
+
+                {/* Universal Search Modal */}
+                <UniversalSearch isOpen={universalSearchOpen} onClose={() => setUniversalSearchOpen(false)} />
 
                 {/* One-time tip about Chrome's footer bar */}
                 <ChromeFooterTip />

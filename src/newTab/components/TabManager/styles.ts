@@ -201,6 +201,26 @@ export const StyledSearchInput = styled.div`
   }
 `;
 
+export const StyledSearchShortcutHint = styled.div`
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  user-select: none;
+
+  span {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.4;
+  }
+`;
+
 export const StyledSearchClear = styled.div`
   position: absolute;
   right: 8px;
