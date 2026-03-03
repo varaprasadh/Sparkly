@@ -12,6 +12,8 @@ import TabItem from './TabItem';
 import {
   StyledTabManagerContainer,
   StyledTabManagerHeader,
+  StyledTabListWrapper,
+  StyledBottomSection,
   StyledCollapse,
   CollapseButton,
   StyledTabThumbnailBG,
@@ -304,10 +306,12 @@ function TabManager(): JSX.Element {
       )}
 
       {/* Tab List */}
-      {renderTabList()}
+      <StyledTabListWrapper>
+        {renderTabList()}
+      </StyledTabListWrapper>
 
       {!collapsed && (
-        <>
+        <StyledBottomSection>
           {/* Suspend Inactive */}
           <StyledSuspendButton onClick={handleSuspendInactive}>
             💤 Suspend inactive tabs
@@ -402,9 +406,9 @@ function TabManager(): JSX.Element {
                   </div>
                 )}
               </>
-            )}
-          </StyledSessionPanel>
-        </>
+              )}
+            </StyledSessionPanel>
+        </StyledBottomSection>
       )}
     </StyledTabManagerContainer>
   );

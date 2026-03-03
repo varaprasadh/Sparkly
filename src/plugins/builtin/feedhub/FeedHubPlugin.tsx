@@ -488,7 +488,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
             onClick={handleToggleLayout}
             title={multiColumn ? 'Single column view' : 'Multi-column view'}
           >
-            {multiColumn ? '▤' : '▥'}
+            {multiColumn ? '☰' : '⊞'}
           </IconButton>
           <IconButton onClick={handleRefresh} spinning={refreshing} title="Refresh feed">
             ↻
@@ -608,7 +608,7 @@ export function FeedHubPlugin({ api }: PluginProps): JSX.Element {
       {/* Multi-column view */}
       {multiColumn && (
         <MultiColumnGrid>
-          {enabledSources.slice(0, 3).map((source) => {
+          {enabledSources.map((source) => {
             const state = feedStates[source.id] || { items: [], loading: true, error: null };
             const filtered = filterItems(state.items);
             return (

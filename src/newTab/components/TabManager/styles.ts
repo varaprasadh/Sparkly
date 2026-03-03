@@ -14,12 +14,33 @@ export const StyledTabManagerContainer = styled.div<StyledTabManagerContainerPro
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+`;
+
+export const StyledTabListWrapper = styled.div`
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  min-height: 0;
+  
   &::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
+    width: 6px;
   }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+`;
+
+export const StyledBottomSection = styled.div`
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 `;
 
 export const StyledTabItem = styled.div<{ isDuplicate?: boolean }>`

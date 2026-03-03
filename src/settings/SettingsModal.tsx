@@ -8,6 +8,7 @@ import { useUI, useSettings } from '../store/hooks';
 import { GeneralTab } from './tabs/GeneralTab';
 import { WallpaperTab } from './tabs/WallpaperTab';
 import { AppearanceTab } from './tabs/AppearanceTab';
+import { AboutTab } from './tabs/AboutTab';
 import { GeneralSettings, WallpaperSettings, AppearanceSettings } from '../types/settings.types';
 
 const Overlay = styled.div`
@@ -175,6 +176,7 @@ const TABS = [
   { id: 'general', label: 'General', icon: '⚙️' },
   { id: 'wallpaper', label: 'Wallpaper', icon: '🖼️' },
   { id: 'appearance', label: 'Appearance', icon: '🎨' },
+  { id: 'about', label: 'About', icon: 'ℹ️' },
 ];
 
 // Draft settings interface
@@ -286,6 +288,8 @@ export function SettingsModal(): JSX.Element | null {
         return <WallpaperTab settings={draft.wallpaper} onUpdate={updateDraftWallpaper} />;
       case 'appearance':
         return <AppearanceTab settings={draft.appearance} onUpdate={updateDraftAppearance} />;
+      case 'about':
+        return <AboutTab />;
       default:
         return <GeneralTab settings={draft.general} onUpdate={updateDraftGeneral} />;
     }
