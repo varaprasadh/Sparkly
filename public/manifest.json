@@ -1,5 +1,5 @@
 {
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzAh2dvzo0mYM/H7bAft1QbOdUsoVbfBaTs4CxZwo0zEHj1wJQkDAWEIa/vYYj5dbxmb26tUsukBxS8wzCVsZlOb1ahgAiUEfxkbpeHYxnSeceULn/MaInF8ewNaW6S3DUTfwkfmQYGcMorxr+/iLhg/zSD81PBpVSyiTvZHpe5ZlUbG+MaP7hg3ytPw1W9EkiZhla+3z6eSK084ct36Fjob/u5LuczUq4Qh3pJPnwS8DVMEx8xOkK4rL5lp6onrvgPc4u0epQEsqXBzVXbphM/BI3C4oz09/BkVrayaZJtEvxka40LgUh9Xd0UCwY/di9Y4oeyzZdftgosA3g/tIZwIDAQAB",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn6Hx7yjUmjB5DKLQQi64ymvm6m3YGSBIJuVAH7dzUVQ7QErT3v8nQVctSoJI5lNfNauj5VRFeHXqZOdrAWPQWbIfIByXwr0/0B3Gn/A3EQyaYrLJg/IPhFjgEmO8hWqZTky4sqfmAUHeWvi6WJV+gNfm3PTZ4PR8jfKsWE96anl453de5oZSR+/gHWh2cdZwSUR+cal9MoTeelpbAo7t/u1Glrh2Sn8GlwA8nnTHZvSjI9ZkSEA1tP0I2aSvLWXcbpBKnHNLo2LeNMULE1kK4BXgOyq3JJibqwmXcywHfq9RoEDpo8nF9L4g/Ft2pOY7SOcTKaMaMHWnkF2uZy9bmwIDAQAB",
     "version": "4.4.5",
     "version_name": "4.4.5",
     "manifest_version": 3,
@@ -24,7 +24,7 @@
         "service_worker": "./background.js"
     },
     "oauth2": {
-        "client_id": "1067014450644-ffb4j64j3jkrv2cq5f3ekm3i9mj14rng.apps.googleusercontent.com",
+        "client_id": "313065344975-k6uda6csaampc8g7i98qpoko9q7fmcr7.apps.googleusercontent.com",
         "scopes": [
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/userinfo.profile",
