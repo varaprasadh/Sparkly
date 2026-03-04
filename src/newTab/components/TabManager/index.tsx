@@ -12,6 +12,8 @@ import TabItem from './TabItem';
 import {
   StyledTabManagerContainer,
   StyledTabManagerHeader,
+  StyledTabListWrapper,
+  StyledBottomSection,
   StyledCollapse,
   CollapseButton,
   StyledTabThumbnailBG,
@@ -21,6 +23,7 @@ import {
   StyledWindowGroup,
   StyledSearchInput,
   StyledSearchClear,
+  StyledSearchShortcutHint,
   StyledDuplicatesBanner,
   StyledDuplicatesCloseAll,
   StyledGroupingToggle,
@@ -266,10 +269,15 @@ function TabManager(): JSX.Element {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            {searchQuery && (
+            {searchQuery ? (
               <StyledSearchClear onClick={() => setSearchQuery('')}>
                 <CloseOutlined />
               </StyledSearchClear>
+            ) : (
+              <StyledSearchShortcutHint>
+                <span>{navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl'}</span>
+                <span>K</span>
+              </StyledSearchShortcutHint>
             )}
           </StyledSearchInput>
 
@@ -304,10 +312,12 @@ function TabManager(): JSX.Element {
       )}
 
       {/* Tab List */}
-      {renderTabList()}
+      <StyledTabListWrapper>
+        {renderTabList()}
+      </StyledTabListWrapper>
 
       {!collapsed && (
-        <>
+        <StyledBottomSection>
           {/* Suspend Inactive */}
           <StyledSuspendButton onClick={handleSuspendInactive}>
             💤 Suspend inactive tabs
@@ -402,9 +412,9 @@ function TabManager(): JSX.Element {
                   </div>
                 )}
               </>
-            )}
-          </StyledSessionPanel>
-        </>
+              )}
+            </StyledSessionPanel>
+        </StyledBottomSection>
       )}
     </StyledTabManagerContainer>
   );

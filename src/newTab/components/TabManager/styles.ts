@@ -14,12 +14,33 @@ export const StyledTabManagerContainer = styled.div<StyledTabManagerContainerPro
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+`;
+
+export const StyledTabListWrapper = styled.div`
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  min-height: 0;
+  
   &::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
+    width: 6px;
   }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+`;
+
+export const StyledBottomSection = styled.div`
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 `;
 
 export const StyledTabItem = styled.div<{ isDuplicate?: boolean }>`
@@ -177,6 +198,26 @@ export const StyledSearchInput = styled.div`
       background: rgba(255, 255, 255, 0.12);
       border-color: rgba(255, 255, 255, 0.2);
     }
+  }
+`;
+
+export const StyledSearchShortcutHint = styled.div`
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  user-select: none;
+
+  span {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.4;
   }
 `;
 

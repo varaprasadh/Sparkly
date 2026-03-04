@@ -2,13 +2,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin  } = require('clean-webpack-plugin')
 const copyWebpackPlugin = require('copy-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const webpack = require('webpack');
 const { resolve } = require('path');
+const fs = require('fs');
 
+// Read version from manifest.json
+const manifest = JSON.parse(fs.readFileSync('./public/manifest.json', 'utf8'));
+const version = manifest.version || '1.0.0';
 
 // webpack plugin to log the build progress
 
 const plugins = [
     new ProgressBarPlugin(),
+    new webpack.DefinePlugin({
+        __VERSION__: JSON.stringify(version)
+    }),
     new HtmlWebpackPlugin({
         template: './public/new-tab.raw.html',
         filename:'new-tab.html',

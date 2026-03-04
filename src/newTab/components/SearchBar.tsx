@@ -10,6 +10,8 @@ import googleIcon from '../../assets/images/google.png';
 import yahooIcon from '../../assets/images/yahoo.png';
 import bingIcon from '../../assets/images/bing.png';
 import duckDuckGoIcon from '../../assets/images/duckduckgo.png';
+import chatgptIcon from '../../assets/images/chatgpt.png';
+import claudeIcon from '../../assets/images/claude.png';
 import { useSettings } from '../../store/hooks';
 
 // Types
@@ -52,6 +54,18 @@ const SEARCH_ENGINES: SearchEngine[] = [
     icon: duckDuckGoIcon,
     getSearchURL: (query: string) => `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
   },
+  {
+    id: 'chatgpt',
+    label: 'ChatGPT',
+    icon: chatgptIcon,
+    getSearchURL: (query: string) => `https://chatgpt.com/?q=${encodeURIComponent(query)}`,
+  },
+  {
+    id: 'claude',
+    label: 'Claude',
+    icon: claudeIcon,
+    getSearchURL: (query: string) => `https://claude.ai/new?q=${encodeURIComponent(query)}`,
+  },
 ];
 
 const DEBOUNCE_DELAY = 300;
@@ -73,6 +87,7 @@ const StyledSearchBar = styled.div`
   width: 100%;
   padding: 0.2rem 0.5rem;
   transition: all 0.3s ease;
+  cursor: pointer;
   
   &:focus-within {
     background: rgba(0, 0, 0, 0.6);
@@ -122,6 +137,25 @@ const StyledSearchIcon = styled.img`
   
   &:active {
     transform: scale(0.9);
+  }
+`;
+
+const StyledShortcutHint = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 0.8rem;
+  pointer-events: none;
+  user-select: none;
+
+  span {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.4;
   }
 `;
 
@@ -311,11 +345,16 @@ function SearchEngineSelector({
   );
 }
 
+interface SearchBarProps {
+  onClick?: () => void;
+}
+
 /**
  * Main SearchBar Component
  */
-export default function SearchBar(): JSX.Element {
+export default function SearchBar({ onClick }: SearchBarProps): JSX.Element {
   const { general, updateGeneral } = useSettings();
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const [queryText, setQueryText] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -454,15 +493,29 @@ export default function SearchBar(): JSX.Element {
         currentEngineId={engineId}
         searchEngines={SEARCH_ENGINES}
       />
-      <StyledSearchWrapper>
+      <StyledSearchWrapper onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}>
         <StyledInput
           type="text"
           placeholder="Search here..."
           value={queryText}
           onKeyDown={handleKeyDown}
           onChange={(e) => setQueryText(e.target.value)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
         />
-        <StyledSearchIcon src={searchIcon} alt="search" onClick={search} />
+        <StyledShortcutHint>
+          <span>{isMac ? '⌘' : 'Ctrl'}</span>
+          <span>K</span>
+        </StyledShortcutHint>
+        <StyledSearchIcon src={searchIcon} alt="search" onClick={(e) => {
+          e.stopPropagation();
+          search();
+        }} />
       </StyledSearchWrapper>
       {showSuggestions && (
         <OutsideClickHandler onOutsideClick={() => setShowSuggestions(false)}>

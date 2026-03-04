@@ -482,20 +482,40 @@ export const CustomFeedDeleteBtn = styled.button`
 
 export const MultiColumnGrid = styled.div`
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
   gap: 0;
-  overflow: hidden;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
 `;
 
 export const ColumnPane = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 280px;
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
+  flex: 1;
 
   &:last-child {
     border-right: none;
+  }
+
+  @media (max-width: 900px) {
+    min-width: 260px;
+    flex: none;
   }
 `;
 
