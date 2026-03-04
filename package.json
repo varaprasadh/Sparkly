@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack",
+    "build:prod": "webpack --env prod",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "zip": "npm run build && node zip.js"
+    "zip": "npm run build:prod && node zip.js"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

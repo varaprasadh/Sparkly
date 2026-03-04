@@ -1,7 +1,7 @@
 {
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzAh2dvzo0mYM/H7bAft1QbOdUsoVbfBaTs4CxZwo0zEHj1wJQkDAWEIa/vYYj5dbxmb26tUsukBxS8wzCVsZlOb1ahgAiUEfxkbpeHYxnSeceULn/MaInF8ewNaW6S3DUTfwkfmQYGcMorxr+/iLhg/zSD81PBpVSyiTvZHpe5ZlUbG+MaP7hg3ytPw1W9EkiZhla+3z6eSK084ct36Fjob/u5LuczUq4Qh3pJPnwS8DVMEx8xOkK4rL5lp6onrvgPc4u0epQEsqXBzVXbphM/BI3C4oz09/BkVrayaZJtEvxka40LgUh9Xd0UCwY/di9Y4oeyzZdftgosA3g/tIZwIDAQAB",
-    "version": "4.4.4",
-    "version_name": "4.4.4",
+    "version": "4.4.5",
+    "version_name": "4.4.5",
     "manifest_version": 3,
     "name": "Sparkly: New Tab for Productive People",
     "description": "Replace your new tab with a beautiful dashboard — wallpapers, news feed, tab manager, and search — all in one place.",

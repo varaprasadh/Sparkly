@@ -177,33 +177,42 @@ const IconButton = styled.button<{ spinning?: boolean }>`
   }
 `;
 
+const AccountRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 0;
+`;
+
+const AccountEmail = styled.div`
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+`;
+
 const SignOutBtn = styled.button`
   background: rgba(248, 113, 113, 0.12);
   border: 1px solid rgba(248, 113, 113, 0.25);
   color: rgba(248, 113, 113, 0.8);
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 11px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s;
-  margin-top: 10px;
-  width: 100%;
 
   &:hover {
     background: rgba(248, 113, 113, 0.2);
     color: #f87171;
   }
-`;
-
-const AccountInfo = styled.div`
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const SettingsPanel = styled.div`
@@ -805,7 +814,12 @@ export function GoogleWorkspacePlugin({ api }: PluginProps): JSX.Element {
       {/* Settings panel */}
       {showSettings && (
         <SettingsPanel>
-          {authState.email && <AccountInfo>Signed in as {authState.email}</AccountInfo>}
+          {authState.email && (
+            <AccountRow>
+              <AccountEmail>Signed in as {authState.email}</AccountEmail>
+              <SignOutBtn onClick={signOut}>Sign out</SignOutBtn>
+            </AccountRow>
+          )}
           <SettingsTitle>Show Sections</SettingsTitle>
           {SECTIONS.map((section) => (
             <SectionCheckbox key={section.id}>
@@ -818,7 +832,6 @@ export function GoogleWorkspacePlugin({ api }: PluginProps): JSX.Element {
               <span>{section.name}</span>
             </SectionCheckbox>
           ))}
-          <SignOutBtn onClick={signOut}>Sign out</SignOutBtn>
         </SettingsPanel>
       )}
 
