@@ -241,6 +241,18 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
         <FormGroup>
           <Toggle>
             <HiddenCheckbox
+              checked={settings.showGoogleWorkspace}
+              onChange={(e) => onUpdate({ showGoogleWorkspace: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.showGoogleWorkspace} />
+            <ToggleLabel>Show Google Workspace</ToggleLabel>
+          </Toggle>
+          <Description>Display Calendar, Drive, and Gmail above the feed</Description>
+        </FormGroup>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
               checked={settings.showBookmarks}
               onChange={(e) => onUpdate({ showBookmarks: e.target.checked })}
             />

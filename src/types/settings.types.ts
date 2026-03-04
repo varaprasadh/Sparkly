@@ -41,6 +41,7 @@ export interface GeneralSettings {
   showBookmarks: boolean;
   maxQuickLinks: number;
   showFeedHub: boolean;
+  showGoogleWorkspace: boolean;
   showWeather: boolean;
   temperatureUnit: 'celsius' | 'fahrenheit';
 }
@@ -132,6 +133,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   showBookmarks: true,
   maxQuickLinks: 8,
   showFeedHub: true,
+  showGoogleWorkspace: false,
   showWeather: true,
   temperatureUnit: 'celsius',
 };

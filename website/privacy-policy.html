@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Sparkly</title>
+  <meta name="description" content="Privacy Policy for Sparkly Chrome Extension" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .legal-page {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+    }
+    .legal-badge {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .legal-title {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .legal-updated {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 48px;
+    }
+    .legal-body {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 40px 48px;
+    }
+    .legal-body h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 36px 0 12px;
+    }
+    .legal-body h2:first-child {
+      margin-top: 0;
+    }
+    .legal-body p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .legal-body ul {
+      margin: 8px 0 14px 20px;
+      color: rgba(255,255,255,0.65);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+    .legal-body ul li {
+      margin-bottom: 6px;
+    }
+    .legal-body a {
+      color: #93c5fd;
+      text-decoration: underline;
+      text-decoration-color: rgba(147,197,253,0.3);
+    }
+    .legal-body a:hover {
+      text-decoration-color: #93c5fd;
+    }
+    .legal-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 32px 0;
+    }
+    .legal-footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.3);
+    }
+    .legal-footer a {
+      color: #93c5fd;
+    }
+    @media (max-width: 600px) {
+      .legal-body { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Sparkly" class="logo-img" />
+        <span class="logo-text">Sparkly</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#showcase">Showcase</a>
+        <a href="index.html#testimonials">Testimonials</a>
+      </div>
+      <a href="https://chromewebstore.google.com/detail/sparkly-new-tab-for-produ/finlildobfdjhkemcieihnkgmgoikgan" target="_blank" rel="noopener noreferrer" class="btn btn-sm">
+        Add to Chrome
+      </a>
+    </div>
+  </nav>
+
+  <div class="legal-page">
+    <div class="legal-badge">Legal</div>
+    <h1 class="legal-title">Privacy Policy</h1>
+    <p class="legal-updated">Last updated: March 4, 2025</p>
+
+    <div class="legal-body">
+
+      <h2>Overview</h2>
+      <p>Sparkly ("we", "our", or "the extension") is a Chrome extension that replaces your new tab page with a productivity dashboard. We are committed to protecting your privacy. This policy explains what data we access, how we use it, and what we never do with it.</p>
+
+      <h2>Data We Access</h2>
+      <p>When you connect your Google account, Sparkly requests read-only access to the following Google services:</p>
+      <ul>
+        <li><strong>Google Calendar</strong> — to display your upcoming events</li>
+        <li><strong>Google Drive</strong> — to show recently viewed files</li>
+        <li><strong>Gmail</strong> — to display inbox emails</li>
+        <li><strong>Google Profile</strong> — to show your name and email address</li>
+      </ul>
+      <p>All access is <strong>read-only</strong>. Sparkly never modifies, deletes, or creates any data in your Google account.</p>
+
+      <h2>How We Use Your Data</h2>
+      <p>Data fetched from Google APIs is used <strong>exclusively</strong> to display information inside your new tab dashboard. Specifically:</p>
+      <ul>
+        <li>Calendar events are shown in the Google Workspace widget</li>
+        <li>Drive files are listed as recently accessed documents</li>
+        <li>Gmail messages are displayed as an inbox summary</li>
+        <li>Your email address is shown in the widget settings panel</li>
+      </ul>
+
+      <h2>Data Storage</h2>
+      <p>Sparkly stores the following data locally in your browser using <code>chrome.storage.local</code>:</p>
+      <ul>
+        <li>Your OAuth access token (to avoid re-authenticating on every new tab)</li>
+        <li>Your widget layout preferences and enabled sections</li>
+        <li>Your wallpaper, search engine, and appearance settings</li>
+        <li>Bookmarks and shortcuts you manually add</li>
+      </ul>
+      <p>All data is stored <strong>locally on your device only</strong>. We do not operate any servers, databases, or backend services. Your data is never transmitted to us or any third party.</p>
+
+      <h2>Data We Never Collect</h2>
+      <p>Sparkly does not:</p>
+      <ul>
+        <li>Send any of your data to external servers</li>
+        <li>Track your browsing history or behavior</li>
+        <li>Use analytics or telemetry of any kind</li>
+        <li>Share your data with advertisers or third parties</li>
+        <li>Store your data in any cloud service we operate</li>
+      </ul>
+
+      <h2>Google API Services</h2>
+      <p>Sparkly's use of Google APIs is limited to displaying data on your local new tab page. Our use complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+      <h2>Permissions</h2>
+      <p>Sparkly requests the following Chrome permissions and uses them as follows:</p>
+      <ul>
+        <li><strong>tabs</strong> — to display and manage your open browser tabs in the Tab Manager widget</li>
+        <li><strong>sessions</strong> — to show recently closed tabs so you can restore them</li>
+        <li><strong>topSites</strong> — to display your most visited sites as quick shortcuts</li>
+        <li><strong>storage</strong> — to save your preferences locally on your device</li>
+        <li><strong>identity</strong> — to authenticate with your Google account via Chrome's built-in OAuth2</li>
+      </ul>
+
+      <h2>Revoking Access</h2>
+      <p>You can disconnect your Google account at any time by clicking the settings (⚙) icon in the Google Workspace widget and selecting "Sign out". You can also revoke access directly from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account permissions page</a>.</p>
+
+      <h2>Children's Privacy</h2>
+      <p>Sparkly is not directed at children under the age of 13 and we do not knowingly collect any information from children.</p>
+
+      <h2>Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. Changes will be reflected by updating the "Last updated" date above. Continued use of the extension after changes constitutes your acceptance of the updated policy.</p>
+
+      <hr class="legal-divider" />
+
+      <h2>Contact</h2>
+      <p>If you have any questions about this Privacy Policy, please reach out via the <a href="https://chromewebstore.google.com/detail/sparkly-new-tab-for-produ/finlildobfdjhkemcieihnkgmgoikgan" target="_blank" rel="noopener noreferrer">Chrome Web Store support page</a>.</p>
+
+    </div>
+
+    <div class="legal-footer">
+      <a href="index.html">← Back to Sparkly</a> &nbsp;·&nbsp;
+      <a href="terms.html">Terms of Service</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

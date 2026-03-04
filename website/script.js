@@ -122,6 +122,18 @@
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     mockTime.textContent = `${hours}:${minutes}`;
+
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const ord = (d) => d + (['st','nd','rd'][((d+90)%100-10)%10-1] || 'th');
+    const day = days[now.getDay()];
+    const month = months[now.getMonth()];
+    const date = now.getDate();
+
+    const mockDate = document.getElementById('mock-date');
+    const mockDate2 = document.getElementById('mock-date-2');
+    if (mockDate) mockDate.textContent = `${day}, ${month} ${ord(date)}`;
+    if (mockDate2) mockDate2.textContent = `${day.toUpperCase()}, ${month.toUpperCase()} ${ord(date).toUpperCase()}`;
   }
 
   updateMockClock();
@@ -240,14 +252,13 @@
   const pgFeed = document.getElementById('pg-feed');
   const pgApps = document.getElementById('pg-apps');
   const pgTabs = document.getElementById('pg-tabs');
-  const pg24h = document.getElementById('pg-24h');
   const pgWeatherSelect = document.getElementById('pg-weather-select');
   const pgWallpaperSelect = document.getElementById('pg-wallpaper-select');
 
   const pgClockSection = document.getElementById('pg-clock-section');
   const pgWeatherPill = document.getElementById('pg-weather-pill');
   const pgSearchBar = document.getElementById('pg-search-bar');
-  const pgTilesEl = document.getElementById('pg-tiles');
+  const pgTilesEl = document.getElementById('pg-tiles-section');
   const pgFeedHub = document.getElementById('pg-feed-hub');
   const pgSidebar = document.getElementById('pg-sidebar');
   const pgTabManager = document.getElementById('pg-tab-manager');
@@ -301,14 +312,7 @@
     });
   }
 
-  // 24-hour format toggle
-  if (pg24h) {
-    pg24h.addEventListener('change', () => {
-      updateClock();
-    });
-  }
-
-  // Weather condition selector
+// Weather condition selector
   if (pgWeatherSelect) {
     pgWeatherSelect.addEventListener('change', (e) => {
       const conditions = {
@@ -338,11 +342,7 @@
     if (!pgClockDisplay || !pgDateDisplay) return;
     
     const now = new Date();
-    const is24h = pg24h && pg24h.checked;
-    
-    const hours = is24h 
-      ? now.getHours().toString().padStart(2, '0')
-      : (now.getHours() % 12 || 12).toString();
+    const hours = (now.getHours() % 12 || 12).toString();
     const minutes = now.getMinutes().toString().padStart(2, '0');
     
     pgClockDisplay.textContent = `${hours}:${minutes}`;

@@ -1,6 +1,7 @@
 {
-    "version": "4.4.4",
-    "version_name": "4.4.4",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn6Hx7yjUmjB5DKLQQi64ymvm6m3YGSBIJuVAH7dzUVQ7QErT3v8nQVctSoJI5lNfNauj5VRFeHXqZOdrAWPQWbIfIByXwr0/0B3Gn/A3EQyaYrLJg/IPhFjgEmO8hWqZTky4sqfmAUHeWvi6WJV+gNfm3PTZ4PR8jfKsWE96anl453de5oZSR+/gHWh2cdZwSUR+cal9MoTeelpbAo7t/u1Glrh2Sn8GlwA8nnTHZvSjI9ZkSEA1tP0I2aSvLWXcbpBKnHNLo2LeNMULE1kK4BXgOyq3JJibqwmXcywHfq9RoEDpo8nF9L4g/Ft2pOY7SOcTKaMaMHWnkF2uZy9bmwIDAQAB",
+    "version": "4.4.5",
+    "version_name": "4.4.5",
     "manifest_version": 3,
     "name": "Sparkly: New Tab for Productive People",
     "description": "Replace your new tab with a beautiful dashboard — wallpapers, news feed, tab manager, and search — all in one place.",
@@ -22,6 +23,16 @@
     "background": {
         "service_worker": "./background.js"
     },
+    "oauth2": {
+        "client_id": "313065344975-k6uda6csaampc8g7i98qpoko9q7fmcr7.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/calendar.readonly",
+            "https://www.googleapis.com/auth/drive.readonly",
+            "https://www.googleapis.com/auth/gmail.readonly"
+        ]
+    },
     "web_accessible_resources": [
         {
             "resources": ["images/icon-16.png", "images/icon-48.png", "images/icon-128.png"],
@@ -38,7 +49,8 @@
         "storage",
         "unlimitedStorage",
         "tabs",
-        "sessions"
+        "sessions",
+        "identity"
     ],
     "host_permissions":[
         "http://*/*",

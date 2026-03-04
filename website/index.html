@@ -130,7 +130,7 @@
             <div class="mock-center">
               <div class="mock-clock">
                 <div class="mock-time" id="mock-time">10:42</div>
-                <div class="mock-date">Tuesday, February 24th</div>
+                <div class="mock-date" id="mock-date">Tuesday, February 24th</div>
               </div>
               <div class="mock-search">
                 <div class="mock-search-icon">&#128269;</div>
@@ -494,7 +494,7 @@
               <div class="carousel-mock">
                 <div class="mock-newtab">
                   <div class="mock-clock">8:30</div>
-                  <div class="mock-date">MONDAY, MARCH 1ST</div>
+                  <div class="mock-date" id="mock-date-2">MONDAY, MARCH 1ST</div>
                   <div class="mock-weather-pill">
                     <span class="mock-weather-icon">☀️</span>
                     <span class="mock-temp">24°</span>
@@ -506,7 +506,6 @@
                 <h3>Smart Clock & Weather</h3>
                 <p>A beautiful clock with date, and real-time weather updates. Toggle widgets on or off from settings — you control what you see.</p>
                 <ul class="feature-list">
-                  <li>12h / 24h format</li>
                   <li>Weather with Celsius/Fahrenheit</li>
                   <li>Fully customizable widgets</li>
                 </ul>
@@ -802,13 +801,6 @@
 
           <h3>Settings</h3>
           <div class="control-group">
-            <label class="playground-toggle">
-              <input type="checkbox" id="pg-24h" />
-              <span class="toggle-slider"></span>
-              <span class="toggle-label">24-hour format</span>
-            </label>
-          </div>
-          <div class="control-group">
             <label class="pg-select-group">
               <span class="pg-select-label">Weather</span>
               <select id="pg-weather-select" class="pg-select">
@@ -866,7 +858,7 @@
               </div>
 
               <!-- Tiles -->
-              <div class="pg-tiles" id="pg-tiles">
+              <div class="pg-tiles" id="pg-tiles-section">
                 <div class="pg-tile" style="background: linear-gradient(135deg, #ea4335, #fbbc04)"></div>
                 <div class="pg-tile" style="background: linear-gradient(135deg, #4285f4, #34a853)"></div>
                 <div class="pg-tile" style="background: linear-gradient(135deg, #4285f4, #ea4335)"></div>
@@ -1113,6 +1105,8 @@
         <!-- <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a> -->
         <a href="https://chromewebstore.google.com/detail/sparkly-new-tab-for-produ/finlildobfdjhkemcieihnkgmgoikgan" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>
         <a href="#features">Features</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
       </div>
       <div class="footer-copy">
         Built with care for humans and it's free.
