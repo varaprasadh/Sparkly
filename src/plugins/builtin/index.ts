@@ -5,8 +5,12 @@
 // Feed Hub (replaces individual HN, GitHub, DevTo plugins)
 export { feedHubManifest, feedHubInstance, FeedHubPlugin } from './feedhub';
 
+// Google Workspace
+export { googleWorkspaceManifest, googleWorkspaceInstance, GoogleWorkspacePlugin } from './googleworkspace';
+
 // All built-in plugins for registration
 import { feedHubManifest, feedHubInstance } from './feedhub';
+import { googleWorkspaceManifest, googleWorkspaceInstance } from './googleworkspace';
 import { PluginManifest, PluginInstance } from '../../types/plugin.types';
 
 export interface BuiltinPlugin {
@@ -16,6 +20,7 @@ export interface BuiltinPlugin {
 
 export const BUILTIN_PLUGINS: BuiltinPlugin[] = [
   { manifest: feedHubManifest, instance: feedHubInstance },
+  { manifest: googleWorkspaceManifest, instance: googleWorkspaceInstance },
 ];
 
 /**

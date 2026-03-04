@@ -32,8 +32,11 @@ import { SettingsModal } from '../settings';
 import { useUI, useSettings, useInitialization } from '../store/hooks';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { feedHubInstance } from '../plugins/builtin/feedhub';
+import { googleWorkspaceInstance } from '../plugins/builtin/googleworkspace';
+import { useSettings } from '../store/hooks';
 
 const FeedHubWidget = feedHubInstance.Component;
+const GoogleWorkspaceWidget = googleWorkspaceInstance.Component;
 
 const StyledMainColumn = styled.div`
     display: flex;
@@ -550,11 +553,18 @@ function NewTabContent() {
                             {general.showTopSites && <TopSites />}
                         </div>
                     </MiddleSection>
-                    {general.showFeedHub && (
+                    {(general.showGoogleWorkspace || general.showFeedHub) && (
                     <DashboardGrid>
+                        {general.showGoogleWorkspace && (
+                        <WidgetContainer style={{ gridColumn: '1 / -1' }}>
+                            <GoogleWorkspaceWidget api={null as any} />
+                        </WidgetContainer>
+                        )}
+                        {general.showFeedHub && (
                         <WidgetContainer style={{ gridColumn: '1 / -1' }}>
                             <FeedHubWidget api={null as any} />
                         </WidgetContainer>
+                        )}
                         {showBottomBar && <BottomSection>
                             <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
                                 Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash
