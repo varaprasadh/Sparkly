@@ -51,7 +51,7 @@ export type FontSize = 'small' | 'medium' | 'large';
 export type LayoutDensity = 'compact' | 'comfortable' | 'spacious';
 
 // Search engine types
-export type SearchEngineId = 'google' | 'bing' | 'yahoo' | 'duckduckgo';
+export type SearchEngineId = 'google' | 'bing' | 'yahoo' | 'duckduckgo' | 'chatgpt' | 'claude';
 
 export interface SearchEngine {
   id: SearchEngineId;

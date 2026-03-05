@@ -3,4 +3,4 @@
  */
 
 export { SettingsModal } from './SettingsModal';
-export { GeneralTab, WallpaperTab, WidgetsTab, AppearanceTab } from './tabs';
+export { GeneralTab, WallpaperTab, WidgetsTab } from './tabs';

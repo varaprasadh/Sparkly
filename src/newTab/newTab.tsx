@@ -30,7 +30,6 @@ import { PluginProvider, pluginRegistry } from '../plugins';
 import { registerBuiltinPlugins } from '../plugins/builtin';
 import { SettingsModal } from '../settings';
 import { useUI, useSettings, useInitialization } from '../store/hooks';
-import { ThemeProvider } from '../components/ThemeProvider';
 import { feedHubInstance } from '../plugins/builtin/feedhub';
 import { googleWorkspaceInstance } from '../plugins/builtin/googleworkspace';
 import { useSettings } from '../store/hooks';
@@ -616,9 +615,7 @@ function NewTab() {
     return (
         <AppProvider>
             <PluginProvider>
-                <ThemeProvider>
                     <NewTabContent />
-                </ThemeProvider>
             </PluginProvider>
         </AppProvider>
     );

@@ -7,9 +7,9 @@ import styled from 'styled-components';
 import { useUI, useSettings } from '../store/hooks';
 import { GeneralTab } from './tabs/GeneralTab';
 import { WallpaperTab } from './tabs/WallpaperTab';
-import { AppearanceTab } from './tabs/AppearanceTab';
+import { WidgetsTab } from './tabs/WidgetsTab';
 import { AboutTab } from './tabs/AboutTab';
-import { GeneralSettings, WallpaperSettings, AppearanceSettings } from '../types/settings.types';
+import { GeneralSettings, WallpaperSettings } from '../types/settings.types';
 
 const Overlay = styled.div`
   position: fixed;
@@ -175,7 +175,7 @@ const UnsavedIndicator = styled.span`
 const TABS = [
   { id: 'general', label: 'General', icon: '⚙️' },
   { id: 'wallpaper', label: 'Wallpaper', icon: '🖼️' },
-  { id: 'appearance', label: 'Appearance', icon: '🎨' },
+  { id: 'widgets', label: 'Widgets', icon: '🧩' },
   { id: 'about', label: 'About', icon: 'ℹ️' },
 ];
 
@@ -183,7 +183,6 @@ const TABS = [
 interface DraftSettings {
   general: GeneralSettings;
   wallpaper: WallpaperSettings;
-  appearance: AppearanceSettings;
 }
 
 export function SettingsModal(): JSX.Element | null {
@@ -194,7 +193,6 @@ export function SettingsModal(): JSX.Element | null {
   const [draft, setDraft] = useState<DraftSettings>({
     general: settings.general,
     wallpaper: settings.wallpaper,
-    appearance: settings.appearance,
   });
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -207,7 +205,6 @@ export function SettingsModal(): JSX.Element | null {
       setDraft({
         general: settings.general,
         wallpaper: settings.wallpaper,
-        appearance: settings.appearance,
       });
       setHasChanges(false);
     }
@@ -232,20 +229,10 @@ export function SettingsModal(): JSX.Element | null {
     setHasChanges(true);
   }, []);
 
-  // Update draft appearance settings
-  const updateDraftAppearance = useCallback((updates: Partial<AppearanceSettings>) => {
-    setDraft((prev) => ({
-      ...prev,
-      appearance: { ...prev.appearance, ...updates },
-    }));
-    setHasChanges(true);
-  }, []);
-
   // Save all changes (keep modal open)
   const handleSave = useCallback(() => {
     settings.updateGeneral(draft.general);
     settings.updateWallpaper(draft.wallpaper);
-    settings.updateAppearance(draft.appearance);
     setHasChanges(false);
   }, [draft, settings]);
 
@@ -254,7 +241,6 @@ export function SettingsModal(): JSX.Element | null {
     setDraft({
       general: settings.general,
       wallpaper: settings.wallpaper,
-      appearance: settings.appearance,
     });
     setHasChanges(false);
     closeSettings();
@@ -286,8 +272,8 @@ export function SettingsModal(): JSX.Element | null {
         return <GeneralTab settings={draft.general} onUpdate={updateDraftGeneral} />;
       case 'wallpaper':
         return <WallpaperTab settings={draft.wallpaper} onUpdate={updateDraftWallpaper} />;
-      case 'appearance':
-        return <AppearanceTab settings={draft.appearance} onUpdate={updateDraftAppearance} />;
+      case 'widgets':
+        return <WidgetsTab settings={draft.general} onUpdate={updateDraftGeneral} />;
       case 'about':
         return <AboutTab />;
       default:

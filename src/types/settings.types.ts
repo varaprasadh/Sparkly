@@ -7,21 +7,18 @@ import {
   WallpaperSource,
   WallpaperRefreshFrequency,
   WallpaperInfo,
-  ThemeMode,
-  FontSize,
-  LayoutDensity,
   Color,
 } from './common.types';
 
 // Re-export types needed by settings components
-export type { ThemeMode, FontSize, LayoutDensity, SearchEngineId, WallpaperSource } from './common.types';
+export type { SearchEngineId, WallpaperSource } from './common.types';
 
 // Wallpaper frequency type alias
 export type WallpaperFrequency = WallpaperRefreshFrequency;
 import { WidgetPlacement, WidgetZone } from './widget.types';
 
 // Settings tab identifiers
-export type SettingsTab = 'general' | 'wallpaper' | 'widgets' | 'appearance';
+export type SettingsTab = 'general' | 'wallpaper' | 'widgets';
 
 // General settings
 export interface GeneralSettings {
@@ -63,22 +60,6 @@ export interface WallpaperSettings {
   dim: boolean;
 }
 
-// Appearance settings
-export interface AppearanceSettings {
-  theme: ThemeMode;
-  accentColor: Color;
-  fontFamily: string;
-  fontSize: FontSize;
-  layoutDensity: LayoutDensity;
-  borderRadius: 'none' | 'small' | 'medium' | 'large';
-  widgetBorderRadius: number;
-  glassEffect: boolean;
-  animations: boolean;
-  enableAnimations: boolean;
-  enableTransparency: boolean;
-  reducedMotion: boolean;
-}
-
 // Widget settings
 export interface WidgetSettings {
   enabledPlugins: string[];
@@ -95,7 +76,6 @@ export interface WidgetSettings {
 export interface SettingsState {
   general: GeneralSettings;
   wallpaper: WallpaperSettings;
-  appearance: AppearanceSettings;
   widgets: WidgetSettings;
   lastSaved: string | null;
   isDirty: boolean;
@@ -154,20 +134,6 @@ export const DEFAULT_WALLPAPER_SETTINGS: WallpaperSettings = {
   dim: false,
 };
 
-export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
-  theme: 'dark',
-  accentColor: '#6366f1',
-  fontFamily: 'system-ui',
-  fontSize: 'medium',
-  layoutDensity: 'comfortable',
-  borderRadius: 'medium',
-  widgetBorderRadius: 12,
-  glassEffect: true,
-  animations: true,
-  enableAnimations: true,
-  enableTransparency: true,
-  reducedMotion: false,
-};
 
 export const DEFAULT_WIDGET_SETTINGS: WidgetSettings = {
   enabledPlugins: ['builtin-hackernews', 'builtin-github', 'builtin-devto'],
@@ -197,9 +163,9 @@ export const SETTINGS_TABS: SettingsTabConfig[] = [
     description: 'Background image settings',
   },
   {
-    id: 'appearance',
-    label: 'Appearance',
-    icon: 'BgColorsOutlined',
-    description: 'Theme and visual preferences',
+    id: 'widgets',
+    label: 'Widgets',
+    icon: 'AppstoreOutlined',
+    description: 'Toggle and manage widgets',
   },
 ];

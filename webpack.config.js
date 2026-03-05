@@ -37,7 +37,8 @@ module.exports = {
     devtool: 'cheap-module-source-map',
     entry:{
         newTab: './src/newTab/newTab.tsx',
-        background: './src/background.ts'
+        background: './src/background.ts',
+        content: './src/content.ts'
     },
     output:{
         filename:'[name].js',

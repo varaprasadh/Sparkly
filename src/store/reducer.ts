@@ -7,10 +7,8 @@ import { WidgetZone, WidgetPlacement } from '../types/widget.types';
 import {
   GeneralSettings,
   WallpaperSettings,
-  AppearanceSettings,
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_WALLPAPER_SETTINGS,
-  DEFAULT_APPEARANCE_SETTINGS,
 } from '../types/settings.types';
 
 // Plugin State
@@ -36,7 +34,6 @@ export interface AppState {
   settings: {
     general: GeneralSettings;
     wallpaper: WallpaperSettings;
-    appearance: AppearanceSettings;
   };
 
   // Plugins
@@ -69,7 +66,6 @@ export const initialState: AppState = {
   settings: {
     general: DEFAULT_GENERAL_SETTINGS,
     wallpaper: DEFAULT_WALLPAPER_SETTINGS,
-    appearance: DEFAULT_APPEARANCE_SETTINGS,
   },
 
   plugins: {
@@ -125,15 +121,6 @@ export function reducer(state: AppState, action: AppAction): AppState {
         },
       };
 
-    case ActionTypes.SET_APPEARANCE_SETTINGS:
-      return {
-        ...state,
-        settings: {
-          ...state.settings,
-          appearance: action.payload,
-        },
-      };
-
     case ActionTypes.UPDATE_GENERAL_SETTINGS:
       return {
         ...state,
@@ -149,15 +136,6 @@ export function reducer(state: AppState, action: AppAction): AppState {
         settings: {
           ...state.settings,
           wallpaper: { ...state.settings.wallpaper, ...action.payload },
-        },
-      };
-
-    case ActionTypes.UPDATE_APPEARANCE_SETTINGS:
-      return {
-        ...state,
-        settings: {
-          ...state.settings,
-          appearance: { ...state.settings.appearance, ...action.payload },
         },
       };
 

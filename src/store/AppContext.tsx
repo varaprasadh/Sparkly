@@ -8,7 +8,6 @@ import { AppAction, actions } from './actions';
 import {
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_WALLPAPER_SETTINGS,
-  DEFAULT_APPEARANCE_SETTINGS,
 } from '../types/settings.types';
 
 // Context type
@@ -60,7 +59,6 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
         const [
           generalSettings,
           wallpaperSettings,
-          appearanceSettings,
           enabledPlugins,
           widgetPlacements,
           pluginSettings,
@@ -71,7 +69,6 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
         ] = await Promise.all([
           loadFromStorage('sparkly_settings_general'),
           loadFromStorage('sparkly_settings_wallpaper'),
-          loadFromStorage('sparkly_settings_appearance'),
           loadFromStorage('sparkly_plugins_enabled'),
           loadFromStorage('sparkly_widgets_placements'),
           loadFromStorage('sparkly_plugins_settings'),
@@ -102,13 +99,6 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
           mergedWallpaper.source = legacyWallpaperConfig as typeof mergedWallpaper.source;
         }
         dispatch(actions.setWallpaperSettings(mergedWallpaper));
-
-        if (appearanceSettings) {
-          dispatch(actions.setAppearanceSettings({
-            ...DEFAULT_APPEARANCE_SETTINGS,
-            ...(appearanceSettings as object)
-          }));
-        }
 
         // Load enabled plugins
         if (enabledPlugins && Array.isArray(enabledPlugins)) {
@@ -154,7 +144,6 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
 
     saveToStorage('sparkly_settings_general', state.settings.general);
     saveToStorage('sparkly_settings_wallpaper', state.settings.wallpaper);
-    saveToStorage('sparkly_settings_appearance', state.settings.appearance);
 
     // Sync legacy keys so older components/boot logic can read them
     saveToStorage('searchEngineId', state.settings.general.searchEngine);

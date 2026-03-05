@@ -117,6 +117,8 @@ const SEARCH_ENGINES = [
   { id: 'bing', label: 'Bing' },
   { id: 'yahoo', label: 'Yahoo' },
   { id: 'duckduckgo', label: 'DuckDuckGo' },
+  { id: 'chatgpt', label: 'ChatGPT' },
+  { id: 'claude', label: 'Claude' },
 ];
 
 interface GeneralTabProps {
@@ -154,139 +156,11 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
             <ToggleSwitch checked={settings.openLinksInNewTab} />
             <ToggleLabel>Open links in new tab</ToggleLabel>
           </Toggle>
-          <Description>When enabled, search results and links will open in a new tab</Description>
+          <Description>When enabled, all link clicks on any website will open in a new tab</Description>
         </FormGroup>
       </Section>
 
 
-      <Section>
-        <SectionTitle>Widgets</SectionTitle>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showClock}
-              onChange={(e) => onUpdate({ showClock: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showClock} />
-            <ToggleLabel>Show clock</ToggleLabel>
-          </Toggle>
-          <Description>Display the clock and date at the center of the page</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showTopSites}
-              onChange={(e) => onUpdate({ showTopSites: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showTopSites} />
-            <ToggleLabel>Show recently visited</ToggleLabel>
-          </Toggle>
-          <Description>Display your most recently visited websites. Set max links below when enabled.</Description>
-        </FormGroup>
-
-        {settings.showTopSites && (
-          <FormGroup>
-            <Label>Maximum links</Label>
-            <Select
-              value={settings.maxQuickLinks}
-              onChange={(e) => onUpdate({ maxQuickLinks: parseInt(e.target.value) })}
-            >
-              <option value="4">4 links</option>
-              <option value="6">6 links</option>
-              <option value="8">8 links</option>
-              <option value="10">10 links</option>
-              <option value="12">12 links</option>
-            </Select>
-          </FormGroup>
-        )}
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showSearch}
-              onChange={(e) => onUpdate({ showSearch: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showSearch} />
-            <ToggleLabel>Show search bar</ToggleLabel>
-          </Toggle>
-          <Description>Display the search bar below the clock</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showTabManager}
-              onChange={(e) => onUpdate({ showTabManager: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showTabManager} />
-            <ToggleLabel>Show tab manager</ToggleLabel>
-          </Toggle>
-          <Description>Display the tab manager bar at the top of the page</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showFeedHub}
-              onChange={(e) => onUpdate({ showFeedHub: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showFeedHub} />
-            <ToggleLabel>Show feed hub</ToggleLabel>
-          </Toggle>
-          <Description>Display the developer news feed below the search bar</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showGoogleWorkspace}
-              onChange={(e) => onUpdate({ showGoogleWorkspace: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showGoogleWorkspace} />
-            <ToggleLabel>Show Google Workspace</ToggleLabel>
-          </Toggle>
-          <Description>Display Calendar, Drive, and Gmail above the feed</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showBookmarks}
-              onChange={(e) => onUpdate({ showBookmarks: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showBookmarks} />
-            <ToggleLabel>Show Google Apps</ToggleLabel>
-          </Toggle>
-          <Description>Display Google app shortcuts in the right sidebar</Description>
-        </FormGroup>
-
-        <FormGroup>
-          <Toggle>
-            <HiddenCheckbox
-              checked={settings.showWeather}
-              onChange={(e) => onUpdate({ showWeather: e.target.checked })}
-            />
-            <ToggleSwitch checked={settings.showWeather} />
-            <ToggleLabel>Show weather</ToggleLabel>
-          </Toggle>
-          <Description>Display current weather below the clock. Requires location permission.</Description>
-        </FormGroup>
-
-        {settings.showWeather && (
-          <FormGroup>
-            <Label>Temperature unit</Label>
-            <Select
-              value={settings.temperatureUnit}
-              onChange={(e) => onUpdate({ temperatureUnit: e.target.value as 'celsius' | 'fahrenheit' })}
-            >
-              <option value="celsius">Celsius (°C)</option>
-              <option value="fahrenheit">Fahrenheit (°F)</option>
-            </Select>
-          </FormGroup>
-        )}
-      </Section>
     </Container>
   );
 }

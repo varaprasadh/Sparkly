@@ -2,7 +2,7 @@
  * Storage schema type definitions
  */
 
-import { GeneralSettings, WallpaperSettings, AppearanceSettings, WidgetSettings } from './settings.types';
+import { GeneralSettings, WallpaperSettings, WidgetSettings } from './settings.types';
 import { WallpaperInfo, Bookmark } from './common.types';
 import { WidgetPlacement, WidgetZone } from './widget.types';
 import { PluginState } from './plugin.types';
@@ -23,7 +23,6 @@ export const STORAGE_PREFIXES = {
 export interface SettingsStorageSchema {
   'settings:general': GeneralSettings;
   'settings:wallpaper': WallpaperSettings;
-  'settings:appearance': AppearanceSettings;
   'settings:widgets': WidgetSettings;
 }
 

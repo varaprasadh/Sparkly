@@ -2,11 +2,9 @@
  * Widgets Settings Tab
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { pluginRegistry } from '../../plugins/PluginRegistry';
-import { useWidgets } from '../../store/hooks';
-import { WidgetZone, ZONE_CONFIGS } from '../../types/widget.types';
+import { GeneralSettings } from '../../types/settings.types';
 
 const Container = styled.div`
   display: flex;
@@ -20,14 +18,6 @@ const Section = styled.div`
   gap: 16px;
 `;
 
-const SectionTitle = styled.h3`
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e5e7eb;
-`;
 
 const Description = styled.p`
   margin: 0;
@@ -35,62 +25,23 @@ const Description = styled.p`
   color: #6b7280;
 `;
 
-const PluginList = styled.div`
+const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 `;
 
-const PluginCard = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-`;
-
-const PluginIcon = styled.span`
-  font-size: 28px;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-`;
-
-const PluginInfo = styled.div`
-  flex: 1;
-`;
-
-const PluginName = styled.h4`
-  margin: 0 0 4px 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: #1f2937;
-`;
-
-const PluginDescription = styled.p`
-  margin: 0;
-  font-size: 13px;
-  color: #6b7280;
-`;
-
-const PluginActions = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
+const Label = styled.label`
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
 `;
 
 const Select = styled.select`
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 14px;
   background: white;
   cursor: pointer;
 
@@ -100,195 +51,109 @@ const Select = styled.select`
   }
 `;
 
-const AddButton = styled.button`
-  padding: 8px 16px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.2s;
 
-  &:hover {
-    background: #2563eb;
-  }
-
-  &:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
-  }
-`;
-
-const ActiveWidgetsSection = styled.div`
-  margin-top: 16px;
-`;
-
-const ActiveWidgetsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const ActiveWidget = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-`;
-
-const WidgetInfo = styled.div`
+const Toggle = styled.label`
   display: flex;
   align-items: center;
   gap: 12px;
-`;
-
-const WidgetIcon = styled.span`
-  font-size: 20px;
-`;
-
-const WidgetName = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-`;
-
-const WidgetZoneTag = styled.span`
-  padding: 4px 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  font-size: 11px;
-  color: #6b7280;
-`;
-
-const RemoveButton = styled.button`
-  background: none;
-  border: none;
-  color: #ef4444;
   cursor: pointer;
-  font-size: 18px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
+`;
 
-  &:hover {
-    background: #fef2f2;
+const ToggleSwitch = styled.div<{ checked: boolean }>`
+  width: 48px;
+  height: 26px;
+  background: ${(p) => (p.checked ? '#3b82f6' : '#d1d5db')};
+  border-radius: 13px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: ${(p) => (p.checked ? '25px' : '3px')};
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 `;
 
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 24px;
-  color: #9ca3af;
-  font-size: 14px;
+const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  display: none;
 `;
 
-const ZONES: { id: WidgetZone; label: string }[] = [
-  { id: 'left-sidebar', label: 'Left Sidebar' },
-  { id: 'right-sidebar', label: 'Right Sidebar' },
-  { id: 'center', label: 'Center' },
+const ToggleLabel = styled.span`
+  font-size: 14px;
+  color: #374151;
+`;
+
+interface WidgetsTabProps {
+  settings: GeneralSettings;
+  onUpdate: (updates: Partial<GeneralSettings>) => void;
+}
+
+const WIDGET_TOGGLES: { key: keyof GeneralSettings; label: string; description: string }[] = [
+  { key: 'showClock',          label: 'Clock',              description: 'Display the clock and date' },
+  { key: 'showSearch',         label: 'Search Bar',         description: 'Display the search bar below the clock' },
+  { key: 'showWeather',        label: 'Weather',            description: 'Show current weather (requires location permission)' },
+  { key: 'showTopSites',       label: 'Recently Visited',   description: 'Show most recently visited sites as quick shortcuts' },
+  { key: 'showTabManager',     label: 'Tab Manager',        description: 'Display the tab manager in the left sidebar' },
+  { key: 'showFeedHub',        label: 'Feed Hub',           description: 'Display the developer news feed' },
+  { key: 'showGoogleWorkspace',label: 'Google Workspace',   description: 'Show Calendar, Drive, and Gmail widget' },
+  { key: 'showBookmarks',      label: 'Google Apps',        description: 'Display Google app shortcuts in the right sidebar' },
 ];
 
-export function WidgetsTab(): JSX.Element {
-  const { placements, addWidget, removeWidget } = useWidgets();
-  const [selectedZone, setSelectedZone] = React.useState<WidgetZone>('right-sidebar');
-
-  const plugins = pluginRegistry.getAll();
-
-  const handleAddWidget = useCallback(
-    (pluginId: string) => {
-      addWidget(pluginId, selectedZone);
-    },
-    [addWidget, selectedZone]
-  );
-
-  const handleRemoveWidget = useCallback(
-    (placementId: string) => {
-      removeWidget(placementId);
-    },
-    [removeWidget]
-  );
-
-  // Check if a plugin is already placed in a zone
-  const isPluginPlaced = useCallback(
-    (pluginId: string) => {
-      return placements.some((p) => p.pluginId === pluginId && p.isVisible);
-    },
-    [placements]
-  );
-
-  const activeWidgets = placements.filter((p) => p.isVisible);
-
+export function WidgetsTab({ settings, onUpdate }: WidgetsTabProps): JSX.Element {
   return (
     <Container>
       <Section>
-        <SectionTitle>Available Widgets</SectionTitle>
-        <Description>Add widgets to your new tab page to enhance productivity</Description>
-
-        <PluginList>
-          {plugins.map((plugin) => (
-            <PluginCard key={plugin.manifest.id}>
-              <PluginIcon>{plugin.manifest.icon}</PluginIcon>
-              <PluginInfo>
-                <PluginName>{plugin.manifest.name}</PluginName>
-                <PluginDescription>{plugin.manifest.description}</PluginDescription>
-              </PluginInfo>
-              <PluginActions>
-                <Select
-                  value={selectedZone}
-                  onChange={(e) => setSelectedZone(e.target.value as WidgetZone)}
-                >
-                  {ZONES.map((zone) => (
-                    <option key={zone.id} value={zone.id}>
-                      {zone.label}
-                    </option>
-                  ))}
-                </Select>
-                <AddButton
-                  onClick={() => handleAddWidget(plugin.manifest.id)}
-                  disabled={isPluginPlaced(plugin.manifest.id)}
-                >
-                  {isPluginPlaced(plugin.manifest.id) ? 'Added' : 'Add'}
-                </AddButton>
-              </PluginActions>
-            </PluginCard>
-          ))}
-
-          {plugins.length === 0 && (
-            <EmptyState>No widgets available</EmptyState>
-          )}
-        </PluginList>
+        {WIDGET_TOGGLES.map(({ key, label, description }) => (
+          <FormGroup key={key}>
+            <Toggle>
+              <HiddenCheckbox
+                checked={!!settings[key]}
+                onChange={(e) => onUpdate({ [key]: e.target.checked } as Partial<GeneralSettings>)}
+              />
+              <ToggleSwitch checked={!!settings[key]} />
+              <div>
+                <ToggleLabel>{label}</ToggleLabel>
+                <Description>{description}</Description>
+              </div>
+            </Toggle>
+          </FormGroup>
+        ))}
+        {settings.showTopSites && (
+          <FormGroup>
+            <Label>Maximum quick links</Label>
+            <Select
+              value={settings.maxQuickLinks}
+              onChange={(e) => onUpdate({ maxQuickLinks: parseInt(e.target.value) })}
+            >
+              <option value="4">4 links</option>
+              <option value="6">6 links</option>
+              <option value="8">8 links</option>
+              <option value="10">10 links</option>
+              <option value="12">12 links</option>
+            </Select>
+          </FormGroup>
+        )}
+        {settings.showWeather && (
+          <FormGroup>
+            <Label>Temperature unit</Label>
+            <Select
+              value={settings.temperatureUnit}
+              onChange={(e) => onUpdate({ temperatureUnit: e.target.value as 'celsius' | 'fahrenheit' })}
+            >
+              <option value="celsius">Celsius (°C)</option>
+              <option value="fahrenheit">Fahrenheit (°F)</option>
+            </Select>
+          </FormGroup>
+        )}
       </Section>
-
-      <ActiveWidgetsSection>
-        <SectionTitle>Active Widgets</SectionTitle>
-        <Description>Manage widgets currently on your new tab page</Description>
-
-        <ActiveWidgetsList style={{ marginTop: '16px' }}>
-          {activeWidgets.map((placement) => {
-            const plugin = pluginRegistry.get(placement.pluginId);
-            if (!plugin) return null;
-
-            return (
-              <ActiveWidget key={placement.id}>
-                <WidgetInfo>
-                  <WidgetIcon>{plugin.manifest.icon}</WidgetIcon>
-                  <WidgetName>{plugin.manifest.name}</WidgetName>
-                  <WidgetZoneTag>{ZONE_CONFIGS[placement.zone].name}</WidgetZoneTag>
-                </WidgetInfo>
-                <RemoveButton onClick={() => handleRemoveWidget(placement.id)}>×</RemoveButton>
-              </ActiveWidget>
-            );
-          })}
-
-          {activeWidgets.length === 0 && (
-            <EmptyState>No widgets added yet. Add widgets from the list above.</EmptyState>
-          )}
-        </ActiveWidgetsList>
-      </ActiveWidgetsSection>
     </Container>
   );
 }

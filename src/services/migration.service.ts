@@ -14,7 +14,6 @@ import {
 import {
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_WALLPAPER_SETTINGS,
-  DEFAULT_APPEARANCE_SETTINGS,
   DEFAULT_WIDGET_SETTINGS,
 } from '../types/settings.types';
 
@@ -51,7 +50,6 @@ const migrations: Migration[] = [
       // Set new namespaced keys
       await storage.set('settings:wallpaper', wallpaperSettings);
       await storage.set('settings:general', generalSettings);
-      await storage.set('settings:appearance', DEFAULT_APPEARANCE_SETTINGS);
       await storage.set('settings:widgets', DEFAULT_WIDGET_SETTINGS);
       await storage.set('ui:tabManagerCollapsed', tabManagerCollapsed);
 
@@ -212,7 +210,6 @@ class MigrationService {
       schemaVersion: STORAGE_SCHEMA_VERSION,
       'settings:general': DEFAULT_GENERAL_SETTINGS,
       'settings:wallpaper': DEFAULT_WALLPAPER_SETTINGS,
-      'settings:appearance': DEFAULT_APPEARANCE_SETTINGS,
       'settings:widgets': DEFAULT_WIDGET_SETTINGS,
       'ui:tabManagerCollapsed': false,
       'ui:rightSidebarCollapsed': false,

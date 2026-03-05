@@ -6,7 +6,6 @@ import { WidgetZone, WidgetPlacement } from '../types/widget.types';
 import {
   GeneralSettings,
   WallpaperSettings,
-  AppearanceSettings,
 } from '../types/settings.types';
 
 // Action Type Constants
@@ -14,10 +13,8 @@ export const ActionTypes = {
   // Settings Actions
   SET_GENERAL_SETTINGS: 'settings/SET_GENERAL',
   SET_WALLPAPER_SETTINGS: 'settings/SET_WALLPAPER',
-  SET_APPEARANCE_SETTINGS: 'settings/SET_APPEARANCE',
   UPDATE_GENERAL_SETTINGS: 'settings/UPDATE_GENERAL',
   UPDATE_WALLPAPER_SETTINGS: 'settings/UPDATE_WALLPAPER',
-  UPDATE_APPEARANCE_SETTINGS: 'settings/UPDATE_APPEARANCE',
 
   // Plugin Actions
   REGISTER_PLUGIN: 'plugins/REGISTER',
@@ -67,11 +64,6 @@ export interface SetWallpaperSettingsAction {
   payload: WallpaperSettings;
 }
 
-export interface SetAppearanceSettingsAction {
-  type: typeof ActionTypes.SET_APPEARANCE_SETTINGS;
-  payload: AppearanceSettings;
-}
-
 export interface UpdateGeneralSettingsAction {
   type: typeof ActionTypes.UPDATE_GENERAL_SETTINGS;
   payload: Partial<GeneralSettings>;
@@ -80,11 +72,6 @@ export interface UpdateGeneralSettingsAction {
 export interface UpdateWallpaperSettingsAction {
   type: typeof ActionTypes.UPDATE_WALLPAPER_SETTINGS;
   payload: Partial<WallpaperSettings>;
-}
-
-export interface UpdateAppearanceSettingsAction {
-  type: typeof ActionTypes.UPDATE_APPEARANCE_SETTINGS;
-  payload: Partial<AppearanceSettings>;
 }
 
 // Plugin Actions
@@ -250,10 +237,8 @@ export interface SetInitializedAction {
 export type AppAction =
   | SetGeneralSettingsAction
   | SetWallpaperSettingsAction
-  | SetAppearanceSettingsAction
   | UpdateGeneralSettingsAction
   | UpdateWallpaperSettingsAction
-  | UpdateAppearanceSettingsAction
   | RegisterPluginAction
   | EnablePluginAction
   | DisablePluginAction
@@ -292,11 +277,6 @@ export const actions = {
     payload: settings,
   }),
 
-  setAppearanceSettings: (settings: AppearanceSettings): SetAppearanceSettingsAction => ({
-    type: ActionTypes.SET_APPEARANCE_SETTINGS,
-    payload: settings,
-  }),
-
   updateGeneralSettings: (updates: Partial<GeneralSettings>): UpdateGeneralSettingsAction => ({
     type: ActionTypes.UPDATE_GENERAL_SETTINGS,
     payload: updates,
@@ -304,11 +284,6 @@ export const actions = {
 
   updateWallpaperSettings: (updates: Partial<WallpaperSettings>): UpdateWallpaperSettingsAction => ({
     type: ActionTypes.UPDATE_WALLPAPER_SETTINGS,
-    payload: updates,
-  }),
-
-  updateAppearanceSettings: (updates: Partial<AppearanceSettings>): UpdateAppearanceSettingsAction => ({
-    type: ActionTypes.UPDATE_APPEARANCE_SETTINGS,
     payload: updates,
   }),
 

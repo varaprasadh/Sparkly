@@ -36,7 +36,6 @@ export function useSettings() {
   return {
     general: state.settings.general,
     wallpaper: state.settings.wallpaper,
-    appearance: state.settings.appearance,
 
     updateGeneral: useCallback(
       (updates: Partial<typeof state.settings.general>) => {
@@ -48,13 +47,6 @@ export function useSettings() {
     updateWallpaper: useCallback(
       (updates: Partial<typeof state.settings.wallpaper>) => {
         dispatch(actions.updateWallpaperSettings(updates));
-      },
-      [dispatch]
-    ),
-
-    updateAppearance: useCallback(
-      (updates: Partial<typeof state.settings.appearance>) => {
-        dispatch(actions.updateAppearanceSettings(updates));
       },
       [dispatch]
     ),
