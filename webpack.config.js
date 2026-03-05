@@ -26,7 +26,24 @@ const plugins = [
         patterns:[
             {
                 from: 'public', to: '.', filter:str=>!/\.raw.html$/.test(str)
-            }
+            },
+            // Bundle ONNX runtime WASM files locally so CSP allows them
+            {
+                from: 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm',
+                to: 'ort-wasm-simd-threaded.jsep.wasm'
+            },
+            {
+                from: 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm',
+                to: 'ort-wasm-simd-threaded.wasm'
+            },
+            {
+                from: 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.mjs',
+                to: 'ort-wasm-simd-threaded.jsep.mjs'
+            },
+            {
+                from: 'node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs',
+                to: 'ort-wasm-simd-threaded.mjs'
+            },
         ]
     }),
     new CleanWebpackPlugin()
@@ -38,7 +55,8 @@ module.exports = {
     entry:{
         newTab: './src/newTab/newTab.tsx',
         background: './src/background.ts',
-        content: './src/content.ts'
+        content: './src/content.ts',
+        offscreen: './src/offscreen.ts'
     },
     output:{
         filename:'[name].js',

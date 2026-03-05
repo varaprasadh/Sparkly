@@ -38,7 +38,9 @@
             "resources": [
                 "images/icon-16.png",
                 "images/icon-48.png",
-                "images/icon-128.png"
+                "images/icon-128.png",
+                "offscreen.html",
+                "offscreen.js"
             ],
             "matches": [
                 "<all_urls>"
@@ -46,7 +48,7 @@
         }
     ],
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; img-src * data:"
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; img-src * data:"
     },
     "permissions": [
         "topSites",
@@ -54,7 +56,8 @@
         "unlimitedStorage",
         "tabs",
         "sessions",
-        "identity"
+        "identity",
+        "offscreen"
     ],
     "host_permissions": [
         "http://*/*",

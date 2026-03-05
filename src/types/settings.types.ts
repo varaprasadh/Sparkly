@@ -18,7 +18,7 @@ export type WallpaperFrequency = WallpaperRefreshFrequency;
 import { WidgetPlacement, WidgetZone } from './widget.types';
 
 // Settings tab identifiers
-export type SettingsTab = 'general' | 'wallpaper' | 'widgets';
+export type SettingsTab = 'general' | 'wallpaper' | 'widgets' | 'ai';
 
 // General settings
 export interface GeneralSettings {
@@ -41,6 +41,7 @@ export interface GeneralSettings {
   showGoogleWorkspace: boolean;
   showWeather: boolean;
   temperatureUnit: 'celsius' | 'fahrenheit';
+  showAI: boolean;
 }
 
 // Wallpaper settings
@@ -116,6 +117,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   showGoogleWorkspace: false,
   showWeather: true,
   temperatureUnit: 'celsius',
+  showAI: false,
 };
 
 export const DEFAULT_WALLPAPER_SETTINGS: WallpaperSettings = {

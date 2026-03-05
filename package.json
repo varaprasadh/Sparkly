@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@huggingface/transformers": "^3.8.1",
     "archiver": "^7.0.1",
     "moment": "^2.30.1",
     "react": "^17.0.2",

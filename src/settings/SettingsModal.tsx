@@ -9,6 +9,7 @@ import { GeneralTab } from './tabs/GeneralTab';
 import { WallpaperTab } from './tabs/WallpaperTab';
 import { WidgetsTab } from './tabs/WidgetsTab';
 import { AboutTab } from './tabs/AboutTab';
+import { AITab } from './tabs/AITab';
 import { GeneralSettings, WallpaperSettings } from '../types/settings.types';
 
 const Overlay = styled.div`
@@ -176,6 +177,7 @@ const TABS = [
   { id: 'general', label: 'General', icon: '⚙️' },
   { id: 'wallpaper', label: 'Wallpaper', icon: '🖼️' },
   { id: 'widgets', label: 'Widgets', icon: '🧩' },
+  { id: 'ai', label: 'Sparkly AI', icon: '✦' },
   { id: 'about', label: 'About', icon: 'ℹ️' },
 ];
 
@@ -274,6 +276,8 @@ export function SettingsModal(): JSX.Element | null {
         return <WallpaperTab settings={draft.wallpaper} onUpdate={updateDraftWallpaper} />;
       case 'widgets':
         return <WidgetsTab settings={draft.general} onUpdate={updateDraftGeneral} />;
+      case 'ai':
+        return <AITab settings={draft.general} onUpdate={updateDraftGeneral} />;
       case 'about':
         return <AboutTab />;
       default:
