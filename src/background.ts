@@ -55,11 +55,26 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === 'SWITCH_TAB') {
-    chrome.tabs.update(message.tabId, { active: true });
-    if (message.windowId) {
-      chrome.windows.update(message.windowId, { focused: true });
+    const { tabId, windowId } = message;
+    if (windowId) {
+      chrome.windows.get(windowId, (win) => {
+        const doFocusAndActivate = () => {
+          chrome.windows.update(windowId, { focused: true }, () => {
+            chrome.windows.update(windowId, { drawAttention: true });
+            chrome.tabs.update(tabId, { active: true });
+            sendResponse({ ok: true });
+          });
+        };
+        if (win.state === 'minimized') {
+          chrome.windows.update(windowId, { state: 'normal' }, doFocusAndActivate);
+        } else {
+          doFocusAndActivate();
+        }
+      });
+    } else {
+      chrome.tabs.update(tabId, { active: true });
+      sendResponse({ ok: true });
     }
-    sendResponse({ ok: true });
     return true;
   }
 

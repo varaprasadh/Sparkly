@@ -31,9 +31,11 @@ export function useDuplicates(allTabs: TabInfo[]) {
       const idsToClose: number[] = [];
       urlMap.forEach((tabs) => {
         if (tabs.length > 1) {
-          // Keep the first, close the rest
-          tabs.slice(1).forEach((t) => {
-            if (t.id !== undefined) idsToClose.push(t.id);
+          // Prefer keeping the active tab; fall back to the first one
+          const activeIdx = tabs.findIndex((t) => t.active);
+          const keepIdx = activeIdx !== -1 ? activeIdx : 0;
+          tabs.forEach((t, i) => {
+            if (i !== keepIdx && t.id !== undefined) idsToClose.push(t.id);
           });
         }
       });

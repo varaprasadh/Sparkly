@@ -479,6 +479,12 @@ function NewTabContent() {
             return;
         }
 
+        // For upload, just load the cached image — no fetching
+        if (source === 'upload') {
+            loadBufferedWallpaper();
+            return;
+        }
+
         // Only fetch a new random wallpaper when source is 'random'
         if (source === 'random') {
             (async () => {
@@ -519,9 +525,10 @@ function NewTabContent() {
         }
     }, [wallpaperJson]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    const isUpload = imageInfo?.isUpload;
     const imageAuthor = imageInfo?.user?.username;
     const imageAuthorUnsplashLink = imageInfo?.user?.links?.html;
-    const showBottomBar = imageAuthor && imageAuthorUnsplashLink;
+    const showBottomBar = !isUpload && imageAuthor && imageAuthorUnsplashLink;
 
     const handleImageLoadError = () => {
         setImageInfo(null);

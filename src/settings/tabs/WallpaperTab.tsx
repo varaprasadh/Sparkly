@@ -85,7 +85,7 @@ const ToggleLabel = styled.span`
 
 const SourceGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 12px;
 `;
 
@@ -139,6 +139,7 @@ const ColorSwatch = styled.button<{ color: string; selected: boolean }>`
 const WALLPAPER_SOURCES: { id: WallpaperSource; label: string; icon: string }[] = [
   { id: 'random', label: 'Random', icon: '🎲' },
   { id: 'search', label: 'Search', icon: '🔍' },
+  { id: 'upload', label: 'Upload', icon: '📤' },
   { id: 'history', label: 'From History', icon: '📚' },
   { id: 'color', label: 'Solid Color', icon: '🎨' },
 ];
@@ -353,6 +354,77 @@ const CurrentWallpaperLabel = styled.span`
   color: #374151;
 `;
 
+const UploadZone = styled.label<{ dragOver?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 24px;
+  border: 2px dashed ${(props) => (props.dragOver ? 'var(--accent-color, #3b82f6)' : '#d1d5db')};
+  border-radius: 12px;
+  background: ${(props) => (props.dragOver ? 'var(--accent-color-light, #eff6ff)' : '#f9fafb')};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--accent-color, #3b82f6);
+    background: var(--accent-color-light, #eff6ff);
+  }
+`;
+
+const UploadIcon = styled.span`
+  font-size: 36px;
+`;
+
+const UploadText = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+`;
+
+const UploadHint = styled.span`
+  font-size: 12px;
+  color: #6b7280;
+`;
+
+const HiddenFileInput = styled.input.attrs({ type: 'file', accept: 'image/*' })`
+  display: none;
+`;
+
+const UploadPreview = styled.div`
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+`;
+
+const UploadPreviewImage = styled.img`
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+`;
+
+const UploadPreviewActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f9fafb;
+`;
+
+const UploadChangeButton = styled.label`
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-color, #3b82f6);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const SEARCH_SUGGESTIONS = ['nature', 'mountains', 'ocean', 'city', 'space', 'forest', 'sunset', 'abstract'];
 
 interface WallpaperHistoryItem {
@@ -383,6 +455,12 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
   const [selectedSearchId, setSelectedSearchId] = useState<string | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+
+  // Upload state
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
 
   // Current wallpaper preview
   const [currentWallpaper, setCurrentWallpaper] = useState<{ thumb: string; author: string } | null>(null);
@@ -518,6 +596,82 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
     onUpdate({ source: 'history' });
   };
 
+  // Load existing upload preview
+  useEffect(() => {
+    if (settings.source === 'upload') {
+      chrome.storage.local.get(['bufferedImageMetadata'], (result) => {
+        try {
+          const meta = result.bufferedImageMetadata;
+          const parsed = typeof meta === 'string' ? JSON.parse(meta) : meta;
+          if (parsed?.isUpload && parsed.thumbDataUrl) {
+            setUploadPreview(parsed.thumbDataUrl);
+          }
+        } catch {
+          // ignore
+        }
+      });
+    }
+  }, [settings.source]);
+
+  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
+
+  const handleFileUpload = (file: File) => {
+    if (!file || !file.type.startsWith('image/')) return;
+
+    setUploadError(null);
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError('Image is too large. Please choose an image under 25 MB.');
+      return;
+    }
+
+    setUploadLoading(true);
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      const dataUrl = reader.result as string;
+
+      // Create a smaller thumbnail for the preview in settings
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_THUMB = 800;
+        const scale = Math.min(MAX_THUMB / img.width, MAX_THUMB / img.height, 1);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d')!;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const thumbDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+        setUploadPreview(thumbDataUrl);
+
+        chrome.storage.local.set({
+          bufferedImage: dataUrl,
+          bufferedImageMetadata: JSON.stringify({
+            isUpload: true,
+            fileName: file.name,
+            thumbDataUrl,
+          }),
+        });
+
+        setUploadLoading(false);
+        onUpdate({ source: 'upload' });
+      };
+      img.onerror = () => {
+        setUploadLoading(false);
+      };
+      img.src = dataUrl;
+    });
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file);
+  };
+
   return (
     <Container>
       <Section>
@@ -590,6 +744,45 @@ export function WallpaperTab({ settings, onUpdate }: WallpaperTabProps): JSX.Ele
               </SearchResultsGrid>
             )}
           </SearchContainer>
+        </Section>
+      )}
+
+      {settings.source === 'upload' && (
+        <Section>
+          <SectionTitle>Upload Wallpaper</SectionTitle>
+          {uploadPreview ? (
+            <UploadPreview>
+              <UploadPreviewImage src={uploadPreview} alt="Uploaded wallpaper" />
+              <UploadPreviewActions>
+                <CurrentWallpaperLabel>Custom wallpaper</CurrentWallpaperLabel>
+                <UploadChangeButton>
+                  Change image
+                  <HiddenFileInput onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file);
+                  }} />
+                </UploadChangeButton>
+              </UploadPreviewActions>
+            </UploadPreview>
+          ) : (
+            <UploadZone
+              dragOver={dragOver}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+            >
+              <HiddenFileInput onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }} />
+              <UploadIcon>{uploadLoading ? '⏳' : '📤'}</UploadIcon>
+              <UploadText>{uploadLoading ? 'Processing...' : 'Click or drag an image here'}</UploadText>
+              <UploadHint>Supports JPG, PNG, WebP (max 25 MB)</UploadHint>
+            </UploadZone>
+          )}
+          {uploadError && (
+            <Description style={{ color: '#ef4444' }}>{uploadError}</Description>
+          )}
         </Section>
       )}
 

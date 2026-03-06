@@ -61,7 +61,7 @@ export interface SearchEngine {
 }
 
 // Wallpaper source types
-export type WallpaperSource = 'random' | 'search' | 'history' | 'color';
+export type WallpaperSource = 'random' | 'search' | 'history' | 'color' | 'upload';
 
 // Wallpaper refresh frequency
 export type WallpaperRefreshFrequency = 'never' | 'every-tab' | 'hourly' | 'daily';
