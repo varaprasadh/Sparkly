@@ -572,7 +572,7 @@ function NewTabContent() {
                     </DashboardGrid>
                     )}
 
-                    {!general.showFeedHub && showBottomBar && (
+                    {!general.showFeedHub && !general.showGoogleWorkspace && showBottomBar && (
                         <BottomSection fixed>
                             <div style={{ background: "#0101012b", color: "white", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
                                 Photo by <a style={{ color: "white" }} href={imageAuthorUnsplashLink}>{imageAuthor}</a> - Unsplash

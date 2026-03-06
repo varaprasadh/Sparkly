@@ -158,6 +158,18 @@ export function GeneralTab({ settings, onUpdate }: GeneralTabProps): JSX.Element
           </Toggle>
           <Description>When enabled, all link clicks on any website will open in a new tab</Description>
         </FormGroup>
+
+        <FormGroup>
+          <Toggle>
+            <HiddenCheckbox
+              checked={settings.globalSearch}
+              onChange={(e) => onUpdate({ globalSearch: e.target.checked })}
+            />
+            <ToggleSwitch checked={settings.globalSearch} />
+            <ToggleLabel>Global search bar</ToggleLabel>
+          </Toggle>
+          <Description>Press {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Shift+K on any webpage to open a universal search bar for tabs and web search</Description>
+        </FormGroup>
       </Section>
 
 

@@ -41,6 +41,7 @@ export interface GeneralSettings {
   showGoogleWorkspace: boolean;
   showWeather: boolean;
   temperatureUnit: 'celsius' | 'fahrenheit';
+  globalSearch: boolean;
 }
 
 // Wallpaper settings
@@ -116,6 +117,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   showGoogleWorkspace: false,
   showWeather: true,
   temperatureUnit: 'celsius',
+  globalSearch: true,
 };
 
 export const DEFAULT_WALLPAPER_SETTINGS: WallpaperSettings = {
