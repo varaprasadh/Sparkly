@@ -78,6 +78,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === 'GET_SUGGESTIONS') {
+    fetch(`https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(message.query)}`)
+      .then(res => res.json())
+      .then(data => sendResponse((data[1] as string[]).slice(0, 5)))
+      .catch(() => sendResponse([]));
+    return true;
+  }
+
   if (message.type === 'SEARCH_NAVIGATE') {
     chrome.tabs.create({ url: message.url });
     sendResponse({ ok: true });

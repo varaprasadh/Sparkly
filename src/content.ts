@@ -121,13 +121,11 @@ function navigateToSearch(url: string): void {
 
 async function getSuggestions(query: string): Promise<string[]> {
   if (!query.trim()) return [];
-  try {
-    const resp = await fetch(`https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}`);
-    const data = await resp.json();
-    return (data[1] as string[]).slice(0, 5);
-  } catch {
-    return [];
-  }
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: 'GET_SUGGESTIONS', query }, (suggestions: string[]) => {
+      resolve(suggestions || []);
+    });
+  });
 }
 
 function escapeHTML(str: string): string {
