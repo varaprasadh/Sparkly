@@ -79,14 +79,8 @@ let globalSearchEnabled = true;
 
 function applyGlobalSearchSetting(settings: { searchEngine?: string; globalSearch?: boolean }): void {
   if (settings.searchEngine) searchEngine = settings.searchEngine;
-  const enabled = settings.globalSearch !== false; // default true
-  if (enabled && !globalSearchEnabled) {
-    document.addEventListener('keydown', handleGlobalKeydown);
-  } else if (!enabled && globalSearchEnabled) {
-    document.removeEventListener('keydown', handleGlobalKeydown);
-    closeSearch();
-  }
-  globalSearchEnabled = enabled;
+  globalSearchEnabled = settings.globalSearch !== false;
+  if (!globalSearchEnabled) closeSearch();
 }
 
 chrome.storage.local.get(STORAGE_KEY, (result) => {
@@ -249,7 +243,26 @@ function updateSelection(): void {
   if (selected) selected.scrollIntoView({ block: 'nearest' });
 }
 
+// Block the page from stealing focus while the search overlay is open
+function trapFocus(e: FocusEvent): void {
+  if (!searchHost || !searchInput) return;
+  // If focus is moving to something outside our shadow DOM, reclaim it
+  const target = e.target as Node;
+  if (!searchHost.contains(target) && !searchHost.shadowRoot?.contains(target)) {
+    e.stopImmediatePropagation();
+    searchInput.focus();
+  }
+}
+
+function swallowEvent(e: Event): void {
+  e.stopImmediatePropagation();
+}
+
 function closeSearch(): void {
+  document.removeEventListener('focus', trapFocus, true);
+  document.removeEventListener('keydown', handleSearchKeydown, true);
+  document.removeEventListener('keyup', swallowEvent, true);
+  document.removeEventListener('keypress', swallowEvent, true);
   if (searchHost) {
     searchHost.remove();
     searchHost = null;
@@ -257,13 +270,14 @@ function closeSearch(): void {
     searchInput = null;
     resultsContainer = null;
   }
-  document.removeEventListener('keydown', handleSearchKeydown);
 }
 
 function handleSearchKeydown(e: KeyboardEvent): void {
+  // Stop ALL keyboard events from reaching the page while overlay is open
+  e.stopImmediatePropagation();
+
   if (e.key === 'Escape') {
     e.preventDefault();
-    e.stopPropagation();
     closeSearch();
     return;
   }
@@ -392,21 +406,28 @@ function openSearch(): void {
     if (e.target === overlay) closeSearch();
   });
 
+  // Blur whatever the page currently has focused to prevent focus fights
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
   document.addEventListener('keydown', handleSearchKeydown, true);
+  document.addEventListener('keyup', swallowEvent, true);
+  document.addEventListener('keypress', swallowEvent, true);
+  document.addEventListener('focus', trapFocus, true);
 
   searchInput.focus();
   search('');
 }
 
-function handleGlobalKeydown(e: KeyboardEvent): void {
-  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'k') {
-    e.preventDefault();
+// Listen for the command from the background script (triggered via chrome.commands)
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'TOGGLE_SEARCH') {
+    if (!globalSearchEnabled) return;
     if (searchHost) {
       closeSearch();
     } else {
       openSearch();
     }
   }
-}
-
-document.addEventListener('keydown', handleGlobalKeydown);
+});

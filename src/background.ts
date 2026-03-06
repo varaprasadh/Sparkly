@@ -38,6 +38,19 @@ function initializeDefaults(): void {
   });
 }
 
+// ── Global search command ─────────────────────────────────────────────────────
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === 'open_global_search') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab?.id) {
+        chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_SEARCH' });
+      }
+    });
+  }
+});
+
 // ── Message handlers for content script ───────────────────────────────────────
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
