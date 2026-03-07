@@ -145,6 +145,9 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     saveToStorage('sparkly_settings_general', state.settings.general);
     saveToStorage('sparkly_settings_wallpaper', state.settings.wallpaper);
 
+    // Sync to keys used by content script and background script
+    saveToStorage('settings:general', state.settings.general);
+
     // Sync legacy keys so older components/boot logic can read them
     saveToStorage('searchEngineId', state.settings.general.searchEngine);
     saveToStorage('wallpaperConfigType', state.settings.wallpaper.source);

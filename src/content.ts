@@ -367,6 +367,14 @@ const SEARCH_STYLES = `
   .gs-hint {
     padding: 8px 16px; font-size: 11px; color: rgba(255,255,255,0.3);
     border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .gs-brand {
+    display: flex; align-items: center; gap: 5px;
+    color: rgba(255,255,255,0.3); font-size: 11px;
+  }
+  .gs-brand img {
+    width: 14px; height: 14px; border-radius: 3px; opacity: 0.6;
   }
 `;
 
@@ -390,7 +398,10 @@ function openSearch(): void {
         <span class="gs-esc-hint">esc to close</span>
       </div>
       <div class="gs-results"></div>
-      <div class="gs-hint">\u2191\u2193 navigate \u2022 Enter select \u2022 Esc close</div>
+      <div class="gs-hint">
+        <span>\u2191\u2193 navigate \u2022 Enter select \u2022 Esc close</span>
+        <span class="gs-brand"><img src="${chrome.runtime.getURL('images/icon-16.png')}" alt="" />Sparkly</span>
+      </div>
     </div>
   `;
 

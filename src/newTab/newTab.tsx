@@ -453,8 +453,8 @@ function NewTabContent() {
         setImageInfo(imageMetaData);
         setAvailableImage(displayableImage);
 
-        // Track wallpaper history
-        if (Object.keys(imageMetaData).length > 0) {
+        // Track wallpaper history (skip uploaded wallpapers — they have no Unsplash URLs)
+        if (Object.keys(imageMetaData).length > 0 && !imageMetaData.isUpload) {
             let { wallpapersTrail = '[]' } = await getObjectFromStorageLocal("wallpapersTrail");
             wallpapersTrail = JSON.parse(wallpapersTrail);
             const isAlreadyInTrail = wallpapersTrail.find(o => o.id === imageMetaData.id);
@@ -524,6 +524,20 @@ function NewTabContent() {
             loadBufferedWallpaper();
         }
     }, [wallpaperJson]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Also reload when bufferedImage changes directly (e.g. history/search/upload selection)
+    useEffect(() => {
+        if (!hasBooted.current) return;
+        const listener = (changes: { [key: string]: chrome.storage.StorageChange }, area: string) => {
+            if (area !== 'local' || !changes.bufferedImage) return;
+            const source = wallpaper.source || 'random';
+            if (source !== 'color') {
+                loadBufferedWallpaper();
+            }
+        };
+        chrome.storage.onChanged.addListener(listener);
+        return () => chrome.storage.onChanged.removeListener(listener);
+    }, [wallpaper.source]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const isUpload = imageInfo?.isUpload;
     const imageAuthor = imageInfo?.user?.username;
